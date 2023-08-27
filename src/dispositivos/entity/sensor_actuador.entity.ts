@@ -4,11 +4,13 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
-import { Ubicacion } from '../ubicaciones/ubicaciones.entity';
+import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
+import { SimuladorActuador } from 'src/simuladorActuador/simuladorActuador.entity';
 
 @Entity({ name: 'sensores' })
-export class Sensor {
+export class SensorActuador {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
@@ -18,8 +20,8 @@ export class Sensor {
   @Column({ length: 25, type: 'varchar', nullable: false })
   tipo: string;
 
-  @Column({ length: 25, type: 'varchar', nullable: false })
-  subUbicacion: string;
+  @Column({ type: 'varchar' })
+  descripcion: string;
 
   @Column({
     name: 'idUbicacion',
@@ -35,4 +37,10 @@ export class Sensor {
     referencedColumnName: 'id',
   })
   ubicacion: Ubicacion;
+
+  @OneToMany(
+    () => SimuladorActuador,
+    (simuladorActuador) => simuladorActuador.actuador,
+  )
+  simuladorActuador: SimuladorActuador[];
 }

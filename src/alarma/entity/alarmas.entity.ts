@@ -7,20 +7,20 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Contacto } from '../contactos/contactos.entity';
-import { Ubicacion } from '../ubicaciones/ubicaciones.entity';
-import { Simulador } from '../simulador/simulador.entity';
-import { AlarmaContacto } from '../alarmasContactos/alarmasContactos.entity';
-import { UbicacionAlarma } from '../ubicacionesAlarmas/ubicacionesAlarmas.entity';
-import { HistorialActivarDesactivar } from '../historialActivarDesactivar/historialActivarDesactivar.entity';
-import { HistorialIncidentes } from '../historialIncidentes/historialIncidentes.entity';
+import { Contacto } from '../../contactos/contactos.entity';
+import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
+import { Simulador } from '../../simulador/simulador.entity';
+import { AlarmaContacto } from './alarmasContactos.entity';
+import { UbicacionAlarma } from '../../ubicacionesAlarmas/ubicacionesAlarmas.entity';
+import { HistorialActivarDesactivar } from '../../historialActivarDesactivar/historialActivarDesactivar.entity';
+import { HistorialIncidentes } from '../../historialIncidentes/historialIncidentes.entity';
 
 @Entity({ name: 'alarma' })
 export class Alarma {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
-  @Column({ length: 20, type: 'varchar', unique: true })
+  @Column({ length: 20, type: 'varchar' })
   estado: string;
 
   @Column({ length: 50, type: 'varchar', unique: true })

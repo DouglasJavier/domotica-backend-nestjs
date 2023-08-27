@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Ubicacion } from '../ubicaciones/ubicaciones.entity';
+import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
 /* import { User } from './users.entity';
 import { Cars } from './cars.entity'; */
 

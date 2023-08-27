@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -15,6 +16,7 @@ import { UbicacionService } from './ubicaciones.service';
 import { Ubicacion } from './ubicaciones.entity';
 import { PaginacionQueryDto } from '../common/dto/paginacionDto';
 import { CrearUbicacionDto } from './dto/crear-ubicacionDto';
+import { ParamIdDto } from 'src/common/dto/params-id.dto';
 
 @Controller('ubicaciones')
 export class UbicacionController {
@@ -27,50 +29,34 @@ export class UbicacionController {
 
   @Post()
   async crear(@Req() req, @Body() parametroDto: CrearUbicacionDto) {
-    /* const user = req.user.id;
-    if (!user) {
-      throw new BadRequestException(
-        `Es necesario que esté autenticado para consumir este recurso.`,
-      );
-    }
-    const usuarioAuditoria = user; */
-    const result = await this.ubicacionServicio.crear(
+    const result = await this.ubicacionServicio.crear(parametroDto);
+    return result;
+  }
+
+  @Patch(':id')
+  async actualizar(
+    @Param() params: ParamIdDto,
+    @Body() parametroDto: CrearUbicacionDto,
+  ) {
+    const { id: idUbicacion } = params;
+    const result = await this.ubicacionServicio.actualizar(
+      idUbicacion,
       parametroDto,
-      //usuarioAuditoria,
     );
     return result;
   }
-}
 
-/*
+  @Patch(':id/activar')
+  async activar(@Param() params: ParamIdDto) {
+    const { id: idUbicacion } = params;
+    const result = await this.ubicacionServicio.activar(idUbicacion);
+    return result;
+  }
 
-@Controller('car')
-export class CarController {
-  constructor(private carService: CarService) {}
-
-  @Get()
-  async getCarByColor(@Query('color') color) {
-    return this.carService.getCarByColor(color);
-  }
-  @Get()
-  async getCars(): Promise<Car[]> {
-    return this.carService.getAllCars();
-  }
-  @Get(':id')
-  async getOneCar(@Param('id') cid: string): Promise<Car> {
-    return this.carService.getCarById(cid);
-  }
-  @Post()
-  async postCar(@Body() request: CreateCarDTO) {
-    return this.carService.postCar(request);
-  }
-  @Delete(':id')
-  async deleteCar(@Param('id') cid: string) {
-    return this.carService.deleteCarById(cid);
-  }
-  @Put(':id')
-  async updateCar(@Param('id') cid: string, @Body() request: UpdateCarDTO) {
-    return this.carService.putCarById(cid, request);
+  @Patch(':id/inactivar')
+  async inactivar(@Param() params: ParamIdDto) {
+    const { id: idUbicacion } = params;
+    const result = await this.ubicacionServicio.inactivar(idUbicacion);
+    return result;
   }
 }
-*/

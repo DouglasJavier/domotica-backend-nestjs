@@ -1,11 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { Alarma } from './alarmas.entity';
-import { AlarmaRepository } from './alarma.repository';
-import { AlarmaCRUDType } from './dto/alarmaCRUDType';
+import { Alarma } from '../entity/alarmas.entity';
+import { AlarmaRepository } from '../repository/alarma.repository';
+import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
 import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository';
-import { AlarmaContactoRepository } from 'src/alarmasContactos/alarmasContactos.repository';
+import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository';
 import { UbicacionAlarma } from 'src/ubicacionesAlarmas/ubicacionesAlarmas.entity';
 import { ubicacionAlarmaRepository } from 'src/ubicacionesAlarmas/ubicacionesAlarmas.repository';
 

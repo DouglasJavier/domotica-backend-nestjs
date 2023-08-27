@@ -7,8 +7,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Horarios } from '../horario/horario.entity';
-import { Actuador } from '../actuador/actuador.entity';
 import { Simulador } from '../simulador/simulador.entity';
+import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity';
 /* import { User } from './users.entity';
 import { Cars } from './cars.entity'; */
 
@@ -26,14 +26,14 @@ export class SimuladorActuador {
     nullable: false,
   })
   idActuador: string;
-  @ManyToOne(() => Actuador, (actuador) => actuador.simuladorActuador, {
+  @ManyToOne(() => SensorActuador, (actuador) => actuador.simuladorActuador, {
     nullable: false,
   })
   @JoinColumn({
     name: 'idActuador',
     referencedColumnName: 'id',
   })
-  actuador: Actuador;
+  actuador: SensorActuador;
 
   @Column({
     name: 'idSimulador',

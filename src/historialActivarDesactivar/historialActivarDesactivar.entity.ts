@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Alarma } from '../alarma/alarmas.entity';
+import { Alarma } from '../alarma/entity/alarmas.entity';
 import { Usuario } from 'src/usuario/usuario.entity';
 
 @Entity({ name: 'historialActivarDesactivar' })

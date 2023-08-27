@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { Alarma } from './alarmas.entity';
-import { AlarmaCRUDType } from './dto/alarmaCRUDType';
+import { Alarma } from '../entity/alarmas.entity';
+import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
 import { Simulador } from 'src/simulador/simulador.entity';
-import { AlarmaContacto } from 'src/alarmasContactos/alarmasContactos.entity';
+import { AlarmaContacto } from 'src/alarma/entity/alarmasContactos.entity';
 import { UbicacionAlarma } from 'src/ubicacionesAlarmas/ubicacionesAlarmas.entity';
 
 @Injectable()

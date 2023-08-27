@@ -32,7 +32,7 @@ export class UbicacionRepository {
       .getRepository(Ubicacion)
       .save(new Ubicacion({ ...ubicacionDto }));
   }
-  async editar(id: string, productoDto: CrearUbicacionDto) {
+  async actualizar(id: string, productoDto: Partial<Ubicacion>) {
     return await this.dataSource.getRepository(Ubicacion).update(
       id,
       new Ubicacion({

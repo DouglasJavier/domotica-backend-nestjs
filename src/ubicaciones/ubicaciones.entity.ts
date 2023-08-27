@@ -7,10 +7,9 @@ import {
   JoinTable,
   JoinColumn,
 } from 'typeorm';
-import { Actuador } from '../actuador/actuador.entity';
-import { Sensor } from '../sensor/sensor.entity';
+import { SensorActuador } from '../dispositivos/entity/sensor_actuador.entity';
 import { UbicacionAlarma } from '../ubicacionesAlarmas/ubicacionesAlarmas.entity';
-import { Dispositivo } from '../dispositivos/dispositivo.entity';
+import { Dispositivo } from '../dispositivos/entity/dispositivo.entity';
 
 @Entity({ name: 'ubicaciones' })
 export class Ubicacion {
@@ -23,11 +22,8 @@ export class Ubicacion {
   @Column({ length: 20, type: 'varchar' })
   estado: string;
 
-  @OneToMany(() => Actuador, (actuador) => actuador.ubicacion)
-  actuadores: Actuador[];
-
-  @OneToMany(() => Sensor, (sensor) => sensor.ubicacion)
-  sensores: Sensor[];
+  @OneToMany(() => SensorActuador, (sensor) => sensor.ubicacion)
+  sensores: SensorActuador[];
 
   @OneToMany(
     () => UbicacionAlarma,

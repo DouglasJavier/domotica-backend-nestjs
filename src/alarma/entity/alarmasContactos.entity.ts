@@ -5,8 +5,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Alarma } from '../alarma/alarmas.entity';
-import { Contacto } from '../contactos/contactos.entity';
+import { Alarma } from './alarmas.entity';
+import { Contacto } from '../../contactos/contactos.entity';
 /* import { User } from './users.entity';
 import { Cars } from './cars.entity'; */
 

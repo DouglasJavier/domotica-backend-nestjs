@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 
 import { Controller } from '@nestjs/common';
-import { AlarmaService } from './alarma.service';
-import { Alarma } from './alarmas.entity';
-import { AlarmaCRUDType } from './dto/alarmaCRUDType';
+import { AlarmaService } from '../service/alarma.service';
+import { Alarma } from '../entity/alarmas.entity';
+import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
 import path from 'path';
 
 @Controller('alarmas')

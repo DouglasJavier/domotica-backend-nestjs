@@ -5,7 +5,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { AlarmaContacto } from '../alarmasContactos/alarmasContactos.entity';
+import { AlarmaContacto } from '../alarma/entity/alarmasContactos.entity';
 /* import { User } from './users.entity';
 import { Cars } from './cars.entity'; */
 
@@ -26,6 +26,13 @@ export class Contacto {
   @Column({ length: 50, type: 'varchar', unique: true, nullable: true })
   numeroTel2: string;
 
+  @Column({ length: 50, type: 'varchar' })
+  estado: string;
+
   @OneToMany(() => AlarmaContacto, (alarmaContacto) => alarmaContacto.contacto)
   alarmaContactos: AlarmaContacto[];
+
+  constructor(data?: Partial<Contacto>) {
+    if (data) Object.assign(this, data);
+  }
 }

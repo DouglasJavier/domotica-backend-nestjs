@@ -2,16 +2,11 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { Actuador } from '../actuador/actuador.entity';
-import { Sensor } from '../sensor/sensor.entity';
 import { Ubicacion } from '../ubicaciones/ubicaciones.entity';
-import { Alarma } from '../alarma/alarmas.entity';
+import { Alarma } from '../alarma/entity/alarmas.entity';
 
 @Entity({ name: 'ubicacionesAlarmas' })
 export class UbicacionAlarma {

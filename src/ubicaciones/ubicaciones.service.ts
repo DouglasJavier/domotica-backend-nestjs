@@ -23,6 +23,21 @@ export class UbicacionService {
   }
 
   async actualizar(id: string, ubicacionDto: CrearUbicacionDto) {
-    const result = await this.ubicacionRepositorio.editar(id, ubicacionDto);
+    const result = await this.ubicacionRepositorio.actualizar(id, ubicacionDto);
+    return { id };
+  }
+
+  async activar(id: string) {
+    const result = await this.ubicacionRepositorio.actualizar(id, {
+      estado: 'ACTIVO',
+    });
+    return { id };
+  }
+
+  async inactivar(id: string) {
+    const result = await this.ubicacionRepositorio.actualizar(id, {
+      estado: 'INACTIVO',
+    });
+    return { id };
   }
 }

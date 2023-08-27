@@ -7,7 +7,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { SimuladorActuador } from '../simuladorActuador/simuladorActuador.entity';
-import { Alarma } from '../alarma/alarmas.entity';
+import { Alarma } from '../alarma/entity/alarmas.entity';
 /* import { User } from './users.entity';
 import { Cars } from './cars.entity'; */
 
