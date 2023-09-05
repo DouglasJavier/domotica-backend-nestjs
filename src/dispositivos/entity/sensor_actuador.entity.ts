@@ -7,9 +7,10 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
-import { SimuladorActuador } from 'src/simuladorActuador/simuladorActuador.entity';
+import { SimuladorActuador } from 'src/simulador/entity/simulador_actuador.entity';
+import { Dispositivo } from './dispositivo.entity';
 
-@Entity({ name: 'sensores' })
+@Entity({ name: 'sensores_actuadores' })
 export class SensorActuador {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
@@ -24,7 +25,7 @@ export class SensorActuador {
   descripcion: string;
 
   @Column({
-    name: 'idUbicacion',
+    name: 'id_ubicacion',
     type: 'bigint',
     nullable: false,
   })
@@ -33,10 +34,32 @@ export class SensorActuador {
     nullable: false,
   })
   @JoinColumn({
-    name: 'idUbicacion',
+    name: 'id_ubicacion',
     referencedColumnName: 'id',
   })
   ubicacion: Ubicacion;
+
+  @Column({ length: 20, type: 'varchar' })
+  estado: string;
+
+  @Column({
+    name: 'id_dispositivo',
+    type: 'bigint',
+    nullable: false,
+  })
+  idDispositivo: string;
+  @ManyToOne(
+    () => Dispositivo,
+    (dispositivo) => dispositivo.sensoresActuadores,
+    {
+      nullable: false,
+    },
+  )
+  @JoinColumn({
+    name: 'id_dispositivo',
+    referencedColumnName: 'id',
+  })
+  dispositivo: Dispositivo;
 
   @OneToMany(
     () => SimuladorActuador,

@@ -6,22 +6,22 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { Horarios } from '../horario/horario.entity';
-import { Simulador } from '../simulador/simulador.entity';
+import { Horario } from './horario.entity';
+import { Simulador } from './simulador.entity';
 import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity';
 /* import { User } from './users.entity';
 import { Cars } from './cars.entity'; */
 
-@Entity({ name: 'SimuladorActuador' })
+@Entity({ name: 'simulador_actuador' })
 export class SimuladorActuador {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
-  @OneToMany(() => Horarios, (horarios) => horarios.simuladorActuador)
-  horarios: Horarios[];
+  @OneToMany(() => Horario, (horario) => horario.simuladorActuador)
+  horarios: Horario[];
 
   @Column({
-    name: 'idActuador',
+    name: 'id_actuador',
     type: 'bigint',
     nullable: false,
   })
@@ -30,22 +30,25 @@ export class SimuladorActuador {
     nullable: false,
   })
   @JoinColumn({
-    name: 'idActuador',
+    name: 'id_actuador',
     referencedColumnName: 'id',
   })
   actuador: SensorActuador;
 
+  @Column({ length: 50, type: 'varchar' })
+  estado: string;
+
   @Column({
-    name: 'idSimulador',
+    name: 'id_simulador',
     type: 'bigint',
     nullable: false,
   })
   idSimulador: string;
-  @ManyToOne(() => Simulador, (simulador) => simulador.simuladorActuador, {
+  @ManyToOne(() => Simulador, (simulador) => simulador.simuladoresActuadores, {
     nullable: false,
   })
   @JoinColumn({
-    name: 'idSimulador',
+    name: 'id_simulador',
     referencedColumnName: 'id',
   })
   simulador: Simulador;

@@ -6,8 +6,8 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
-import { SimuladorActuador } from '../simuladorActuador/simuladorActuador.entity';
-import { Alarma } from '../alarma/entity/alarmas.entity';
+import { SimuladorActuador } from './simulador_actuador.entity';
+import { Alarma } from '../../alarma/entity/alarmas.entity';
 /* import { User } from './users.entity';
 import { Cars } from './cars.entity'; */
 
@@ -26,8 +26,11 @@ export class Simulador {
     () => SimuladorActuador,
     (simuladorActuador) => simuladorActuador.simulador,
   )
-  simuladorActuador: SimuladorActuador[];
+  simuladoresActuadores: SimuladorActuador[];
 
   @OneToOne(() => Alarma, (alarma) => alarma.simulador)
   alarma: Alarma;
+  constructor(data?: Partial<Simulador>) {
+    if (data) Object.assign(this, data);
+  }
 }

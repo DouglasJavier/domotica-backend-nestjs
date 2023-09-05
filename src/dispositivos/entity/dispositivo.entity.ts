@@ -4,8 +4,10 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
+import { SensorActuador } from './sensor_actuador.entity';
 /* import { User } from './users.entity';
 import { Cars } from './cars.entity'; */
 
@@ -20,11 +22,14 @@ export class Dispositivo {
   @Column({ length: 50, type: 'varchar' })
   tipo: string;
 
-  @Column({ length: 50, type: 'varchar', unique: true, nullable: true })
+  @Column({ length: 50, type: 'varchar', unique: true, nullable: false })
   direccionLan: string;
 
   @Column({ length: 50, type: 'varchar', unique: true, nullable: true })
   direccionWan: string;
+
+  @Column({ length: 20, type: 'varchar' })
+  estado: string;
 
   @Column({
     name: 'idUbicacion',
@@ -40,4 +45,13 @@ export class Dispositivo {
     referencedColumnName: 'id',
   })
   ubicacion: Ubicacion;
+
+  constructor(data?: Partial<Dispositivo>) {
+    if (data) Object.assign(this, data);
+  }
+  @OneToMany(
+    () => SensorActuador,
+    (sensorActuador) => sensorActuador.dispositivo,
+  )
+  sensoresActuadores: SensorActuador[];
 }

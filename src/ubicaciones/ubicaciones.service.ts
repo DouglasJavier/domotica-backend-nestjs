@@ -8,13 +8,11 @@ import { CrearUbicacionDto } from './dto/crear-ubicacionDto';
 
 @Injectable()
 export class UbicacionService {
-  constructor(
-    @InjectRepository(Ubicacion)
-    private ubicacionRepositorio: UbicacionRepository,
-  ) {}
+  constructor(private ubicacionRepositorio: UbicacionRepository) {}
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    return await this.ubicacionRepositorio.listar(paginacionQueryDto);
+    const result = await this.ubicacionRepositorio.listar(paginacionQueryDto);
+    return result;
   }
 
   async crear(ubicacionDto: CrearUbicacionDto) {

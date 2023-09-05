@@ -12,7 +12,7 @@ export class UbicacionRepository {
     const query = this.dataSource
       .getRepository(Ubicacion)
       .createQueryBuilder('ubicacion')
-      .select(['ubicacion.id', 'ubicacion.nombre']);
+      .select(['ubicacion.id', 'ubicacion.nombre', 'ubicacion.estado']);
     if (limite) query.take(limite);
     if (salto) query.skip(salto);
     switch (campo) {
@@ -30,7 +30,7 @@ export class UbicacionRepository {
   async crear(ubicacionDto: CrearUbicacionDto) {
     return await this.dataSource
       .getRepository(Ubicacion)
-      .save(new Ubicacion({ ...ubicacionDto }));
+      .save(new Ubicacion({ ...ubicacionDto, estado: 'ACTIVO' }));
   }
   async actualizar(id: string, productoDto: Partial<Ubicacion>) {
     return await this.dataSource.getRepository(Ubicacion).update(
