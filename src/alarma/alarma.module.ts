@@ -6,7 +6,7 @@ import { AlarmaService } from './service/alarma.service';
 import { AlarmaRepository } from './repository/alarma.repository';
 import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository';
 import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository';
-import { ubicacionAlarmaRepository } from 'src/ubicacionesAlarmas/ubicacionesAlarmas.repository';
+import { ubicacionAlarmaRepository } from './repository/ubicacionAlarma.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Alarma])],

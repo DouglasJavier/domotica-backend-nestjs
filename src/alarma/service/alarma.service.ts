@@ -7,6 +7,7 @@ import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
 import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository';
 import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository';
 import { UbicacionAlarma } from 'src/alarma/entity/ubicacionesAlarmas.entity';
+import { ubicacionAlarmaRepository } from '../repository/ubicacionAlarma.repository';
 
 @Injectable()
 export class AlarmaService {
