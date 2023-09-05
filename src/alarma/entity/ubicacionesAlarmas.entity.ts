@@ -5,8 +5,8 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { Ubicacion } from '../ubicaciones/ubicaciones.entity';
-import { Alarma } from '../alarma/entity/alarmas.entity';
+import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
+import { Alarma } from './alarmas.entity';
 
 @Entity({ name: 'ubicacionesAlarmas' })
 export class UbicacionAlarma {

@@ -5,7 +5,7 @@ import { Alarma } from '../entity/alarmas.entity';
 import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
 import { Simulador } from 'src/simulador/entity/simulador.entity';
 import { AlarmaContacto } from 'src/alarma/entity/alarmasContactos.entity';
-import { UbicacionAlarma } from 'src/ubicacionesAlarmas/ubicacionesAlarmas.entity';
+import { UbicacionAlarma } from 'src/alarma/entity/ubicacionesAlarmas.entity';
 
 @Injectable()
 export class AlarmaRepository {

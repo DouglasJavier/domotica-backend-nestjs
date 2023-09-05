@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { HorarioDto } from '../dto/crear-simulador.dto';
 import { Horario } from '../entity/horario.entity';
+import dayjs = require('dayjs');
 
 @Injectable()
 export class HorarioRepository {
@@ -26,11 +27,17 @@ export class HorarioRepository {
     horarios: HorarioDto[],
     transaction: EntityManager,
   ) {
+    const fechaActual = dayjs().format('YYYY-MM-DD ');
+
     const nuevosHorarios: Horario[] = horarios.map((horario) => {
+      // Formatear la fecha y la hora
+      const horaInicio = fechaActual + horario.horaInicio + '+00:00';
+      const horaFin = fechaActual + horario.horaFin + '+00:00';
       const nuevoHorario = new Horario();
       nuevoHorario.idSimuladorActuador = idSimuladorActuador;
-      nuevoHorario.horaInicio = horario.horaInicio;
-      nuevoHorario.horaFin = horario.horaFin;
+      nuevoHorario.horaInicio = horaInicio;
+      nuevoHorario.horaFin = horaFin;
+      nuevoHorario.estado = 'ACTIVO';
       return nuevoHorario;
     });
     return await transaction

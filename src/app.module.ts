@@ -10,7 +10,6 @@ import { HistorialIncidentes } from './historialIncidentes/historialIncidentes.e
 import { HistorialIncidentesModule } from './historialIncidentes/historialIncidentes.module';
 import { SimuladorModule } from './simulador/simulador.module';
 import { UbicacionModule } from './ubicaciones/ubicaciones.module';
-import { UbicacionAlarmaModule } from './ubicacionesAlarmas/ubicacionesAlarmas.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { Alarma } from './alarma/entity/alarmas.entity';
 import { AlarmaContacto } from './alarma/entity/alarmasContactos.entity';
@@ -21,7 +20,7 @@ import { SensorActuador } from './dispositivos/entity/sensor_actuador.entity';
 import { Simulador } from './simulador/entity/simulador.entity';
 import { SimuladorActuador } from './simulador/entity/simulador_actuador.entity';
 import { Ubicacion } from './ubicaciones/ubicaciones.entity';
-import { UbicacionAlarma } from './ubicacionesAlarmas/ubicacionesAlarmas.entity';
+import { UbicacionAlarma } from './alarma/entity/ubicacionesAlarmas.entity';
 import { Usuario } from './usuario/usuario.entity';
 import { AlarmaController } from './alarma/controller/alarma.controller';
 import { ContactoController } from './contactos/contactos.controller';
@@ -30,8 +29,8 @@ import { HistorialActivarDesactivarController } from './historialActivarDesactiv
 import { HistorialIncidentesController } from './historialIncidentes/historialIncidentes.controller';
 import { SimuladorController } from './simulador/controller/simulador.controller';
 import { UbicacionController } from './ubicaciones/ubicaciones.controller';
-import { UbicacionAlarmaController } from './ubicacionesAlarmas/ubicacionesAlarmas.controller';
 import { UsuarioController } from './usuario/usuario.controller';
+import { Horario } from './simulador/entity/horario.entity';
 /* import { UsersService } from './users/users.service';
 import { CarsService } from './cars/cars.service';
  */
@@ -58,6 +57,7 @@ import { CarsService } from './cars/cars.service';
         Ubicacion,
         UbicacionAlarma,
         Usuario,
+        Horario,
       ],
       synchronize: true,
       //logging: true,
@@ -69,7 +69,6 @@ import { CarsService } from './cars/cars.service';
     HistorialIncidentesModule,
     SimuladorModule,
     UbicacionModule,
-    UbicacionAlarmaModule,
     UsuarioModule,
   ],
   controllers: [
@@ -81,7 +80,6 @@ import { CarsService } from './cars/cars.service';
     HistorialIncidentesController,
     SimuladorController,
     UbicacionController,
-    UbicacionAlarmaController,
     UsuarioController,
   ],
   providers: [AppService],

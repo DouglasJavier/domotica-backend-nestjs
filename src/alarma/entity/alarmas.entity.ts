@@ -11,7 +11,7 @@ import { Contacto } from '../../contactos/contactos.entity';
 import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
 import { Simulador } from '../../simulador/entity/simulador.entity';
 import { AlarmaContacto } from './alarmasContactos.entity';
-import { UbicacionAlarma } from '../../ubicacionesAlarmas/ubicacionesAlarmas.entity';
+import { UbicacionAlarma } from './ubicacionesAlarmas.entity';
 import { HistorialActivarDesactivar } from '../../historialActivarDesactivar/historialActivarDesactivar.entity';
 import { HistorialIncidentes } from '../../historialIncidentes/historialIncidentes.entity';
 

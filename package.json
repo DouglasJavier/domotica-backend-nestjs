@@ -22,13 +22,13 @@
     "migrations:clean": "rimraf database/migrations/*",
     "schema:drop": "npm run typeorm -- schema:drop -d ormconfig-default.ts",
     "typeorm": "NODE_OPTIONS=--max_old_space_size=8192 ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
-
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
+    "dayjs": "^1.11.9",
     "mysql2": "^3.2.0",
     "pg": "^8.10.0",
     "reflect-metadata": "^0.1.13",

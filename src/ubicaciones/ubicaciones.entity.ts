@@ -8,7 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { SensorActuador } from '../dispositivos/entity/sensor_actuador.entity';
-import { UbicacionAlarma } from '../ubicacionesAlarmas/ubicacionesAlarmas.entity';
+import { UbicacionAlarma } from '../alarma/entity/ubicacionesAlarmas.entity';
 import { Dispositivo } from '../dispositivos/entity/dispositivo.entity';
 
 @Entity({ name: 'ubicaciones' })
