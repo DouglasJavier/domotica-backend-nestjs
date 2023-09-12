@@ -15,7 +15,7 @@ export class AlarmaContacto {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
-  @Column({ length: 20, type: 'varchar', unique: true })
+  @Column({ length: 20, type: 'varchar' })
   estado: string;
 
   @Column({

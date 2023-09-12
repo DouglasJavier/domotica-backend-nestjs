@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Alarma } from '../entity/alarmas.entity';
 import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
 import { Simulador } from 'src/simulador/entity/simulador.entity';
 import { AlarmaContacto } from 'src/alarma/entity/alarmasContactos.entity';
 import { UbicacionAlarma } from 'src/alarma/entity/ubicacionesAlarmas.entity';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class AlarmaRepository {
@@ -14,8 +15,24 @@ export class AlarmaRepository {
     const respuesta = await this.dataSource
       .getRepository(Alarma)
       .createQueryBuilder('alarma')
-      .select(['alarma'])
-      .getMany();
+      .leftJoin('alarma.alarmaContactos', 'alarmaContacto')
+      .leftJoin('alarmaContacto.contacto', 'contacto')
+      .leftJoin('alarma.ubicacionAlarmas', 'ubicacionAlarmas')
+      .leftJoin('ubicacionAlarmas.ubicacion', 'ubicacion')
+      .leftJoin('alarma.simulador', 'simulador')
+      .select([
+        'alarma',
+        'alarmaContacto.id',
+        'contacto.id',
+        'contacto.nombre',
+        'contacto.apellido',
+        'ubicacionAlarmas.id',
+        'ubicacion.id',
+        'ubicacion.nombre',
+        'simulador.id',
+        'simulador.nombre',
+      ])
+      .getManyAndCount();
     return respuesta;
   }
   async buscarPorId(id: string) {
@@ -28,69 +45,61 @@ export class AlarmaRepository {
     if (!alarma) throw new NotFoundException('Articulo no encontrado');
     return alarma;
   }
-  async crear(alarmaDto: AlarmaCRUDType) {
+  async crear(alarmaDto: AlarmaCRUDType, transaction: EntityManager) {
     const alarma = new Alarma();
     alarma.nombre = alarmaDto.nombre;
-    alarma.tipo = alarmaDto.tipo;
+    alarma.seguridadBienes = alarmaDto.seguridadBienes;
+    alarma.seguridadPersonas = alarmaDto.seguridadPersonas;
     alarma.envio_noti = alarmaDto.envio_noti;
     alarma.idSimulador = alarmaDto.idSimulador;
     alarma.sonido = alarmaDto.sonido;
     alarma.notificacion = alarmaDto.notificacion;
     alarma.idSimulador = alarmaDto.idSimulador;
-    const result = await this.dataSource.getRepository(Alarma).save(alarma);
+    alarma.estado = 'ACTIVO';
+    const result = await transaction.getRepository(Alarma).save(alarma);
     await alarmaDto.idContactos.map(async (idContacto) => {
       const alarmaContacto = new AlarmaContacto();
       alarmaContacto.idContacto = idContacto;
       alarmaContacto.idAlarma = result.id;
-      await this.dataSource.getRepository(AlarmaContacto).save(alarmaContacto);
+      alarmaContacto.estado = 'ACTIVO';
+      await transaction.getRepository(AlarmaContacto).save(alarmaContacto);
     });
     await alarmaDto.idUbicaciones.map(async (idUbicacion) => {
       const alarmaUbicacion = new UbicacionAlarma();
       alarmaUbicacion.idUbicacion = idUbicacion;
       alarmaUbicacion.idAlarma = result.id;
-      await this.dataSource
-        .getRepository(UbicacionAlarma)
-        .save(alarmaUbicacion);
+      alarmaUbicacion.estado = 'ACTIVO';
+      await transaction.getRepository(UbicacionAlarma).save(alarmaUbicacion);
     });
     return result;
   }
-  async editar(alarmaDto: AlarmaCRUDType, id: string) {
-    const alarma = new Alarma();
-    alarma.nombre = alarmaDto.nombre;
-    alarma.tipo = alarmaDto.tipo;
-    alarma.envio_noti = alarmaDto.envio_noti;
-    alarma.idSimulador = alarmaDto.idSimulador;
-    alarma.sonido = alarmaDto.sonido;
-    alarma.notificacion = alarmaDto.notificacion;
-    alarma.idSimulador = alarmaDto.idSimulador;
-    const result = await this.dataSource
-      .getRepository(Alarma)
-      .update(id, alarma);
-    return result;
-  }
-  async encender(id: string) {
-    const alarma = new Alarma();
-    alarma.estado = 'ENCENDIDO';
-    const result = await this.dataSource
-      .getRepository(Alarma)
-      .update(id, alarma);
-    return result;
-  }
+  async actualizar(
+    id: string,
+    alarmaDto: Partial<Alarma>,
+    transaction: EntityManager,
+  ) {
+    const alarma = alarmaDto;
+    delete alarma.alarmaContactos;
+    delete alarma.ubicacionAlarmas;
+    delete alarma.historialActivarDesactivar;
+    delete alarma.historialIncidentes;
 
-  async apagar(id: string) {
-    const alarma = new Alarma();
-    alarma.estado = 'APAGADO';
-    const result = await this.dataSource
-      .getRepository(Alarma)
-      .update(id, alarma);
-    return result;
+    const datosActualizar: QueryDeepPartialEntity<Alarma> = new Alarma({
+      nombre: alarmaDto.nombre,
+      envio_noti: alarmaDto.envio_noti,
+      notificacion: alarmaDto.notificacion,
+      sonido: alarmaDto.sonido,
+      seguridadBienes: alarmaDto.seguridadBienes,
+      seguridadPersonas: alarmaDto.seguridadBienes,
+    });
+    return await transaction
+      .createQueryBuilder()
+      .update(Alarma)
+      .set(datosActualizar)
+      .where({ id: id })
+      .execute();
   }
-  async inactivar(id: string) {
-    const alarma = new Alarma();
-    alarma.estado = 'INACTIVO';
-    const result = await this.dataSource
-      .getRepository(Alarma)
-      .update(id, alarma);
-    return result;
+  async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
+    return this.dataSource.manager.transaction<T>(op);
   }
 }

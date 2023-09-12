@@ -6,5 +6,6 @@ export interface AlarmaCRUDType {
   nombre: string;
   notificacion: boolean;
   sonido: boolean;
-  tipo: string[];
+  seguridadBienes: boolean;
+  seguridadPersonas: boolean;
 }

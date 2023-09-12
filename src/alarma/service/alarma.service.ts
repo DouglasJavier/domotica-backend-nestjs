@@ -1,13 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
-import { Alarma } from '../entity/alarmas.entity';
 import { AlarmaRepository } from '../repository/alarma.repository';
 import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
 import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository';
 import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository';
-import { UbicacionAlarma } from 'src/alarma/entity/ubicacionesAlarmas.entity';
 import { ubicacionAlarmaRepository } from '../repository/ubicacionAlarma.repository';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class AlarmaService {
@@ -28,14 +25,20 @@ export class AlarmaService {
     return alarma;
   }
   async crear(alarmaDto: AlarmaCRUDType) {
-    const result = await this.alarmaRepository.crear(alarmaDto);
-    this.historialRepository.crear({
-      accion: 'CREAR',
-      fecha: new Date(),
-      idAlarma: result.id,
-      idUsuario: '1',
-    });
-    return result;
+    const op = async (transaction: EntityManager) => {
+      const result = await this.alarmaRepository.crear(alarmaDto, transaction);
+      this.historialRepository.crear(
+        {
+          accion: 'CREAR',
+          fecha: new Date(),
+          idAlarma: result.id,
+          idUsuario: '1',
+        },
+        transaction,
+      );
+      return result;
+    };
+    return this.alarmaRepository.runTransaction(op);
   }
   async editar(alarmaDto: AlarmaCRUDType, id: string) {
     const existe = this.alarmaRepository.buscarPorId(id);
@@ -43,52 +46,98 @@ export class AlarmaService {
       throw new NotFoundException('No existe el articulo selecionado');
     this.alarmasContactosRepository.inactivarContactos(id);
     this.ubicacionesAlarmasRepository.inactivarUbicaciones(id);
-    const result = await this.alarmaRepository.editar(alarmaDto, id);
-    this.historialRepository.crear({
-      accion: 'EDITAR',
-      fecha: new Date(),
-      idAlarma: id,
-      idUsuario: '1',
-    });
-    return result;
+    const op = async (transaction: EntityManager) => {
+      const result = await this.alarmaRepository.actualizar(
+        id,
+        alarmaDto,
+        transaction,
+      );
+      this.historialRepository.crear(
+        {
+          accion: 'EDITAR',
+          fecha: new Date(),
+          idAlarma: id,
+          idUsuario: '1',
+        },
+        transaction,
+      );
+      return result;
+    };
+    return this.alarmaRepository.runTransaction(op);
   }
   async encender(id: string) {
     const existe = this.alarmaRepository.buscarPorId(id);
     if (!existe)
       throw new NotFoundException('No existe el articulo selecionado');
-    const result = await this.alarmaRepository.encender(id);
-    this.historialRepository.crear({
-      accion: 'ENCENDER',
-      fecha: new Date(),
-      idAlarma: id,
-      idUsuario: '1',
-    });
-    return result;
+    const op = async (transaction: EntityManager) => {
+      const result = await this.alarmaRepository.actualizar(
+        id,
+        {
+          estado: 'ENCENDIDO',
+        },
+        transaction,
+      );
+      this.historialRepository.crear(
+        {
+          accion: 'ENCENDER',
+          fecha: new Date(),
+          idAlarma: id,
+          idUsuario: '1',
+        },
+        transaction,
+      );
+      return result;
+    };
+    return this.alarmaRepository.runTransaction(op);
   }
   async apagar(id: string) {
     const existe = this.alarmaRepository.buscarPorId(id);
     if (!existe)
       throw new NotFoundException('No existe el articulo selecionado');
-    const result = await this.alarmaRepository.apagar(id);
-    this.historialRepository.crear({
-      accion: 'APAGAR',
-      fecha: new Date(),
-      idAlarma: id,
-      idUsuario: '1',
-    });
-    return result;
+    const op = async (transaction: EntityManager) => {
+      const result = await this.alarmaRepository.actualizar(
+        id,
+        {
+          estado: 'APAGADO',
+        },
+        transaction,
+      );
+      this.historialRepository.crear(
+        {
+          accion: 'APAGAR',
+          fecha: new Date(),
+          idAlarma: id,
+          idUsuario: '1',
+        },
+        transaction,
+      );
+      return result;
+    };
+    return this.alarmaRepository.runTransaction(op);
   }
   async inactivar(id: string) {
     const existe = this.alarmaRepository.buscarPorId(id);
     if (!existe)
       throw new NotFoundException('No existe el articulo selecionado');
-    const result = await this.alarmaRepository.inactivar(id);
-    this.historialRepository.crear({
-      accion: 'ELIMINAR',
-      fecha: new Date(),
-      idAlarma: id,
-      idUsuario: '1',
-    });
-    return result;
+    const op = async (transaction: EntityManager) => {
+      const result = await this.alarmaRepository.actualizar(
+        id,
+        {
+          estado: 'INACTIVO',
+        },
+        transaction,
+      );
+      this.historialRepository.crear(
+        {
+          accion: 'ELIMINAR',
+          fecha: new Date(),
+          idAlarma: id,
+          idUsuario: '1',
+        },
+        transaction,
+      );
+      return result;
+    };
+    return this.alarmaRepository.runTransaction(op);
   }
 }

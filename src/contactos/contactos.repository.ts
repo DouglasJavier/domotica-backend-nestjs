@@ -25,7 +25,8 @@ export class ContactoRepository {
         'alarma.id',
         'alarma.nombre',
       ])
-      .where('alarmaContactos.estado = :estado', { estado: 'ACTIVO' });
+      .where('contacto.estado = :estado', { estado: 'ACTIVO' });
+    //.andWhere('alarmaContactos.estado = :estado');
     if (limite) query.take(limite);
     if (salto) query.skip(salto);
     switch (campo) {
@@ -43,7 +44,7 @@ export class ContactoRepository {
   async crear(contactoDto: ContactoCRUDType) {
     return await this.dataSource
       .getRepository(Contacto)
-      .save(new Contacto({ ...contactoDto }));
+      .save(new Contacto({ ...contactoDto, estado: 'ACTIVO' }));
   }
   async actualizar(id: string, contactoDto: Partial<Contacto>) {
     return await this.dataSource.getRepository(Contacto).update(

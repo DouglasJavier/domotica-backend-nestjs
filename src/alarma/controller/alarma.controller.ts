@@ -37,7 +37,7 @@ export class AlarmaController {
     return result;
   }
 
-  @Put(':id')
+  @Patch(':id')
   async editarAlarma(
     @Body() alarmaDto: AlarmaCRUDType,
     @Param('id') id: string,

@@ -25,7 +25,10 @@ export class Usuario {
   usuario: string;
 
   @Column({ length: 60, type: 'varchar' })
-  contraseña: string;
+  contrasenia: string;
+
+  @Column({ length: 50, type: 'varchar' })
+  estado: string;
 
   @Column({ length: 60, type: 'varchar' })
   rol: string;
@@ -35,4 +38,8 @@ export class Usuario {
     (historialActivarDesactivar) => historialActivarDesactivar.usuario,
   )
   historialActivarDesactivar: HistorialActivarDesactivar[];
+
+  constructor(data?: Partial<Usuario>) {
+    if (data) Object.assign(this, data);
+  }
 }

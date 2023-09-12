@@ -1,16 +1,50 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
-import { UsuarioService } from './usuario.service';
-//import { request } from 'http';
+import { Body, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 
-@Controller('usuario')
+import { Controller } from '@nestjs/common';
+import { PaginacionQueryDto } from 'src/common/dto/paginacionDto';
+import { ParamIdDto } from 'src/common/dto/params-id.dto';
+import { UsuarioService } from './usuario.service';
+import { UsuarioCRUDType } from './dto/UsuarioCRUDType';
+
+@Controller('usuarios')
 export class UsuarioController {
-  constructor(private usuarioService: UsuarioService) {}
+  constructor(private contactoServicio: UsuarioService) {}
+  @Get()
+  async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
+    const result = await this.contactoServicio.listar(paginacionQueryDto);
+    return result;
+  }
+
+  @Post()
+  async crear(@Req() req, @Body() parametroDto: UsuarioCRUDType) {
+    const result = await this.contactoServicio.crear(parametroDto);
+    return result;
+  }
+
+  @Patch(':id')
+  async actualizar(
+    @Param() params: ParamIdDto,
+    @Body() parametroDto: UsuarioCRUDType,
+  ) {
+    const { id: idUbicacion } = params;
+    const result = await this.contactoServicio.actualizar(
+      idUbicacion,
+      parametroDto,
+    );
+    return result;
+  }
+
+  @Patch(':id/activar')
+  async activar(@Param() params: ParamIdDto) {
+    const { id: idUbicacion } = params;
+    const result = await this.contactoServicio.activar(idUbicacion);
+    return result;
+  }
+
+  @Patch(':id/inactivar')
+  async inactivar(@Param() params: ParamIdDto) {
+    const { id: idUbicacion } = params;
+    const result = await this.contactoServicio.inactivar(idUbicacion);
+    return result;
+  }
 }

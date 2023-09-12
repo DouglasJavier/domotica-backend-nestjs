@@ -6,6 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Alarma } from '../alarma/entity/alarmas.entity';
+import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity';
 
 @Entity({ name: 'historialIncidentes' })
 export class HistorialIncidentes {
@@ -35,4 +36,19 @@ export class HistorialIncidentes {
     referencedColumnName: 'id',
   })
   alarma: Alarma;
+
+  @Column({
+    name: 'id_sensor',
+    type: 'bigint',
+    nullable: false,
+  })
+  idSensor: string;
+  @ManyToOne(() => SensorActuador, (sensor) => sensor.historialIncidentes, {
+    nullable: false,
+  })
+  @JoinColumn({
+    name: 'id_sensor',
+    referencedColumnName: 'id',
+  })
+  sensor: SensorActuador;
 }

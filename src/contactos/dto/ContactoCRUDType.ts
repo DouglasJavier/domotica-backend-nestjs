@@ -3,5 +3,4 @@ export interface ContactoCRUDType {
   apellido: string;
   numeroTel1: string;
   numeroTel2: string;
-  idAlarmas: string;
 }

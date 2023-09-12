@@ -3,9 +3,8 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
-  ManyToMany,
-  OneToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Contacto } from '../../contactos/contactos.entity';
 import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
@@ -32,11 +31,14 @@ export class Alarma {
   @Column({ type: 'boolean', default: false })
   notificacion: boolean;
 
-  @Column({ length: 50, type: 'varchar', unique: true })
+  @Column({ length: 50, type: 'varchar' })
   envio_noti: string;
 
-  @Column({ length: 10, type: 'varchar', unique: true })
-  tipo: string[];
+  @Column({ name: 'seguridad_personas', type: 'boolean', default: false })
+  seguridadPersonas: boolean;
+
+  @Column({ name: 'seguridad_bienes', type: 'boolean', default: false })
+  seguridadBienes: boolean;
 
   @OneToMany(() => AlarmaContacto, (alarmaContacto) => alarmaContacto.alarma)
   alarmaContactos: AlarmaContacto[];
@@ -51,16 +53,16 @@ export class Alarma {
   historialActivarDesactivar: HistorialActivarDesactivar[];
 
   @Column({
-    name: 'idSimulador',
+    name: 'id_simulador',
     type: 'bigint',
     nullable: false,
   })
   idSimulador: string;
-  @OneToOne(() => Simulador, (simulador) => simulador.alarma, {
+  @ManyToOne(() => Simulador, (simulador) => simulador.alarma, {
     nullable: false,
   })
   @JoinColumn({
-    name: 'idSimulador',
+    name: 'id_simulador',
     referencedColumnName: 'id',
   })
   simulador: Simulador;
@@ -70,4 +72,8 @@ export class Alarma {
     (historialIncidentes) => historialIncidentes.alarma,
   )
   historialIncidentes: HistorialIncidentes[];
+
+  constructor(data?: Partial<Alarma>) {
+    if (data) Object.assign(this, data);
+  }
 }

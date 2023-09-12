@@ -9,6 +9,7 @@ import {
 import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
 import { SimuladorActuador } from 'src/simulador/entity/simulador_actuador.entity';
 import { Dispositivo } from './dispositivo.entity';
+import { HistorialIncidentes } from 'src/historialIncidentes/historialIncidentes.entity';
 
 @Entity({ name: 'sensores_actuadores' })
 export class SensorActuador {
@@ -66,4 +67,10 @@ export class SensorActuador {
     (simuladorActuador) => simuladorActuador.actuador,
   )
   simuladorActuador: SimuladorActuador[];
+
+  @OneToMany(
+    () => HistorialIncidentes,
+    (historialIncidentes) => historialIncidentes.sensor,
+  )
+  historialIncidentes: HistorialIncidentes[];
 }
