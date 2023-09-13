@@ -45,4 +45,24 @@ export class SensorActuadorRepository {
       .values(sensorActuador)
       .execute();
   }
+  async buscarPorPinDisposotivo(idDispositivo: string, pin: string) {
+    const query = this.dataSource
+      .getRepository(SensorActuador)
+      .createQueryBuilder('sensorActuador')
+      .leftJoin('sensorActuador.dispositivo', 'dispositivo')
+      .leftJoin('dispositivo.ubicacion', 'ubicacionDispositivo')
+      .leftJoin('sensorActuador.ubicacion', 'ubicacionSensorActuador')
+      .select([
+        'sensorActuador',
+        'dispositivo',
+        'ubicacionSensorActuador',
+        'ubicacionDispositivo',
+      ])
+      .where('dispositivo.id = :id', { id: idDispositivo })
+      .andWhere('sensorActuador.pin = :pin', { pin })
+      .andWhere('sensorActuador.tipo = :tipo', { tipo: 'SENSOR' })
+      .andWhere('sensorActuador.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('dispositivo.estado = :estado');
+    return query.getOne();
+  }
 }

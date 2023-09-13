@@ -50,7 +50,7 @@ export class AlarmaController {
     const result = this.alarmaService.encender(id);
     return result;
   }
-  @Patch(':id/agagar')
+  @Patch(':id/apagar')
   async apagarAlarma(@Param('id') id: string) {
     const result = this.alarmaService.apagar(id);
     return result;

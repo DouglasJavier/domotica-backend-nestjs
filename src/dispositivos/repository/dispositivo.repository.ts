@@ -51,6 +51,22 @@ export class DispositivoRepository {
     }
     return await query.getManyAndCount();
   }
+  async buscarPorId(idDispositivo: string) {
+    const query = this.dataSource
+      .getRepository(Dispositivo)
+      .createQueryBuilder('dispositivo')
+      .leftJoin('dispositivo.ubicacion', 'ubicacionDispositivo')
+      .leftJoin('dispositivo.sensoresActuadores', 'sensorActuador')
+      .leftJoin('sensorActuador.ubicacion', 'ubicacionSensorActuador')
+      .select([
+        'dispositivo',
+        'sensorActuador',
+        'ubicacionSensorActuador',
+        'ubicacionDispositivo',
+      ])
+      .where('dispositivo.id = :id', { id: idDispositivo });
+    return query.getOne();
+  }
   async crear(dispositivoDto: DispositivoCrearDto, transaction: EntityManager) {
     const nuevoDispositivo = new Dispositivo();
     nuevoDispositivo.nombre = dispositivoDto.nombre;

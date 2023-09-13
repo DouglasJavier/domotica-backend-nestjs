@@ -19,6 +19,9 @@ export class HistorialActivarDesactivar {
   @Column({ length: 50, type: 'varchar', nullable: false })
   accion: string;
 
+  @Column({ length: 20, type: 'varchar' })
+  estado: string;
+
   @Column({
     name: 'idAlarma',
     type: 'bigint',

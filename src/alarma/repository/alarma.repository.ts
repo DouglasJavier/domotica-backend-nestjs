@@ -32,6 +32,8 @@ export class AlarmaRepository {
         'simulador.id',
         'simulador.nombre',
       ])
+      .orderBy('alarma.id', 'DESC')
+      .andWhere('alarma.estado != :estado', { estado: 'INACTIVO' })
       .getManyAndCount();
     return respuesta;
   }
@@ -42,6 +44,26 @@ export class AlarmaRepository {
       .select(['alarma'])
       .where('alarma.id = :id', { id: id })
       .getOne();
+    if (!alarma) throw new NotFoundException('Articulo no encontrado');
+    return alarma;
+  }
+  async buscarAlarmaEncendida() {
+    const alarma = await this.dataSource
+      .getRepository(Alarma)
+      .createQueryBuilder('alarma')
+      .select(['alarma'])
+      .where('alarma.estado = :estado', { estado: 'ENCENDIDO' })
+      .getOne();
+    if (!alarma) throw new NotFoundException('Articulo no encontrado');
+    return alarma;
+  }
+  async buscarEncendido() {
+    const alarma = await this.dataSource
+      .getRepository(Alarma)
+      .createQueryBuilder('alarma')
+      .select(['alarma'])
+      .where('alarma.estado = :estado', { estado: 'ENCENDIDO' })
+      .getMany();
     if (!alarma) throw new NotFoundException('Articulo no encontrado');
     return alarma;
   }
@@ -85,12 +107,7 @@ export class AlarmaRepository {
     delete alarma.historialIncidentes;
 
     const datosActualizar: QueryDeepPartialEntity<Alarma> = new Alarma({
-      nombre: alarmaDto.nombre,
-      envio_noti: alarmaDto.envio_noti,
-      notificacion: alarmaDto.notificacion,
-      sonido: alarmaDto.sonido,
-      seguridadBienes: alarmaDto.seguridadBienes,
-      seguridadPersonas: alarmaDto.seguridadBienes,
+      ...alarmaDto,
     });
     return await transaction
       .createQueryBuilder()

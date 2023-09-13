@@ -31,6 +31,7 @@ import { SimuladorController } from './simulador/controller/simulador.controller
 import { UbicacionController } from './ubicaciones/ubicaciones.controller';
 import { UsuarioController } from './usuario/usuario.controller';
 import { Horario } from './simulador/entity/horario.entity';
+import { Fotos } from './historialIncidentes/fotos.entity';
 /* import { UsersService } from './users/users.service';
 import { CarsService } from './cars/cars.service';
  */
@@ -58,6 +59,7 @@ import { CarsService } from './cars/cars.service';
         UbicacionAlarma,
         Usuario,
         Horario,
+        Fotos,
       ],
       synchronize: true,
       //logging: true,

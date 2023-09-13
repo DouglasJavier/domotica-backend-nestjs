@@ -55,11 +55,11 @@ export class Alarma {
   @Column({
     name: 'id_simulador',
     type: 'bigint',
-    nullable: false,
+    nullable: true,
   })
   idSimulador: string;
   @ManyToOne(() => Simulador, (simulador) => simulador.alarma, {
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({
     name: 'id_simulador',

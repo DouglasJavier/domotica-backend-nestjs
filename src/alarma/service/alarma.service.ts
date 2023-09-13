@@ -1,4 +1,10 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AlarmaRepository } from '../repository/alarma.repository';
 import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
 import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository';
@@ -46,10 +52,14 @@ export class AlarmaService {
       throw new NotFoundException('No existe el articulo selecionado');
     this.alarmasContactosRepository.inactivarContactos(id);
     this.ubicacionesAlarmasRepository.inactivarUbicaciones(id);
+    const alarma = alarmaDto;
+    delete alarma.idContactos;
+    delete alarma.idSimulador;
+    delete alarma.idUbicaciones;
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
         id,
-        alarmaDto,
+        alarma,
         transaction,
       );
       this.historialRepository.crear(
@@ -68,7 +78,16 @@ export class AlarmaService {
   async encender(id: string) {
     const existe = this.alarmaRepository.buscarPorId(id);
     if (!existe)
-      throw new NotFoundException('No existe el articulo selecionado');
+      throw new NotFoundException(
+        'No existe la alarma selecionada selecionado',
+      );
+    const encendidos = await this.alarmaRepository.buscarEncendido();
+    if (encendidos.length > 0) {
+      throw new HttpException(
+        'Ya hay una alarma encendida',
+        HttpStatus.CONFLICT,
+      );
+    }
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
         id,
@@ -98,7 +117,7 @@ export class AlarmaService {
       const result = await this.alarmaRepository.actualizar(
         id,
         {
-          estado: 'APAGADO',
+          estado: 'ACTIVO',
         },
         transaction,
       );

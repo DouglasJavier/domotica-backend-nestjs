@@ -4,9 +4,11 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Alarma } from '../alarma/entity/alarmas.entity';
 import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity';
+import { Fotos } from './fotos.entity';
 
 @Entity({ name: 'historialIncidentes' })
 export class HistorialIncidentes {
@@ -16,11 +18,8 @@ export class HistorialIncidentes {
   @Column({ type: 'timestamptz', nullable: false })
   fecha: Date;
 
-  @Column({ length: 50, type: 'varchar', nullable: false })
-  detalles: string;
-
-  @Column('varchar', { array: true, nullable: true })
-  fotos: string[];
+  @Column({ length: 20, type: 'varchar' })
+  estado: string;
 
   @Column({
     name: 'idAlarma',
@@ -51,4 +50,10 @@ export class HistorialIncidentes {
     referencedColumnName: 'id',
   })
   sensor: SensorActuador;
+  @OneToMany(() => Fotos, (foto) => foto.historialIncidente)
+  fotos: Fotos[];
+
+  constructor(data?: Partial<HistorialIncidentes>) {
+    if (data) Object.assign(this, data);
+  }
 }

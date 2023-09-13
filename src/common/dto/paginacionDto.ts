@@ -4,3 +4,8 @@ export class PaginacionQueryDto {
   sentido?: 'ASC' | 'DESC';
   campo?: string;
 }
+
+export class IntervaloFechasDto {
+  fechaInicio: string;
+  fechaFin: string;
+}
