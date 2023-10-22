@@ -7,6 +7,7 @@ import { Fotos } from './fotos.entity';
 import { HistorialIncidenteRepository } from './historialIncidentes.repository';
 import { SensorActuadorRepository } from 'src/dispositivos/repository/sensor_actuador.repository';
 import { AlarmaRepository } from 'src/alarma/repository/alarma.repository';
+import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([HistorialIncidentes, Fotos])],
@@ -16,6 +17,7 @@ import { AlarmaRepository } from 'src/alarma/repository/alarma.repository';
     HistorialIncidenteRepository,
     SensorActuadorRepository,
     AlarmaRepository,
+    DispositivoRepository,
   ],
   exports: [HistorialIncidentesService],
 })

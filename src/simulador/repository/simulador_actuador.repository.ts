@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { SimuladorActuador } from '../entity/simulador_actuador.entity';
 import { SimuladorActuadorDto } from '../dto/crear-simulador.dto';
+import { Dispositivo } from 'src/dispositivos/entity/dispositivo.entity';
 
 @Injectable()
 export class SimuladorActuadorRepository {
@@ -32,5 +33,29 @@ export class SimuladorActuadorRepository {
       .getRepository(SimuladorActuador)
       .save(nuevoSimuladorActuador);
     return simulador;
+  }
+  async listarActuadoresSimulador(idAlarma: string) {
+    const query = this.dataSource
+      .getRepository(SimuladorActuador)
+      .createQueryBuilder('simuladorActuador')
+      .leftJoin('simuladorActuador.simulador', 'simulador')
+      .leftJoin('simulador.alarmas', 'alarma')
+      .leftJoin('simuladorActuador.actuador', 'actuador')
+      .leftJoin('actuador.dispositivo', 'dispositivo')
+      .leftJoin('simuladorActuador.horarios', 'horario')
+      .select([
+        'simuladorActuador',
+        'simulador.id',
+        'actuador.pin',
+        'dispositivo.direccionLan',
+        'horario.horaInicio',
+        'horario.horaFin',
+      ])
+      .where('simulador.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('simuladorActuador.estado = :estado')
+      .andWhere('horario.estado = :estado')
+      .andWhere('dispositivo.estado = :estado')
+      .where('alarma.id = :id', { id: idAlarma });
+    return query.getMany();
   }
 }

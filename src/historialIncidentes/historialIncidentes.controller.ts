@@ -1,4 +1,4 @@
-import { Body, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Get, Param, Patch, Post, Query, Req, Res } from '@nestjs/common';
 
 import { Controller } from '@nestjs/common';
 import { HistorialIncidentesService } from './historialIncidentes.service';
@@ -34,5 +34,9 @@ export class HistorialIncidentesController {
     const { id: idHistorial } = params;
     const result = await this.historialServicio.inactivar(idHistorial);
     return result;
+  }
+  @Get('/fotos/:fileId')
+  async serveAvatar(@Param('fileId') fileId, @Res() res): Promise<any> {
+    res.sendFile(fileId, { root: 'fotos' });
   }
 }

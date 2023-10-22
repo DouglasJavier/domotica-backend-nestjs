@@ -22,10 +22,10 @@ export class Dispositivo {
   @Column({ length: 50, type: 'varchar' })
   tipo: string;
 
-  @Column({ length: 50, type: 'varchar', unique: true, nullable: false })
+  @Column({ length: 200, type: 'varchar', nullable: false })
   direccionLan: string;
 
-  @Column({ length: 50, type: 'varchar', unique: true, nullable: true })
+  @Column({ length: 200, type: 'varchar', nullable: true })
   direccionWan: string;
 
   @Column({ length: 20, type: 'varchar' })
@@ -46,12 +46,13 @@ export class Dispositivo {
   })
   ubicacion: Ubicacion;
 
-  constructor(data?: Partial<Dispositivo>) {
-    if (data) Object.assign(this, data);
-  }
   @OneToMany(
     () => SensorActuador,
     (sensorActuador) => sensorActuador.dispositivo,
   )
   sensoresActuadores: SensorActuador[];
+
+  constructor(data?: Partial<Dispositivo>) {
+    if (data) Object.assign(this, data);
+  }
 }

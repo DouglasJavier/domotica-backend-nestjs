@@ -29,7 +29,9 @@ export class DispositivoRepository {
         'sensorActuador.descripcion',
         'sensorActuador.pin',
         'ubicacionSensorActuador.nombre',
+        'ubicacionSensorActuador.id',
         'ubicacionDispositivo.nombre',
+        'ubicacionDispositivo.id',
       ])
       .where('dispositivo.estado = :estado', { estado: 'ACTIVO' })
       .andWhere('sensorActuador.estado = :estado');
@@ -115,6 +117,24 @@ export class DispositivoRepository {
       .set(datosActualizar)
       .where({ id: id })
       .execute();
+  }
+
+  async listarCamaras() {
+    const query = this.dataSource
+      .getRepository(Dispositivo)
+      .createQueryBuilder('dispositivo')
+      .leftJoin('dispositivo.ubicacion', 'ubicacionDispositivo')
+      .select([
+        'dispositivo.id',
+        'dispositivo.nombre',
+        'dispositivo.direccionLan',
+        'dispositivo.direccionWan',
+        'ubicacionDispositivo.nombre',
+        'ubicacionDispositivo.id',
+      ])
+      .where('dispositivo.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('dispositivo.tipo = :tipo', { tipo: 'ESP-32CAM' });
+    return await query.getManyAndCount();
   }
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
     return this.dataSource.manager.transaction<T>(op);

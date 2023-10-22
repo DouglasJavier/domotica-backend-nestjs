@@ -32,12 +32,15 @@ import { UbicacionController } from './ubicaciones/ubicaciones.controller';
 import { UsuarioController } from './usuario/usuario.controller';
 import { Horario } from './simulador/entity/horario.entity';
 import { Fotos } from './historialIncidentes/fotos.entity';
+import { TaskSimuladorModule } from './tasks/taskSimulador.module';
+import { ScheduleModule } from '@nestjs/schedule';
 /* import { UsersService } from './users/users.service';
 import { CarsService } from './cars/cars.service';
  */
 @Module({
   // exports: [UsersService, CarsService],
   imports: [
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -72,6 +75,7 @@ import { CarsService } from './cars/cars.service';
     SimuladorModule,
     UbicacionModule,
     UsuarioModule,
+    TaskSimuladorModule,
   ],
   controllers: [
     AppController,

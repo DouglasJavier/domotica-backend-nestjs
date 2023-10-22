@@ -65,4 +65,15 @@ export class SensorActuadorRepository {
       .andWhere('dispositivo.estado = :estado');
     return query.getOne();
   }
+
+  async listarActuadores() {
+    const query = this.dataSource
+      .getRepository(SensorActuador)
+      .createQueryBuilder('sensorActuador')
+      .leftJoin('sensorActuador.ubicacion', 'ubicacionSensorActuador')
+      .select(['sensorActuador', 'ubicacionSensorActuador'])
+      .andWhere('sensorActuador.tipo = :tipo', { tipo: 'ACTUADOR' })
+      .andWhere('sensorActuador.estado = :estado', { estado: 'ACTIVO' });
+    return query.getManyAndCount();
+  }
 }

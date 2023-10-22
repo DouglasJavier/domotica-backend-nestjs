@@ -12,7 +12,12 @@ export class UbicacionRepository {
     const query = this.dataSource
       .getRepository(Ubicacion)
       .createQueryBuilder('ubicacion')
-      .select(['ubicacion.id', 'ubicacion.nombre', 'ubicacion.estado']);
+      .leftJoin('ubicacion.dispositivos', 'dispositivos')
+      .leftJoin('ubicacion.sensores', 'sensores')
+      .leftJoin('ubicacion.ubicacionesAlarmas', 'ubicacionesAlarmas')
+      .leftJoin('ubicacionesAlarmas.alarma', 'alarma')
+      .select(['ubicacion.id', 'ubicacion.nombre', 'ubicacion.estado'])
+      .where('ubicacion.estado != :estado', { estado: 'INACTIVO' });
     if (limite) query.take(limite);
     if (salto) query.skip(salto);
     switch (campo) {

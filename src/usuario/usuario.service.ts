@@ -16,6 +16,7 @@ export class UsuarioService {
   }
 
   async crear(contactoDto: UsuarioCRUDType) {
+    contactoDto.contrasenia = '123';
     const contacto = await this.contactoRepositorio.crear(contactoDto);
     return contacto;
   }

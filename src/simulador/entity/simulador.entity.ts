@@ -28,8 +28,8 @@ export class Simulador {
   )
   simuladoresActuadores: SimuladorActuador[];
 
-  @OneToOne(() => Alarma, (alarma) => alarma.simulador)
-  alarma: Alarma;
+  @OneToMany(() => Alarma, (alarma) => alarma.simulador)
+  alarmas: Alarma;
   constructor(data?: Partial<Simulador>) {
     if (data) Object.assign(this, data);
   }

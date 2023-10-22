@@ -29,7 +29,16 @@ export class HistorialActivarDesactivarRepository {
     const query = this.dataSource
       .getRepository(HistorialActivarDesactivar)
       .createQueryBuilder('historialActivarDesactivar')
-      .select(['historialActivarDesactivar'])
+      .leftJoin('historialActivarDesactivar.usuario', 'usuario')
+      .leftJoin('historialActivarDesactivar.alarma', 'alarma')
+      .select([
+        'historialActivarDesactivar',
+        'usuario.id',
+        'usuario.nombres',
+        'usuario.apellidos',
+        'alarma.id',
+        'alarma.nombre',
+      ])
       .where('historialActivarDesactivar.estado != :estado', {
         estado: 'INACTIVO',
       });

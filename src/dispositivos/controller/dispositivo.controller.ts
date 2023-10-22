@@ -15,6 +15,17 @@ export class DispositivoController {
     return result;
   }
 
+  @Get('/listarActuadores')
+  async listarActuadores() {
+    const result = await this.dispositivoServicio.listarActuadores();
+    return result;
+  }
+
+  @Get('/camaras')
+  async listarCamaras() {
+    const result = await this.dispositivoServicio.listarCamaras();
+    return result;
+  }
   @Post()
   async crear(@Req() req, @Body() parametroDto: DispositivoCrearDto) {
     const result = await this.dispositivoServicio.crear(parametroDto);

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { Dispositivo } from '../entity/dispositivo.entity';
@@ -6,6 +6,7 @@ import { DispositivoRepository } from '../repository/dispositivo.repository';
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto';
 import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto';
 import { SensorActuadorRepository } from '../repository/sensor_actuador.repository';
+import axios from 'axios';
 
 @Injectable()
 export class DispositivoService {
@@ -18,10 +19,21 @@ export class DispositivoService {
     return await this.dispositivoRepositorio.listar(paginacionQueryDto);
   }
 
-  async crear(ubicacionDto: DispositivoCrearDto) {
+  async crear(dispositivoDto: DispositivoCrearDto) {
+    const respuestaDisp = await axios
+      .post(
+        `http://${dispositivoDto.direccionLan}/conf`,
+        dispositivoDto.sensoresActuadores,
+      )
+      .catch((err) => {
+        throw new NotFoundException('Direcion de dispositivo no valida');
+      });
+    if (!respuestaDisp) {
+      throw new NotFoundException('Respuesta invalida');
+    }
     const op = async (transaction: EntityManager) => {
       const dispositivo = await this.dispositivoRepositorio.crear(
-        ubicacionDto,
+        dispositivoDto,
         transaction,
       );
       return dispositivo;
@@ -30,6 +42,18 @@ export class DispositivoService {
   }
 
   async actualizar(id: string, dispositivoDto: DispositivoCrearDto) {
+    const dispositivo = await this.dispositivoRepositorio.buscarPorId(id);
+    const respuestaDisp = await axios
+      .post(
+        `http://${dispositivo.direccionLan}/conf_pin`,
+        dispositivoDto.sensoresActuadores,
+      )
+      .catch((err) => {
+        throw new NotFoundException('Direcion de dispositivo no valida');
+      });
+    if (!respuestaDisp) {
+      throw new NotFoundException('Respuesta invalida');
+    }
     const op = async (transaction: EntityManager) => {
       const result = await this.dispositivoRepositorio.actualizar(
         id,
@@ -77,5 +101,12 @@ export class DispositivoService {
       return { id };
     };
     return this.dispositivoRepositorio.runTransaction(op);
+  }
+
+  async listarActuadores() {
+    return await this.sensorActuadorRepositorio.listarActuadores();
+  }
+  async listarCamaras() {
+    return await this.dispositivoRepositorio.listarCamaras();
   }
 }

@@ -5,6 +5,7 @@ import { PaginacionQueryDto } from 'src/common/dto/paginacionDto';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { Simulador } from '../entity/simulador.entity';
 import { SimuladorCrearDto } from '../dto/crear-simulador.dto';
+import { SimuladorActuador } from '../entity/simulador_actuador.entity';
 
 @Injectable()
 export class SimuladorRepository {
@@ -15,11 +16,16 @@ export class SimuladorRepository {
       .getRepository(Simulador)
       .createQueryBuilder('simulador')
       .leftJoin('simulador.simuladoresActuadores', 'simuladorActuador')
+      .leftJoin('simuladorActuador.actuador', 'actuador')
+      .leftJoin('actuador.ubicacion', 'ubicacion')
       .leftJoin('simuladorActuador.horarios', 'horario')
       .select([
         'simulador.id',
         'simulador.nombre',
         'simuladorActuador.idActuador',
+        'actuador.tipo',
+        'actuador.descripcion',
+        'ubicacion.nombre',
         'horario.horaInicio',
         'horario.horaFin',
       ])

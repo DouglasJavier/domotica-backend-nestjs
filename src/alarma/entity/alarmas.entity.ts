@@ -58,7 +58,7 @@ export class Alarma {
     nullable: true,
   })
   idSimulador: string;
-  @ManyToOne(() => Simulador, (simulador) => simulador.alarma, {
+  @ManyToOne(() => Simulador, (simulador) => simulador.alarmas, {
     nullable: true,
   })
   @JoinColumn({

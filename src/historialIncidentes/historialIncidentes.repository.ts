@@ -4,6 +4,7 @@ import { PaginacionQueryDto } from '../common/dto/paginacionDto';
 import { HistorialIncidentes } from './historialIncidentes.entity';
 import { Ubicacion } from 'src/ubicaciones/ubicaciones.entity';
 import { CrearHistorialIncidentesDto } from './dto/crear-historialIncidenteDto';
+import { Fotos } from './fotos.entity';
 
 @Injectable()
 export class HistorialIncidenteRepository {
@@ -49,9 +50,16 @@ export class HistorialIncidenteRepository {
     nuevoHistorialIncidentes.idAlarma = insidenteDto.idAlarma;
     nuevoHistorialIncidentes.idSensor = insidenteDto.idSensor;
     nuevoHistorialIncidentes.estado = 'ACTIVO';
-    return await this.dataSource
+    const result = await this.dataSource
       .getRepository(HistorialIncidentes)
       .save(nuevoHistorialIncidentes);
+    insidenteDto.fotos.map(async (foto) => {
+      const nuevaFoto = new Fotos();
+      nuevaFoto.foto = foto;
+      nuevaFoto.idIncidente = result.id;
+      await this.dataSource.getRepository(Fotos).save(nuevaFoto);
+    });
+    return result;
   }
   async inactivar(id: string, transaction: EntityManager) {
     return await transaction

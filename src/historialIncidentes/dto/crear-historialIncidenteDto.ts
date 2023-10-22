@@ -3,6 +3,7 @@ export class CrearHistorialIncidentesDto {
   fecha: Date;
   idSensor: string;
   idAlarma: string;
+  fotos?: string[];
 }
 
 export class RegistroIncidenteDto {
