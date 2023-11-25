@@ -49,7 +49,7 @@ export class HistorialIncidentesService {
       fecha: new Date(),
       fotos: fotosCapturadas,
     });
-    await this.enviarFotosPorTelegram(fotosCapturadas);
+    this.enviarFotosPorTelegram(fotosCapturadas);
     return historialIncidente;
   }
 
@@ -88,7 +88,7 @@ export class HistorialIncidentesService {
       // Capturar la foto
       const respuestaFoto = await axios
         .get(
-          `https://previews.123rf.com/images/andreypopov/andreypopov1701/andreypopov170101341/70448514-la-captura-de-las-c%C3%A1maras-de-seguridad-del-ladr%C3%B3n-tratando-de-entrar-en-la-casa-mientras-que-abre-la.jpg`,
+          `http://${dispositivo.direccionWan}/jpg`,
           {
             responseType: 'stream',
           },
