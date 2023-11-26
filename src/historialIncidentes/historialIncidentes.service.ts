@@ -50,7 +50,7 @@ export class HistorialIncidentesService {
       fecha: new Date(),
       fotos: fotosCapturadas,
     });
-    await this.enviarFotosPorTelegram(fotosCapturadas);
+    this.enviarFotosPorTelegram(fotosCapturadas);
     return historialIncidente;
   }
 
