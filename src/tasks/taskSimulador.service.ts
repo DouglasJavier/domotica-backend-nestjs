@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression, Interval } from '@nestjs/schedule';
+import axios from 'axios';
+import e from 'express';
+import { AlarmaRepository } from 'src/alarma/repository/alarma.repository';
 import { SimuladorActuadorRepository } from 'src/simulador/repository/simulador_actuador.repository';
 
 @Injectable()
 export class TaskSimuladorService {
   constructor(
     private simuladorActuadorRepositorio: SimuladorActuadorRepository,
+    private alarmaRepositorio: AlarmaRepository,
   ) {}
 
   @Interval(Number(10000))
@@ -17,58 +21,77 @@ export class TaskSimuladorService {
     console.log('##################################'); */
   }
 
-  /* @Cron(CronExpression.EVERY_MINUTE) // Puedes ajustar la frecuencia según tus necesidades
+  @Cron(CronExpression.EVERY_MINUTE) // Puedes ajustar la frecuencia según tus necesidades
   async handleCron() {
     // Verifica los horarios y ejecuta las acciones en consecuencia
-    const result =
-      await this.simuladorActuadorRepositorio.listarActuadoresSimulador('1');
+    const alarmaActiva = await this.alarmaRepositorio.buscarEncendido();
+    console.log('################# ALARMA #################');
+    console.log(alarmaActiva);
     console.log('##################################');
-    console.log(result);
-    console.log('##################################');
-    /* const now = new Date();
-    const actuadores = [
-      {
-        pin: 14,
-        horarios: [
-          { horaInicio: '19:30', horaFin: '20:02' },
-          { horaInicio: '14:02', horaFin: '21:01' },
-        ],
-      },
-      {
-        pin: 15,
-        horarios: [
-          { horaInicio: '18:40', horaFin: '11:36' },
-          { horaInicio: '13:21', horaFin: '13:59' },
-        ],
-      },
-    ];
-
-    actuadores.forEach((actuador) => {
-      actuador.horarios.forEach((horario) => {
-        const horaInicio = new Date(now);
-        horaInicio.setHours(
-          Number(horario.horaInicio.split(':')[0]),
-          Number(horario.horaInicio.split(':')[1]),
-          0,
+    if (alarmaActiva) {
+      const result =
+        await this.simuladorActuadorRepositorio.listarActuadoresSimulador(
+          alarmaActiva[0].id,
         );
+      console.log('################# RESULT #################');
+      console.log(result);
+      console.log('##################################');
+      const now = new Date();
+      const actuadores = result;
 
-        const horaFin = new Date(now);
-        horaFin.setHours(
-          Number(horario.horaFin.split(':')[0]),
-          Number(horario.horaFin.split(':')[1]),
-          0,
-        );
+      actuadores.forEach((actuador) => {
+        console.log('xxxxxxxxxxxxhorarioxxxxxxxxxxxx');
+        console.log(actuador.horarios);
+        console.log(actuador.actuador.dispositivo);
+        console.log('xxxxxxxxxxxxxxxxxxxxxxxx');
+        actuador.horarios.forEach(async (horario) => {
+          const horaInicio = new Date(horario.horaInicio);
+          const horaFin = new Date(horario.horaFin);
 
-        if (now >= horaInicio && now <= horaFin) {
-          // Estamos dentro del horario, ejecuta la acción correspondiente
-          // this.actuadorService.encenderActuador(actuador.pin);
-          console.log('ENCENDER');
-        } else {
-          // Fuera del horario, apaga el actuador si estaba encendido
-          // this.actuadorService.apagarActuador(actuador.pin);
-          console.log('APAGAR');
-        }
+          const horaActualHoras = now.getHours();
+          const horaActualMinutos = now.getMinutes();
+          const horaInicioHoras = horaInicio.getHours();
+          const horaInicioMinutos = horaInicio.getMinutes();
+          const horaFinHoras = horaFin.getHours();
+          const horaFinMinutos = horaFin.getMinutes();
+          if (
+            horaActualHoras === horaInicioHoras &&
+            horaActualMinutos === horaInicioMinutos
+          ) {
+            console.log('ENCENDER');
+            const respuestaAccion = await axios
+              .post(
+                `http://${actuador.actuador.dispositivo.direccionLan}/actuador`,
+                {
+                  pin: actuador.actuador.pin,
+                  accion: 'ENCENDER',
+                },
+              )
+              .catch((error) => {
+                console.log(error);
+                throw new NotFoundException('error al enviar acción');
+              });
+          }
+          if (
+            horaActualHoras === horaFinHoras &&
+            horaActualMinutos === horaFinMinutos
+          ) {
+            console.log('APAGAR');
+            const respuestaAccion = await axios
+              .post(
+                `http://${actuador.actuador.dispositivo.direccionWan}/actuador`,
+                {
+                  pin: actuador.actuador.pin,
+                  accion: 'APAGAR',
+                },
+              )
+              .catch((error) => {
+                console.log(error);
+                throw new NotFoundException('error al enviar acción');
+              });
+          }
+        });
       });
-    }); */
-  /*  } */
+    }
+  }
 }

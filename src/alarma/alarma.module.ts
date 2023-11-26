@@ -7,6 +7,7 @@ import { AlarmaRepository } from './repository/alarma.repository';
 import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository';
 import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository';
 import { ubicacionAlarmaRepository } from './repository/ubicacionAlarma.repository';
+import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Alarma])],
@@ -17,6 +18,7 @@ import { ubicacionAlarmaRepository } from './repository/ubicacionAlarma.reposito
     HistorialActivarDesactivarRepository,
     AlarmaContactoRepository,
     ubicacionAlarmaRepository,
+    DispositivoRepository,
   ],
   exports: [AlarmaService],
 })

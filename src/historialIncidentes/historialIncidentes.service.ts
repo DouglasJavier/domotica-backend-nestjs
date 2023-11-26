@@ -31,6 +31,7 @@ export class HistorialIncidentesService {
   }
 
   async crear(registroIncidenteDto: RegistroIncidenteDto) {
+    console.log('entró a crear historial');
     const alarma = await this.alarmaRepositorio.buscarAlarmaEncendida();
     if (!alarma) throw new NotFoundException('No se encontró la alarma');
     const dispositivo = await this.dispositivoRepositorio.buscarPorId(
@@ -87,12 +88,9 @@ export class HistorialIncidentesService {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       // Capturar la foto
       const respuestaFoto = await axios
-        .get(
-          `https://previews.123rf.com/images/andreypopov/andreypopov1701/andreypopov170101341/70448514-la-captura-de-las-c%C3%A1maras-de-seguridad-del-ladr%C3%B3n-tratando-de-entrar-en-la-casa-mientras-que-abre-la.jpg`,
-          {
-            responseType: 'stream',
-          },
-        )
+        .get(`http://${dispositivo.direccionLan}/jpg`, {
+          responseType: 'stream',
+        })
         .catch((error) => {
           throw new NotFoundException('error al capturar las fotos');
         });

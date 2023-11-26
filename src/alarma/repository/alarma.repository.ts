@@ -41,7 +41,8 @@ export class AlarmaRepository {
     const alarma = await this.dataSource
       .getRepository(Alarma)
       .createQueryBuilder('alarma')
-      .select(['alarma'])
+      .leftJoin('alarma.ubicacionAlarmas', 'ubicaciones')
+      .select(['alarma', 'ubicaciones'])
       .where('alarma.id = :id', { id: id })
       .getOne();
     if (!alarma) throw new NotFoundException('Articulo no encontrado');

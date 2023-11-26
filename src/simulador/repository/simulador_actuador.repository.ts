@@ -45,17 +45,17 @@ export class SimuladorActuadorRepository {
       .leftJoin('simuladorActuador.horarios', 'horario')
       .select([
         'simuladorActuador',
-        'simulador.id',
+        'simulador',
         'actuador.pin',
-        'dispositivo.direccionLan',
+        'dispositivo',
         'horario.horaInicio',
         'horario.horaFin',
       ])
       .where('simulador.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('simuladorActuador.estado = :estado')
-      .andWhere('horario.estado = :estado')
-      .andWhere('dispositivo.estado = :estado')
-      .where('alarma.id = :id', { id: idAlarma });
+      .andWhere('simuladorActuador.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('horario.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('dispositivo.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('alarma.id = :id', { id: idAlarma });
     return query.getMany();
   }
 }

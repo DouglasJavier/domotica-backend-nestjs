@@ -20,22 +20,22 @@ export class DispositivoService {
   }
 
   async crear(dispositivoDto: DispositivoCrearDto) {
-    const respuestaDisp = await axios
-      .post(
-        `http://${dispositivoDto.direccionLan}/conf`,
-        dispositivoDto.sensoresActuadores,
-      )
-      .catch((err) => {
-        throw new NotFoundException('Direcion de dispositivo no valida');
-      });
-    if (!respuestaDisp) {
-      throw new NotFoundException('Respuesta invalida');
-    }
     const op = async (transaction: EntityManager) => {
       const dispositivo = await this.dispositivoRepositorio.crear(
         dispositivoDto,
         transaction,
       );
+      const respuestaDisp = await axios
+        .post(`http://${dispositivoDto.direccionLan}/conf_pin`, {
+          idDispositivo: dispositivo.id,
+          sensoresActuadores: dispositivoDto.sensoresActuadores,
+        })
+        .catch((err) => {
+          throw new NotFoundException('Direcion de dispositivo no valida');
+        });
+      if (!respuestaDisp) {
+        throw new NotFoundException('Respuesta invalida');
+      }
       return dispositivo;
     };
     return this.dispositivoRepositorio.runTransaction(op);
@@ -43,11 +43,12 @@ export class DispositivoService {
 
   async actualizar(id: string, dispositivoDto: DispositivoCrearDto) {
     const dispositivo = await this.dispositivoRepositorio.buscarPorId(id);
+    console.log(dispositivoDto.sensoresActuadores);
     const respuestaDisp = await axios
-      .post(
-        `http://${dispositivo.direccionLan}/conf_pin`,
-        dispositivoDto.sensoresActuadores,
-      )
+      .post(`http://${dispositivoDto.direccionLan}/conf_pin`, {
+        idDispositivo: dispositivo.id,
+        sensoresActuadores: dispositivoDto.sensoresActuadores,
+      })
       .catch((err) => {
         throw new NotFoundException('Direcion de dispositivo no valida');
       });
