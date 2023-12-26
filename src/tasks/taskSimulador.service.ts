@@ -28,7 +28,7 @@ export class TaskSimuladorService {
     console.log('################# ALARMA #################');
     console.log(alarmaActiva);
     console.log('##################################');
-    if (alarmaActiva) {
+    if (alarmaActiva.length > 0) {
       const result =
         await this.simuladorActuadorRepositorio.listarActuadoresSimulador(
           alarmaActiva[0].id,
@@ -79,7 +79,7 @@ export class TaskSimuladorService {
             console.log('APAGAR');
             const respuestaAccion = await axios
               .post(
-                `http://${actuador.actuador.dispositivo.direccionWan}/actuador`,
+                `http://${actuador.actuador.dispositivo.direccionLan}/actuador`,
                 {
                   pin: actuador.actuador.pin,
                   accion: 'APAGAR',

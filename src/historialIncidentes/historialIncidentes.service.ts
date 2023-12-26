@@ -31,7 +31,9 @@ export class HistorialIncidentesService {
   }
 
   async crear(registroIncidenteDto: RegistroIncidenteDto) {
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     console.log('entró a crear historial');
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     const alarma = await this.alarmaRepositorio.buscarAlarmaEncendida();
     if (!alarma) throw new NotFoundException('No se encontró la alarma');
     const dispositivo = await this.dispositivoRepositorio.buscarPorId(

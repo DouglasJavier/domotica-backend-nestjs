@@ -70,10 +70,12 @@ export class SensorActuadorRepository {
     const query = this.dataSource
       .getRepository(SensorActuador)
       .createQueryBuilder('sensorActuador')
+      .leftJoin('sensorActuador.dispositivo', 'dispositivo')
       .leftJoin('sensorActuador.ubicacion', 'ubicacionSensorActuador')
       .select(['sensorActuador', 'ubicacionSensorActuador'])
       .andWhere('sensorActuador.tipo = :tipo', { tipo: 'ACTUADOR' })
-      .andWhere('sensorActuador.estado = :estado', { estado: 'ACTIVO' });
+      .andWhere('sensorActuador.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('dispositivo.estado = :estado', { estado: 'ACTIVO' });
     return query.getManyAndCount();
   }
 }
