@@ -1,3 +1,3 @@
 export class ParamIdDto {
-  id: string;
+  id: string
 }

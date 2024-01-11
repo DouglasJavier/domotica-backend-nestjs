@@ -4,24 +4,25 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   ManyToOne,
-} from 'typeorm';
-import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
-import { Alarma } from './alarmas.entity';
-
-@Entity({ name: 'ubicacionesAlarmas' })
+} from 'typeorm'
+import { Ubicacion } from '../../ubicaciones/ubicaciones.entity'
+import { Alarma } from './alarmas.entity'
+import * as dotenv from 'dotenv'
+dotenv.config()
+@Entity({ name: 'ubicacionesAlarmas', schema: process.env.DB_SCHEMA_PROYECTO })
 export class UbicacionAlarma {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
-  id: string;
+  id: string
 
   @Column({ length: 20, type: 'varchar' })
-  estado: string;
+  estado: string
 
   @Column({
     name: 'idUbicacion',
     type: 'bigint',
     nullable: false,
   })
-  idUbicacion: string;
+  idUbicacion: string
   @ManyToOne(() => Ubicacion, (ubicacion) => ubicacion.ubicacionesAlarmas, {
     nullable: false,
   })
@@ -29,14 +30,14 @@ export class UbicacionAlarma {
     name: 'idUbicacion',
     referencedColumnName: 'id',
   })
-  ubicacion: Ubicacion;
+  ubicacion: Ubicacion
 
   @Column({
     name: 'idAlarma',
     type: 'bigint',
     nullable: false,
   })
-  idAlarma: string;
+  idAlarma: string
   @ManyToOne(() => Alarma, (alarma) => alarma.ubicacionAlarmas, {
     nullable: false,
   })
@@ -44,5 +45,5 @@ export class UbicacionAlarma {
     name: 'idAlarma',
     referencedColumnName: 'id',
   })
-  alarma: Alarma;
+  alarma: Alarma
 }

@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
-import { HorarioDto } from '../dto/crear-simulador.dto';
-import { Horario } from '../entity/horario.entity';
-import dayjs = require('dayjs');
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { DataSource, EntityManager, Repository } from 'typeorm'
+import { HorarioDto } from '../dto/crear-simulador.dto'
+import { Horario } from '../entity/horario.entity'
+import dayjs = require('dayjs')
 
 @Injectable()
 export class HorarioRepository {
@@ -20,14 +20,14 @@ export class HorarioRepository {
         idSimuladorActuador,
       })
       // .andWhere('id_articulo IN(:...ids)', { ids: articulos })
-      .execute();
+      .execute()
   }
   async _crear(
     idSimuladorActuador: string,
     horarios: HorarioDto[],
-    transaction: EntityManager,
+    transaction: EntityManager
   ) {
-    const fechaActual = dayjs().format('YYYY-MM-DD ');
+    const fechaActual = dayjs().format('YYYY-MM-DD ')
 
     const nuevosHorarios: Horario[] = horarios.map((horario) => {
       // Formatear la fecha y la hora
@@ -37,18 +37,18 @@ export class HorarioRepository {
       console.log(dayjs(horario.horaInicio).format('HH:mm:ss'));
       console.log(dayjs(horario.horaFin).format('HH:mm:ss'));
       console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'); */
-      const nuevoHorario = new Horario();
-      nuevoHorario.idSimuladorActuador = idSimuladorActuador;
-      nuevoHorario.horaInicio = horario.horaInicio;
-      nuevoHorario.horaFin = horario.horaFin;
-      nuevoHorario.estado = 'ACTIVO';
-      return nuevoHorario;
-    });
+      const nuevoHorario = new Horario()
+      nuevoHorario.idSimuladorActuador = idSimuladorActuador
+      nuevoHorario.horaInicio = horario.horaInicio
+      nuevoHorario.horaFin = horario.horaFin
+      nuevoHorario.estado = 'ACTIVO'
+      return nuevoHorario
+    })
     return await transaction
       .createQueryBuilder()
       .insert()
       .into(Horario)
       .values(nuevosHorarios)
-      .execute();
+      .execute()
   }
 }

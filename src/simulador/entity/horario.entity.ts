@@ -4,35 +4,36 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-} from 'typeorm';
-import { SimuladorActuador } from './simulador_actuador.entity';
-
-@Entity({ name: 'horarios' })
+} from 'typeorm'
+import { SimuladorActuador } from './simulador_actuador.entity'
+import * as dotenv from 'dotenv'
+dotenv.config()
+@Entity({ name: 'horarios', schema: process.env.DB_SCHEMA_PROYECTOS })
 export class Horario {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
-  id: string;
+  id: string
 
   @Column({ type: 'timestamptz', nullable: false })
-  horaInicio: string;
+  horaInicio: string
 
   @Column({ type: 'timestamptz', nullable: false })
-  horaFin: string;
+  horaFin: string
 
   @Column({ length: 20, type: 'varchar' })
-  estado: string;
+  estado: string
 
   @Column({
     name: 'id_simulador_actuador',
     type: 'varchar',
   })
-  idSimuladorActuador: string;
+  idSimuladorActuador: string
   @ManyToOne(
     () => SimuladorActuador,
-    (simuladorActuador) => simuladorActuador.horarios,
+    (simuladorActuador) => simuladorActuador.horarios
   )
   @JoinColumn({
     name: 'id_simulador_actuador',
     referencedColumnName: 'id',
   })
-  simuladorActuador: SimuladorActuador;
+  simuladorActuador: SimuladorActuador
 }

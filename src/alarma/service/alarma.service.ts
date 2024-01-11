@@ -5,15 +5,15 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { AlarmaRepository } from '../repository/alarma.repository';
-import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
-import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository';
-import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository';
-import { ubicacionAlarmaRepository } from '../repository/ubicacionAlarma.repository';
-import { EntityManager } from 'typeorm';
-import axios from 'axios';
-import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository';
+} from '@nestjs/common'
+import { AlarmaRepository } from '../repository/alarma.repository'
+import { AlarmaCRUDType } from '../dto/alarmaCRUDType'
+import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository'
+import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository'
+import { ubicacionAlarmaRepository } from '../repository/ubicacionAlarma.repository'
+import { EntityManager } from 'typeorm'
+import axios from 'axios'
+import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
 
 @Injectable()
 export class AlarmaService {
@@ -23,20 +23,20 @@ export class AlarmaService {
     private historialRepository: HistorialActivarDesactivarRepository,
     private alarmasContactosRepository: AlarmaContactoRepository,
     private ubicacionesAlarmasRepository: ubicacionAlarmaRepository,
-    private dispositivoRepository: DispositivoRepository,
+    private dispositivoRepository: DispositivoRepository
   ) {}
   async listaAlarmas() {
-    const respuesta = this.alarmaRepository.listaAlarmas();
-    return respuesta;
+    const respuesta = this.alarmaRepository.listaAlarmas()
+    return respuesta
   }
   async alarmaPorId(id: string) {
-    const alarma = this.alarmaRepository.buscarPorId(id);
-    if (!alarma) throw new NotFoundException('Articulo no encontrado');
-    return alarma;
+    const alarma = this.alarmaRepository.buscarPorId(id)
+    if (!alarma) throw new NotFoundException('Articulo no encontrado')
+    return alarma
   }
   async crear(alarmaDto: AlarmaCRUDType) {
     const op = async (transaction: EntityManager) => {
-      const result = await this.alarmaRepository.crear(alarmaDto, transaction);
+      const result = await this.alarmaRepository.crear(alarmaDto, transaction)
       this.historialRepository.crear(
         {
           accion: 'CREAR',
@@ -44,28 +44,28 @@ export class AlarmaService {
           idAlarma: result.id,
           idUsuario: '1',
         },
-        transaction,
-      );
-      return result;
-    };
-    return this.alarmaRepository.runTransaction(op);
+        transaction
+      )
+      return result
+    }
+    return this.alarmaRepository.runTransaction(op)
   }
   async editar(alarmaDto: AlarmaCRUDType, id: string) {
-    const existe = this.alarmaRepository.buscarPorId(id);
+    const existe = this.alarmaRepository.buscarPorId(id)
     if (!existe)
-      throw new NotFoundException('No existe el articulo selecionado');
-    this.alarmasContactosRepository.inactivarContactos(id);
-    this.ubicacionesAlarmasRepository.inactivarUbicaciones(id);
-    const alarma = alarmaDto;
-    delete alarma.idContactos;
-    delete alarma.idSimulador;
-    delete alarma.idUbicaciones;
+      throw new NotFoundException('No existe el articulo selecionado')
+    this.alarmasContactosRepository.inactivarContactos(id)
+    this.ubicacionesAlarmasRepository.inactivarUbicaciones(id)
+    const alarma = alarmaDto
+    delete alarma.idContactos
+    delete alarma.idSimulador
+    delete alarma.idUbicaciones
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
         id,
         alarma,
-        transaction,
-      );
+        transaction
+      )
       this.historialRepository.crear(
         {
           accion: 'EDITAR',
@@ -73,47 +73,45 @@ export class AlarmaService {
           idAlarma: id,
           idUsuario: '1',
         },
-        transaction,
-      );
-      return result;
-    };
-    return this.alarmaRepository.runTransaction(op);
+        transaction
+      )
+      return result
+    }
+    return this.alarmaRepository.runTransaction(op)
   }
   async encender(id: string) {
-    const alarma = await this.alarmaRepository.buscarPorId(id);
+    const alarma = await this.alarmaRepository.buscarPorId(id)
     if (!alarma)
-      throw new NotFoundException(
-        'No existe la alarma selecionada selecionado',
-      );
-    const encendidos = await this.alarmaRepository.buscarEncendido();
+      throw new NotFoundException('No existe la alarma selecionada selecionado')
+    const encendidos = await this.alarmaRepository.buscarEncendido()
     if (encendidos.length > 0) {
       throw new HttpException(
         'Ya hay una alarma encendida',
-        HttpStatus.CONFLICT,
-      );
+        HttpStatus.CONFLICT
+      )
     }
     //Envio de información a los dispositivos
     for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
       const dispositivos =
         await this.dispositivoRepository.buscarPorIdUbicaciónSensores(
-          alarma.ubicacionAlarmas[i].idUbicacion,
-        );
-      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
-      console.log(dispositivos);
-      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
-      console.log(dispositivos);
+          alarma.ubicacionAlarmas[i].idUbicacion
+        )
+      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+      console.log(dispositivos)
+      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+      console.log(dispositivos)
       for (let j = 0; j < dispositivos.length; j++) {
         const respuestaEnvio = await axios
           .post(`http://${dispositivos[j].direccionLan}/sensores`, {
             sensoresActuadores: dispositivos[j].sensoresActuadores,
           })
           .catch((error) => {
-            console.log(`error al activar sensor en ${dispositivos[j].nombre}`);
-            console.log(error);
+            console.log(`error al activar sensor en ${dispositivos[j].nombre}`)
+            console.log(error)
             throw new NotFoundException(
-              `error al activar sensor en ${dispositivos[j].nombre}`,
-            );
-          });
+              `error al activar sensor en ${dispositivos[j].nombre}`
+            )
+          })
       }
     }
     const op = async (transaction: EntityManager) => {
@@ -122,8 +120,8 @@ export class AlarmaService {
         {
           estado: 'ENCENDIDO',
         },
-        transaction,
-      );
+        transaction
+      )
       this.historialRepository.crear(
         {
           accion: 'ENCENDER',
@@ -131,24 +129,24 @@ export class AlarmaService {
           idAlarma: id,
           idUsuario: '1',
         },
-        transaction,
-      );
-      return result;
-    };
-    return this.alarmaRepository.runTransaction(op);
+        transaction
+      )
+      return result
+    }
+    return this.alarmaRepository.runTransaction(op)
   }
   async apagar(id: string) {
-    const alarma = await this.alarmaRepository.buscarPorId(id);
+    const alarma = await this.alarmaRepository.buscarPorId(id)
     if (!alarma)
-      throw new NotFoundException('No existe el articulo selecionado');
+      throw new NotFoundException('No existe el articulo selecionado')
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
         id,
         {
           estado: 'ACTIVO',
         },
-        transaction,
-      );
+        transaction
+      )
       this.historialRepository.crear(
         {
           accion: 'APAGAR',
@@ -156,17 +154,17 @@ export class AlarmaService {
           idAlarma: id,
           idUsuario: '1',
         },
-        transaction,
-      );
+        transaction
+      )
       for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
         const dispositivos =
           await this.dispositivoRepository.buscarPorIdUbicaciónSensores(
-            alarma.ubicacionAlarmas[i].idUbicacion,
-          );
-        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
-        console.log(dispositivos);
-        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
-        console.log(dispositivos);
+            alarma.ubicacionAlarmas[i].idUbicacion
+          )
+        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+        console.log(dispositivos)
+        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+        console.log(dispositivos)
         for (let j = 0; j < dispositivos.length; j++) {
           const respuestaEnvio = await axios
             .post(`http://${dispositivos[j].direccionLan}/sensores`, {
@@ -174,31 +172,31 @@ export class AlarmaService {
             })
             .catch((error) => {
               console.log(
-                `error al activar sensor en ${dispositivos[j].nombre}`,
-              );
-              console.log(error);
+                `error al activar sensor en ${dispositivos[j].nombre}`
+              )
+              console.log(error)
               throw new NotFoundException(
-                `error al activar sensor en ${dispositivos[j].nombre}`,
-              );
-            });
+                `error al activar sensor en ${dispositivos[j].nombre}`
+              )
+            })
         }
       }
-      return result;
-    };
-    return this.alarmaRepository.runTransaction(op);
+      return result
+    }
+    return this.alarmaRepository.runTransaction(op)
   }
   async inactivar(id: string) {
-    const existe = this.alarmaRepository.buscarPorId(id);
+    const existe = this.alarmaRepository.buscarPorId(id)
     if (!existe)
-      throw new NotFoundException('No existe el articulo selecionado');
+      throw new NotFoundException('No existe el articulo selecionado')
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
         id,
         {
           estado: 'INACTIVO',
         },
-        transaction,
-      );
+        transaction
+      )
       this.historialRepository.crear(
         {
           accion: 'ELIMINAR',
@@ -206,10 +204,10 @@ export class AlarmaService {
           idAlarma: id,
           idUsuario: '1',
         },
-        transaction,
-      );
-      return result;
-    };
-    return this.alarmaRepository.runTransaction(op);
+        transaction
+      )
+      return result
+    }
+    return this.alarmaRepository.runTransaction(op)
   }
 }

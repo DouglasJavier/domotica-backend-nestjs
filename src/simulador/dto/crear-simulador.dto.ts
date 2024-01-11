@@ -1,12 +1,12 @@
 export class SimuladorCrearDto {
-  nombre: string;
-  simuladoresActuadores: SimuladorActuadorDto[];
+  nombre: string
+  simuladoresActuadores: SimuladorActuadorDto[]
 }
 export class SimuladorActuadorDto {
-  idActuador: string;
-  horarios: HorarioDto[];
+  idActuador: string
+  horarios: HorarioDto[]
 }
 export class HorarioDto {
-  horaInicio: string;
-  horaFin: string;
+  horaInicio: string
+  horaFin: string
 }

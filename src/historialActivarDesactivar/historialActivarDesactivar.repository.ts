@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
-import { HistorialActivarDesactivar } from './historialActivarDesactivar.entity';
-import { HistorialActivarDesactivarCRUDType } from './dto/historialActivarDesactivarCRUDType';
-import { PaginacionQueryDto } from 'src/common/dto/paginacionDto';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { DataSource, EntityManager, Repository } from 'typeorm'
+import { HistorialActivarDesactivar } from './historialActivarDesactivar.entity'
+import { HistorialActivarDesactivarCRUDType } from './dto/historialActivarDesactivarCRUDType'
+import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 
 @Injectable()
 export class HistorialActivarDesactivarRepository {
@@ -11,20 +11,20 @@ export class HistorialActivarDesactivarRepository {
 
   async crear(
     historialDto: HistorialActivarDesactivarCRUDType,
-    transaction: EntityManager,
+    transaction: EntityManager
   ) {
-    const historial = new HistorialActivarDesactivar();
-    historial.accion = historialDto.accion;
-    historial.fecha = historialDto.fecha;
-    historial.idAlarma = historialDto.idAlarma;
-    historial.idUsuario = historialDto.idUsuario;
-    historial.estado = 'ACTIVO';
+    const historial = new HistorialActivarDesactivar()
+    historial.accion = historialDto.accion
+    historial.fecha = historialDto.fecha
+    historial.idAlarma = historialDto.idAlarma
+    historial.idUsuario = historialDto.idUsuario
+    historial.estado = 'ACTIVO'
     return await transaction
       .getRepository(HistorialActivarDesactivar)
-      .save(historial);
+      .save(historial)
   }
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, salto, campo, sentido } = paginacionQueryDto;
+    const { limite, salto, campo, sentido } = paginacionQueryDto
 
     const query = this.dataSource
       .getRepository(HistorialActivarDesactivar)
@@ -41,18 +41,18 @@ export class HistorialActivarDesactivarRepository {
       ])
       .where('historialActivarDesactivar.estado != :estado', {
         estado: 'INACTIVO',
-      });
+      })
     switch (campo) {
       case 'id':
-        query.addOrderBy('historialActivarDesactivar.id', sentido);
-        break;
+        query.addOrderBy('historialActivarDesactivar.id', sentido)
+        break
       case 'fecha':
-        query.addOrderBy('historialActivarDesactivar.fecha', sentido);
-        break;
+        query.addOrderBy('historialActivarDesactivar.fecha', sentido)
+        break
       default:
-        query.orderBy('historialActivarDesactivar.id', 'DESC');
+        query.orderBy('historialActivarDesactivar.id', 'DESC')
     }
-    return await query.getManyAndCount();
+    return await query.getManyAndCount()
   }
   async inactivar(id: string, transaction: EntityManager) {
     return await transaction
@@ -63,17 +63,17 @@ export class HistorialActivarDesactivarRepository {
         estado: 'INACTIVO',
       })
       .where('id = :id', { id })
-      .execute();
+      .execute()
   }
   async inactivarPorFecha(
     fechaInicio: string,
     fechaFin: string,
-    transaction: EntityManager,
+    transaction: EntityManager
   ) {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-    console.log(fechaInicio);
-    console.log(fechaFin);
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+    console.log(fechaInicio)
+    console.log(fechaFin)
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
 
     return await transaction
       .getRepository(HistorialActivarDesactivar)
@@ -84,9 +84,9 @@ export class HistorialActivarDesactivarRepository {
       })
       .where('fecha >= :fecha1', { fecha1: fechaInicio })
       .andWhere('fecha <= :fecha2', { fecha2: fechaFin })
-      .execute();
+      .execute()
   }
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
-    return this.dataSource.manager.transaction<T>(op);
+    return this.dataSource.manager.transaction<T>(op)
   }
 }

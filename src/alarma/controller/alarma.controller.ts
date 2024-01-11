@@ -7,13 +7,13 @@ import {
   Post,
   Put,
   Query,
-} from '@nestjs/common';
+} from '@nestjs/common'
 
-import { Controller } from '@nestjs/common';
-import { AlarmaService } from '../service/alarma.service';
-import { Alarma } from '../entity/alarmas.entity';
-import { AlarmaCRUDType } from '../dto/alarmaCRUDType';
-import path from 'path';
+import { Controller } from '@nestjs/common'
+import { AlarmaService } from '../service/alarma.service'
+import { Alarma } from '../entity/alarmas.entity'
+import { AlarmaCRUDType } from '../dto/alarmaCRUDType'
+import path from 'path'
 
 @Controller('alarmas')
 export class AlarmaController {
@@ -21,43 +21,43 @@ export class AlarmaController {
 
   @Get()
   async listaAlarmas() {
-    const lista = this.alarmaService.listaAlarmas();
-    return lista;
+    const lista = this.alarmaService.listaAlarmas()
+    return lista
   }
 
   @Get(':id')
   async buscarAlarma(@Param('id') id: string) {
-    const lista = this.alarmaService.alarmaPorId(id);
-    return lista;
+    const lista = this.alarmaService.alarmaPorId(id)
+    return lista
   }
 
   @Post()
   async crearAlarma(@Body() alarmaDto: AlarmaCRUDType) {
-    const result = this.alarmaService.crear(alarmaDto);
-    return result;
+    const result = this.alarmaService.crear(alarmaDto)
+    return result
   }
 
   @Patch(':id')
   async editarAlarma(
     @Body() alarmaDto: AlarmaCRUDType,
-    @Param('id') id: string,
+    @Param('id') id: string
   ) {
-    const result = this.alarmaService.editar(alarmaDto, id);
-    return result;
+    const result = this.alarmaService.editar(alarmaDto, id)
+    return result
   }
   @Patch(':id/encender')
   async encenderAlarma(@Param('id') id: string) {
-    const result = this.alarmaService.encender(id);
-    return result;
+    const result = this.alarmaService.encender(id)
+    return result
   }
   @Patch(':id/apagar')
   async apagarAlarma(@Param('id') id: string) {
-    const result = this.alarmaService.apagar(id);
-    return result;
+    const result = this.alarmaService.apagar(id)
+    return result
   }
   @Patch(':id/eliminar')
   async eliminarAlarma(@Param('id') id: string) {
-    const result = this.alarmaService.inactivar(id);
-    return result;
+    const result = this.alarmaService.inactivar(id)
+    return result
   }
 }

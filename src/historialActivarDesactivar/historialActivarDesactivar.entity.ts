@@ -4,30 +4,34 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-} from 'typeorm';
-import { Alarma } from '../alarma/entity/alarmas.entity';
-import { Usuario } from 'src/usuario/usuario.entity';
-
-@Entity({ name: 'historialActivarDesactivar' })
+} from 'typeorm'
+import { Alarma } from '../alarma/entity/alarmas.entity'
+import { Usuario } from 'src/core/usuario/usuario.entity'
+import * as dotenv from 'dotenv'
+dotenv.config()
+@Entity({
+  name: 'historialActivarDesactivar',
+  schema: process.env.DB_SCHEMA_PROYECTOS,
+})
 export class HistorialActivarDesactivar {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
-  id: string;
+  id: string
 
   @Column({ type: 'timestamptz', nullable: false })
-  fecha: Date;
+  fecha: Date
 
   @Column({ length: 50, type: 'varchar', nullable: false })
-  accion: string;
+  accion: string
 
   @Column({ length: 20, type: 'varchar' })
-  estado: string;
+  estado: string
 
   @Column({
     name: 'idAlarma',
     type: 'bigint',
     nullable: false,
   })
-  idAlarma: string;
+  idAlarma: string
   @ManyToOne(() => Alarma, (alarma) => alarma.historialActivarDesactivar, {
     nullable: false,
   })
@@ -35,14 +39,14 @@ export class HistorialActivarDesactivar {
     name: 'idAlarma',
     referencedColumnName: 'id',
   })
-  alarma: Alarma;
+  alarma: Alarma
 
   @Column({
     name: 'idUsuario',
     type: 'bigint',
     nullable: false,
   })
-  idUsuario: string;
+  idUsuario: string
   @ManyToOne(() => Usuario, (usuario) => usuario.historialActivarDesactivar, {
     nullable: false,
   })
@@ -50,5 +54,5 @@ export class HistorialActivarDesactivar {
     name: 'idUsuario',
     referencedColumnName: 'id',
   })
-  usuario: Usuario;
+  usuario: Usuario
 }

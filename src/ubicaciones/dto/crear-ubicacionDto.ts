@@ -1,3 +1,3 @@
 export class CrearUbicacionDto {
-  nombre: string;
+  nombre: string
 }

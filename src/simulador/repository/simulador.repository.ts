@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
-import { PaginacionQueryDto } from 'src/common/dto/paginacionDto';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { Simulador } from '../entity/simulador.entity';
-import { SimuladorCrearDto } from '../dto/crear-simulador.dto';
-import { SimuladorActuador } from '../entity/simulador_actuador.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { DataSource, EntityManager, Repository } from 'typeorm'
+import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { Simulador } from '../entity/simulador.entity'
+import { SimuladorCrearDto } from '../dto/crear-simulador.dto'
+import { SimuladorActuador } from '../entity/simulador_actuador.entity'
 
 @Injectable()
 export class SimuladorRepository {
   constructor(private dataSource: DataSource) {}
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, salto, campo, sentido } = paginacionQueryDto;
+    const { limite, salto, campo, sentido } = paginacionQueryDto
     const query = this.dataSource
       .getRepository(Simulador)
       .createQueryBuilder('simulador')
@@ -31,50 +31,50 @@ export class SimuladorRepository {
       ])
       .where('simulador.estado = :estado', { estado: 'ACTIVO' })
       .andWhere('simuladorActuador.estado = :estado')
-      .andWhere('horario.estado = :estado');
+      .andWhere('horario.estado = :estado')
 
-    if (limite) query.take(limite);
-    if (salto) query.skip(salto);
+    if (limite) query.take(limite)
+    if (salto) query.skip(salto)
     switch (campo) {
       case 'id':
-        query.addOrderBy('simulador.id', sentido);
-        break;
+        query.addOrderBy('simulador.id', sentido)
+        break
       case 'nombre':
-        query.addOrderBy('simulador.nombre', sentido);
-        break;
+        query.addOrderBy('simulador.nombre', sentido)
+        break
       default:
-        query.orderBy('simulador.id', 'ASC');
+        query.orderBy('simulador.id', 'ASC')
     }
-    return await query.getManyAndCount();
+    return await query.getManyAndCount()
   }
   async crear(simuladorDto: SimuladorCrearDto, transaction: EntityManager) {
-    const nuevoSimulador = new Simulador();
-    nuevoSimulador.nombre = simuladorDto.nombre;
-    nuevoSimulador.estado = 'ACTIVO';
+    const nuevoSimulador = new Simulador()
+    nuevoSimulador.nombre = simuladorDto.nombre
+    nuevoSimulador.estado = 'ACTIVO'
     const simulador = await transaction
       .getRepository(Simulador)
-      .save(nuevoSimulador);
+      .save(nuevoSimulador)
 
-    return simulador;
+    return simulador
   }
   async actualizar(
     id: string,
     simuladorDto: Partial<Simulador>,
-    transaction: EntityManager,
+    transaction: EntityManager
   ) {
-    const simulador = simuladorDto;
-    delete simulador.simuladoresActuadores;
+    const simulador = simuladorDto
+    delete simulador.simuladoresActuadores
     const datosActualizar: QueryDeepPartialEntity<Simulador> = new Simulador({
       ...simulador,
-    });
+    })
     return await transaction
       .createQueryBuilder()
       .update(Simulador)
       .set(datosActualizar)
       .where({ id: id })
-      .execute();
+      .execute()
   }
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
-    return this.dataSource.manager.transaction<T>(op);
+    return this.dataSource.manager.transaction<T>(op)
   }
 }

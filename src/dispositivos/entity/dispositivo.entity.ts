@@ -5,38 +5,37 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
-} from 'typeorm';
-import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
-import { SensorActuador } from './sensor_actuador.entity';
-/* import { User } from './users.entity';
-import { Cars } from './cars.entity'; */
-
-@Entity({ name: 'dispositivos' })
+} from 'typeorm'
+import { Ubicacion } from '../../ubicaciones/ubicaciones.entity'
+import { SensorActuador } from './sensor_actuador.entity'
+import * as dotenv from 'dotenv'
+dotenv.config()
+@Entity({ name: 'dispositivos', schema: process.env.DB_SCHEMA_PROYECTOS })
 export class Dispositivo {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
-  id: string;
+  id: string
 
   @Column({ length: 50, type: 'varchar' })
-  nombre: string;
+  nombre: string
 
   @Column({ length: 50, type: 'varchar' })
-  tipo: string;
+  tipo: string
 
   @Column({ length: 200, type: 'varchar', nullable: false })
-  direccionLan: string;
+  direccionLan: string
 
   @Column({ length: 200, type: 'varchar', nullable: true })
-  direccionWan: string;
+  direccionWan: string
 
   @Column({ length: 20, type: 'varchar' })
-  estado: string;
+  estado: string
 
   @Column({
     name: 'idUbicacion',
     type: 'bigint',
     nullable: false,
   })
-  idUbicacion: string;
+  idUbicacion: string
   @ManyToOne(() => Ubicacion, (ubicacion) => ubicacion.dispositivos, {
     nullable: false,
   })
@@ -44,15 +43,15 @@ export class Dispositivo {
     name: 'idUbicacion',
     referencedColumnName: 'id',
   })
-  ubicacion: Ubicacion;
+  ubicacion: Ubicacion
 
   @OneToMany(
     () => SensorActuador,
-    (sensorActuador) => sensorActuador.dispositivo,
+    (sensorActuador) => sensorActuador.dispositivo
   )
-  sensoresActuadores: SensorActuador[];
+  sensoresActuadores: SensorActuador[]
 
   constructor(data?: Partial<Dispositivo>) {
-    if (data) Object.assign(this, data);
+    if (data) Object.assign(this, data)
   }
 }

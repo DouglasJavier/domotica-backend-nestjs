@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Alarma } from './entity/alarmas.entity';
-import { AlarmaController } from './controller/alarma.controller';
-import { AlarmaService } from './service/alarma.service';
-import { AlarmaRepository } from './repository/alarma.repository';
-import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository';
-import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository';
-import { ubicacionAlarmaRepository } from './repository/ubicacionAlarma.repository';
-import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository';
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Alarma } from './entity/alarmas.entity'
+import { AlarmaController } from './controller/alarma.controller'
+import { AlarmaService } from './service/alarma.service'
+import { AlarmaRepository } from './repository/alarma.repository'
+import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository'
+import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository'
+import { ubicacionAlarmaRepository } from './repository/ubicacionAlarma.repository'
+import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Alarma])],

@@ -1,16 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { Brackets, DataSource, EntityManager } from 'typeorm';
-import { PaginacionQueryDto } from '../common/dto/paginacionDto';
-import { HistorialIncidentes } from './historialIncidentes.entity';
-import { Ubicacion } from 'src/ubicaciones/ubicaciones.entity';
-import { CrearHistorialIncidentesDto } from './dto/crear-historialIncidenteDto';
-import { Fotos } from './fotos.entity';
+import { Injectable } from '@nestjs/common'
+import { Brackets, DataSource, EntityManager } from 'typeorm'
+import { PaginacionQueryDto } from '../common/dto/paginacionDto'
+import { HistorialIncidentes } from './historialIncidentes.entity'
+import { Ubicacion } from 'src/ubicaciones/ubicaciones.entity'
+import { CrearHistorialIncidentesDto } from './dto/crear-historialIncidenteDto'
+import { Fotos } from './fotos.entity'
 
 @Injectable()
 export class HistorialIncidenteRepository {
   constructor(private dataSource: DataSource) {}
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, salto, campo, sentido } = paginacionQueryDto;
+    const { limite, salto, campo, sentido } = paginacionQueryDto
 
     const query = this.dataSource
       .getRepository(HistorialIncidentes)
@@ -31,35 +31,35 @@ export class HistorialIncidenteRepository {
         'sensor.descripcion',
         'ubicacion',
       ])
-      .where('historialIncidentes.estado != :estado', { estado: 'INACTIVO' });
+      .where('historialIncidentes.estado != :estado', { estado: 'INACTIVO' })
     switch (campo) {
       case 'id':
-        query.addOrderBy('historialIncidentes.id', sentido);
-        break;
+        query.addOrderBy('historialIncidentes.id', sentido)
+        break
       case 'fecha':
-        query.addOrderBy('historialIncidentes.fecha', sentido);
-        break;
+        query.addOrderBy('historialIncidentes.fecha', sentido)
+        break
       default:
-        query.orderBy('historialIncidentes.id', 'DESC');
+        query.orderBy('historialIncidentes.id', 'DESC')
     }
-    return await query.getManyAndCount();
+    return await query.getManyAndCount()
   }
   async crear(insidenteDto: CrearHistorialIncidentesDto) {
-    const nuevoHistorialIncidentes = new HistorialIncidentes();
-    nuevoHistorialIncidentes.fecha = insidenteDto.fecha;
-    nuevoHistorialIncidentes.idAlarma = insidenteDto.idAlarma;
-    nuevoHistorialIncidentes.idSensor = insidenteDto.idSensor;
-    nuevoHistorialIncidentes.estado = 'ACTIVO';
+    const nuevoHistorialIncidentes = new HistorialIncidentes()
+    nuevoHistorialIncidentes.fecha = insidenteDto.fecha
+    nuevoHistorialIncidentes.idAlarma = insidenteDto.idAlarma
+    nuevoHistorialIncidentes.idSensor = insidenteDto.idSensor
+    nuevoHistorialIncidentes.estado = 'ACTIVO'
     const result = await this.dataSource
       .getRepository(HistorialIncidentes)
-      .save(nuevoHistorialIncidentes);
+      .save(nuevoHistorialIncidentes)
     insidenteDto.fotos.map(async (foto) => {
-      const nuevaFoto = new Fotos();
-      nuevaFoto.foto = foto;
-      nuevaFoto.idIncidente = result.id;
-      await this.dataSource.getRepository(Fotos).save(nuevaFoto);
-    });
-    return result;
+      const nuevaFoto = new Fotos()
+      nuevaFoto.foto = foto
+      nuevaFoto.idIncidente = result.id
+      await this.dataSource.getRepository(Fotos).save(nuevaFoto)
+    })
+    return result
   }
   async inactivar(id: string, transaction: EntityManager) {
     return await transaction
@@ -70,17 +70,17 @@ export class HistorialIncidenteRepository {
         estado: 'INACTIVO',
       })
       .where('id = :id', { id })
-      .execute();
+      .execute()
   }
   async inactivarPorFecha(
     fechaInicio: string,
     fechaFin: string,
-    transaction: EntityManager,
+    transaction: EntityManager
   ) {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-    console.log(fechaInicio);
-    console.log(fechaFin);
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+    console.log(fechaInicio)
+    console.log(fechaFin)
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
 
     return await transaction
       .getRepository(HistorialIncidentes)
@@ -91,9 +91,9 @@ export class HistorialIncidenteRepository {
       })
       .where('fecha >= :fecha1', { fecha1: fechaInicio })
       .andWhere('fecha <= :fecha2', { fecha2: fechaFin })
-      .execute();
+      .execute()
   }
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
-    return this.dataSource.manager.transaction<T>(op);
+    return this.dataSource.manager.transaction<T>(op)
   }
 }

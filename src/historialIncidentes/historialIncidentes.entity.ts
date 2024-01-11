@@ -5,28 +5,32 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
-} from 'typeorm';
-import { Alarma } from '../alarma/entity/alarmas.entity';
-import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity';
-import { Fotos } from './fotos.entity';
-
-@Entity({ name: 'historialIncidentes' })
+} from 'typeorm'
+import { Alarma } from '../alarma/entity/alarmas.entity'
+import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity'
+import { Fotos } from './fotos.entity'
+import * as dotenv from 'dotenv'
+dotenv.config()
+@Entity({
+  name: 'historialIncidentes',
+  schema: process.env.DB_SCHEMA_PROYECTOS,
+})
 export class HistorialIncidentes {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
-  id: string;
+  id: string
 
   @Column({ type: 'timestamptz', nullable: false })
-  fecha: Date;
+  fecha: Date
 
   @Column({ length: 20, type: 'varchar' })
-  estado: string;
+  estado: string
 
   @Column({
     name: 'idAlarma',
     type: 'bigint',
     nullable: false,
   })
-  idAlarma: string;
+  idAlarma: string
   @ManyToOne(() => Alarma, (alarma) => alarma.historialIncidentes, {
     nullable: false,
   })
@@ -34,14 +38,14 @@ export class HistorialIncidentes {
     name: 'idAlarma',
     referencedColumnName: 'id',
   })
-  alarma: Alarma;
+  alarma: Alarma
 
   @Column({
     name: 'id_sensor',
     type: 'bigint',
     nullable: false,
   })
-  idSensor: string;
+  idSensor: string
   @ManyToOne(() => SensorActuador, (sensor) => sensor.historialIncidentes, {
     nullable: false,
   })
@@ -49,11 +53,11 @@ export class HistorialIncidentes {
     name: 'id_sensor',
     referencedColumnName: 'id',
   })
-  sensor: SensorActuador;
+  sensor: SensorActuador
   @OneToMany(() => Fotos, (foto) => foto.historialIncidente)
-  fotos: Fotos[];
+  fotos: Fotos[]
 
   constructor(data?: Partial<HistorialIncidentes>) {
-    if (data) Object.assign(this, data);
+    if (data) Object.assign(this, data)
   }
 }

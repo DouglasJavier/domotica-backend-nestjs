@@ -4,25 +4,26 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-} from 'typeorm';
-import { Alarma } from '../alarma/entity/alarmas.entity';
-import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity';
-import { HistorialIncidentes } from './historialIncidentes.entity';
-
-@Entity({ name: 'fotosIncidentes' })
+} from 'typeorm'
+import { Alarma } from '../alarma/entity/alarmas.entity'
+import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity'
+import { HistorialIncidentes } from './historialIncidentes.entity'
+import * as dotenv from 'dotenv'
+dotenv.config()
+@Entity({ name: 'fotosIncidentes', schema: process.env.DB_SCHEMA_PROYECTOS })
 export class Fotos {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
-  id: string;
+  id: string
 
   @Column({ type: 'varchar' })
-  foto: string;
+  foto: string
 
   @Column({
     name: 'id_incidente',
     type: 'bigint',
     nullable: false,
   })
-  idIncidente: string;
+  idIncidente: string
   @ManyToOne(() => HistorialIncidentes, (incidente) => incidente.fotos, {
     nullable: false,
   })
@@ -30,5 +31,5 @@ export class Fotos {
     name: 'id_incidente',
     referencedColumnName: 'id',
   })
-  historialIncidente: HistorialIncidentes;
+  historialIncidente: HistorialIncidentes
 }

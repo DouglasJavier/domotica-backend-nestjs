@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
-import { UbicacionAlarma } from '../entity/ubicacionesAlarmas.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { DataSource, Repository } from 'typeorm'
+import { UbicacionAlarma } from '../entity/ubicacionesAlarmas.entity'
 
 @Injectable()
 export class ubicacionAlarmaRepository {
@@ -16,6 +16,6 @@ export class ubicacionAlarmaRepository {
       })
       .where('idAlarma = :idAlarma', { idAlarma })
       // .andWhere('id_articulo IN(:...ids)', { ids: articulos })
-      .execute();
+      .execute()
   }
 }

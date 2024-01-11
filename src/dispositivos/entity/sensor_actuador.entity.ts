@@ -5,32 +5,36 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
-} from 'typeorm';
-import { Ubicacion } from '../../ubicaciones/ubicaciones.entity';
-import { SimuladorActuador } from 'src/simulador/entity/simulador_actuador.entity';
-import { Dispositivo } from './dispositivo.entity';
-import { HistorialIncidentes } from 'src/historialIncidentes/historialIncidentes.entity';
-
-@Entity({ name: 'sensores_actuadores' })
+} from 'typeorm'
+import { Ubicacion } from '../../ubicaciones/ubicaciones.entity'
+import { SimuladorActuador } from 'src/simulador/entity/simulador_actuador.entity'
+import { Dispositivo } from './dispositivo.entity'
+import { HistorialIncidentes } from 'src/historialIncidentes/historialIncidentes.entity'
+import * as dotenv from 'dotenv'
+dotenv.config()
+@Entity({
+  name: 'sensores_actuadores',
+  schema: process.env.DB_SCHEMA_PROYECTOS,
+})
 export class SensorActuador {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
-  id: string;
+  id: string
 
   @Column({ length: 5, type: 'varchar', nullable: false })
-  pin: string;
+  pin: string
 
   @Column({ length: 25, type: 'varchar', nullable: false })
-  tipo: string;
+  tipo: string
 
   @Column({ type: 'varchar' })
-  descripcion: string;
+  descripcion: string
 
   @Column({
     name: 'id_ubicacion',
     type: 'bigint',
     nullable: false,
   })
-  idUbicacion: string;
+  idUbicacion: string
   @ManyToOne(() => Ubicacion, (ubicacion) => ubicacion.sensores, {
     nullable: false,
   })
@@ -38,39 +42,39 @@ export class SensorActuador {
     name: 'id_ubicacion',
     referencedColumnName: 'id',
   })
-  ubicacion: Ubicacion;
+  ubicacion: Ubicacion
 
   @Column({ length: 20, type: 'varchar' })
-  estado: string;
+  estado: string
 
   @Column({
     name: 'id_dispositivo',
     type: 'bigint',
     nullable: false,
   })
-  idDispositivo: string;
+  idDispositivo: string
   @ManyToOne(
     () => Dispositivo,
     (dispositivo) => dispositivo.sensoresActuadores,
     {
       nullable: false,
-    },
+    }
   )
   @JoinColumn({
     name: 'id_dispositivo',
     referencedColumnName: 'id',
   })
-  dispositivo: Dispositivo;
+  dispositivo: Dispositivo
 
   @OneToMany(
     () => SimuladorActuador,
-    (simuladorActuador) => simuladorActuador.actuador,
+    (simuladorActuador) => simuladorActuador.actuador
   )
-  simuladorActuador: SimuladorActuador[];
+  simuladorActuador: SimuladorActuador[]
 
   @OneToMany(
     () => HistorialIncidentes,
-    (historialIncidentes) => historialIncidentes.sensor,
+    (historialIncidentes) => historialIncidentes.sensor
   )
-  historialIncidentes: HistorialIncidentes[];
+  historialIncidentes: HistorialIncidentes[]
 }

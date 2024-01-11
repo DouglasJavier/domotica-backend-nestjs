@@ -4,26 +4,26 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-} from 'typeorm';
-import { Alarma } from './alarmas.entity';
-import { Contacto } from '../../contactos/contactos.entity';
-/* import { User } from './users.entity';
-import { Cars } from './cars.entity'; */
+} from 'typeorm'
+import { Alarma } from './alarmas.entity'
+import { Contacto } from '../../contactos/contactos.entity'
+import * as dotenv from 'dotenv'
+dotenv.config()
 
-@Entity({ name: 'alarmasContactos' })
+@Entity({ name: 'alarmasContactos', schema: process.env.DB_SCHEMA_PROYECTO })
 export class AlarmaContacto {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
-  id: string;
+  id: string
 
   @Column({ length: 20, type: 'varchar' })
-  estado: string;
+  estado: string
 
   @Column({
     name: 'idAlarma',
     type: 'bigint',
     nullable: false,
   })
-  idAlarma: string;
+  idAlarma: string
   @ManyToOne(() => Alarma, (alarma) => alarma.alarmaContactos, {
     nullable: false,
   })
@@ -31,14 +31,14 @@ export class AlarmaContacto {
     name: 'idAlarma',
     referencedColumnName: 'id',
   })
-  alarma: Alarma;
+  alarma: Alarma
 
   @Column({
     name: 'idContacto',
     type: 'bigint',
     nullable: false,
   })
-  idContacto: string;
+  idContacto: string
   @ManyToOne(() => Contacto, (contacto) => contacto.alarmaContactos, {
     nullable: false,
   })
@@ -46,5 +46,5 @@ export class AlarmaContacto {
     name: 'idContacto',
     referencedColumnName: 'id',
   })
-  contacto: Contacto;
+  contacto: Contacto
 }

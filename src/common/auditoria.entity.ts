@@ -5,7 +5,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from 'typeorm'
 
 export enum Transaccion {
   CREAR = 'CREAR',
@@ -19,7 +19,7 @@ export abstract class AuditoriaEntity extends BaseEntity {
     nullable: false,
     comment: 'Estado del registro',
   })
-  estado: string;
+  estado: string
 
   @Column('varchar', {
     name: '_transaccion',
@@ -27,14 +27,14 @@ export abstract class AuditoriaEntity extends BaseEntity {
     nullable: false,
     comment: 'Tipo de operación ejecutada',
   })
-  transaccion: string;
+  transaccion: string
 
   @Column('bigint', {
     name: '_usuario_creacion',
     nullable: false,
     comment: 'Id de usuario que creó el registro',
   })
-  usuarioCreacion: string;
+  usuarioCreacion: string
 
   @CreateDateColumn({
     name: '_fecha_creacion',
@@ -43,14 +43,14 @@ export abstract class AuditoriaEntity extends BaseEntity {
     default: () => 'now()',
     comment: 'Fecha de creación',
   })
-  fechaCreacion: Date;
+  fechaCreacion: Date
 
   @Column('bigint', {
     name: '_usuario_modificacion',
     nullable: true,
     comment: 'Id de usuario que realizo una modificación',
   })
-  usuarioModificacion?: string | null;
+  usuarioModificacion?: string | null
 
   @UpdateDateColumn({
     name: '_fecha_modificacion',
@@ -58,20 +58,20 @@ export abstract class AuditoriaEntity extends BaseEntity {
     nullable: true,
     comment: 'Fecha en que se realizó una modificación',
   })
-  fechaModificacion?: Date | null;
+  fechaModificacion?: Date | null
 
   @BeforeInsert()
   insertarTransaccion() {
-    this.transaccion = this.transaccion || Transaccion.CREAR;
+    this.transaccion = this.transaccion || Transaccion.CREAR
   }
 
   @BeforeUpdate()
   actualizarTransaccion() {
-    this.transaccion = this.transaccion || Transaccion.ACTUALIZAR;
+    this.transaccion = this.transaccion || Transaccion.ACTUALIZAR
   }
 
   protected constructor(data?: Partial<AuditoriaEntity>) {
-    super();
-    if (data) Object.assign(this, data);
+    super()
+    if (data) Object.assign(this, data)
   }
 }
