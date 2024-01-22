@@ -10,10 +10,11 @@ import { Alarma } from '../alarma/entity/alarmas.entity'
 import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity'
 import { Fotos } from './fotos.entity'
 import * as dotenv from 'dotenv'
+import { Usuario } from 'src/core/usuario/usuario.entity'
 dotenv.config()
 @Entity({
   name: 'historialIncidentes',
-  schema: process.env.DB_SCHEMA_PROYECTOS,
+  schema: process.env.DB_SCHEMA_PROYECTO,
 })
 export class HistorialIncidentes {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -24,6 +25,23 @@ export class HistorialIncidentes {
 
   @Column({ length: 20, type: 'varchar' })
   estado: string
+
+  /* @Column({ name: 'usuario_auditoria', length: 20, type: 'varchar' })
+  usuarioAuditoria: string */
+  @Column({
+    name: 'usuario_auditoria',
+    type: 'bigint',
+    nullable: true,
+  })
+  idUsuarioAuditoria: string
+  @ManyToOne(() => Usuario, (usuario) => usuario.historialIncidentes, {
+    nullable: true,
+  })
+  @JoinColumn({
+    name: 'usuario_auditoria',
+    referencedColumnName: 'id',
+  })
+  usuarioAuditoria: Usuario
 
   @Column({
     name: 'idAlarma',

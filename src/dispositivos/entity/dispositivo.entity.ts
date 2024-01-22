@@ -10,7 +10,7 @@ import { Ubicacion } from '../../ubicaciones/ubicaciones.entity'
 import { SensorActuador } from './sensor_actuador.entity'
 import * as dotenv from 'dotenv'
 dotenv.config()
-@Entity({ name: 'dispositivos', schema: process.env.DB_SCHEMA_PROYECTOS })
+@Entity({ name: 'dispositivos', schema: process.env.DB_SCHEMA_PROYECTO })
 export class Dispositivo {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string

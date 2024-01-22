@@ -37,6 +37,9 @@ export class AuthService {
 
     // verificar si la cuenta esta bloqueada
     if (respuesta.intentos > 5) {
+      await this.usuarioService._actualizar(respuesta.id, {
+        estado: 'BLOQUEADO',
+      })
       throw new UnauthorizedException('Usuario bloqueado')
     }
 

@@ -1,20 +1,12 @@
-import {
-  Body,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common'
+import { Body, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
 
 import { Controller } from '@nestjs/common'
 import { AlarmaService } from '../service/alarma.service'
-import { Alarma } from '../entity/alarmas.entity'
 import { AlarmaCRUDType } from '../dto/alarmaCRUDType'
-import path from 'path'
+import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
+import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 
+@UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('alarmas')
 export class AlarmaController {
   constructor(private alarmaService: AlarmaService) {}

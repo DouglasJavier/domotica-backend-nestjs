@@ -10,3 +10,7 @@ export class RegistroIncidenteDto {
   idDispositivo: string
   pin: string
 }
+
+export class AtencionIncidentesDto {
+  idIncidentes: string[]
+}

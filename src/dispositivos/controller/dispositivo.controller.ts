@@ -1,11 +1,23 @@
-import { Body, Get, Param, Patch, Post, Query, Req } from '@nestjs/common'
+import {
+  Body,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common'
 
 import { Controller } from '@nestjs/common'
 import { DispositivoService } from '../service/dispositivo.service'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
 import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto'
+import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
+import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 
+@UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('dispositivos')
 export class DispositivoController {
   constructor(private dispositivoServicio: DispositivoService) {}

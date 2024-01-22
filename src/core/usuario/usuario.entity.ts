@@ -1,6 +1,7 @@
 import { HistorialActivarDesactivar } from 'src/historialActivarDesactivar/historialActivarDesactivar.entity'
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
 import * as dotenv from 'dotenv'
+import { HistorialIncidentes } from 'src/historialIncidentes/historialIncidentes.entity'
 dotenv.config()
 
 @Entity({ name: 'usuario', schema: process.env.DB_SCHEMA_USUARIOS })
@@ -34,6 +35,12 @@ export class Usuario {
     (historialActivarDesactivar) => historialActivarDesactivar.usuario
   )
   historialActivarDesactivar: HistorialActivarDesactivar[]
+
+  @OneToMany(
+    () => HistorialIncidentes,
+    (historialIncidentes) => historialIncidentes.usuarioAuditoria
+  )
+  historialIncidentes: HistorialIncidentes[]
 
   constructor(data?: Partial<Usuario>) {
     if (data) Object.assign(this, data)

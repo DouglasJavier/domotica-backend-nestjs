@@ -4,7 +4,7 @@ import { Alarma } from '../../alarma/entity/alarmas.entity'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-@Entity({ name: 'simuladores', schema: process.env.DB_SCHEMA_PROYECTOS })
+@Entity({ name: 'simuladores', schema: process.env.DB_SCHEMA_PROYECTO })
 export class Simulador {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string

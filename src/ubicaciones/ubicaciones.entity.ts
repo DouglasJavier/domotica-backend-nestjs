@@ -4,7 +4,10 @@ import { UbicacionAlarma } from '../alarma/entity/ubicacionesAlarmas.entity'
 import { Dispositivo } from '../dispositivos/entity/dispositivo.entity'
 import * as dotenv from 'dotenv'
 dotenv.config()
-@Entity({ name: 'ubicaciones', schema: process.env.DB_SCHEMA_PROYECTOS })
+console.log('```````````````````````````````````````````')
+console.log(process.env.DB_SCHEMA_PROYECTO)
+console.log('```````````````````````````````````````````')
+@Entity({ name: 'ubicaciones', schema: process.env.DB_SCHEMA_PROYECTO })
 export class Ubicacion {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string

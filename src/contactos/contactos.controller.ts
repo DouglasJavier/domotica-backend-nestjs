@@ -1,13 +1,12 @@
 import {
   Body,
-  Delete,
   Get,
   Param,
   Patch,
   Post,
-  Put,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common'
 
 import { Controller } from '@nestjs/common'
@@ -15,7 +14,10 @@ import { ContactoService } from './contactos.service'
 import { ContactoCRUDType } from './dto/ContactoCRUDType'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
+import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
+import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 
+@UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('contactos')
 export class ContactoController {
   constructor(private contactoServicio: ContactoService) {}

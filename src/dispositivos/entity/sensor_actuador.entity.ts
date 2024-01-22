@@ -14,7 +14,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 @Entity({
   name: 'sensores_actuadores',
-  schema: process.env.DB_SCHEMA_PROYECTOS,
+  schema: process.env.DB_SCHEMA_PROYECTO,
 })
 export class SensorActuador {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })

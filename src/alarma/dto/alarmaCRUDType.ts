@@ -1,11 +1,11 @@
 export interface AlarmaCRUDType {
   envio_noti: string
   idContactos: string[]
-  idSimulador: string
+  idSimulador: string | null
   idUbicaciones: string[]
   nombre: string
-  notificacion: boolean
-  sonido: boolean
+  sonido: string
+  alumbradoAutomatico: boolean
   seguridadBienes: boolean
-  seguridadPersonas: boolean
+  sensoresHumo: boolean
 }

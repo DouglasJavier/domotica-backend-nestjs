@@ -3,6 +3,7 @@ export class PaginacionQueryDto {
   salto?: number
   sentido?: 'ASC' | 'DESC'
   campo?: string
+  estado?: string
 }
 
 export class IntervaloFechasDto {

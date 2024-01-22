@@ -11,7 +11,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 @Entity({
   name: 'historialActivarDesactivar',
-  schema: process.env.DB_SCHEMA_PROYECTOS,
+  schema: process.env.DB_SCHEMA_PROYECTO,
 })
 export class HistorialActivarDesactivar {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })

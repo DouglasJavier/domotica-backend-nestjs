@@ -8,7 +8,7 @@ import {
 import { SimuladorActuador } from './simulador_actuador.entity'
 import * as dotenv from 'dotenv'
 dotenv.config()
-@Entity({ name: 'horarios', schema: process.env.DB_SCHEMA_PROYECTOS })
+@Entity({ name: 'horarios', schema: process.env.DB_SCHEMA_PROYECTO })
 export class Horario {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string

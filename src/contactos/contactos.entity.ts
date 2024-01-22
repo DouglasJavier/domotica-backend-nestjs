@@ -17,7 +17,7 @@ export class Contacto {
   @Column({ length: 50, type: 'varchar', unique: true })
   numeroTel1: string
 
-  @Column({ length: 50, type: 'varchar', unique: true, nullable: true })
+  @Column({ length: 50, type: 'varchar', nullable: true })
   numeroTel2: string
 
   @Column({ length: 50, type: 'varchar' })

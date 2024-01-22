@@ -10,7 +10,7 @@ import { Fotos } from './fotos.entity'
 export class HistorialIncidenteRepository {
   constructor(private dataSource: DataSource) {}
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, salto, campo, sentido } = paginacionQueryDto
+    const { limite, salto, campo, sentido, estado } = paginacionQueryDto
 
     const query = this.dataSource
       .getRepository(HistorialIncidentes)
@@ -31,7 +31,11 @@ export class HistorialIncidenteRepository {
         'sensor.descripcion',
         'ubicacion',
       ])
-      .where('historialIncidentes.estado != :estado', { estado: 'INACTIVO' })
+      .where('historialIncidentes.estado != :estado2', { estado2: 'INACTIVO' })
+    if (limite) query.take(limite)
+    if (salto) query.skip(salto)
+    if (estado)
+      query.andWhere('historialIncidentes.estado = :estado', { estado })
     switch (campo) {
       case 'id':
         query.addOrderBy('historialIncidentes.id', sentido)
@@ -49,7 +53,7 @@ export class HistorialIncidenteRepository {
     nuevoHistorialIncidentes.fecha = insidenteDto.fecha
     nuevoHistorialIncidentes.idAlarma = insidenteDto.idAlarma
     nuevoHistorialIncidentes.idSensor = insidenteDto.idSensor
-    nuevoHistorialIncidentes.estado = 'ACTIVO'
+    nuevoHistorialIncidentes.estado = 'DESATENDIDO'
     const result = await this.dataSource
       .getRepository(HistorialIncidentes)
       .save(nuevoHistorialIncidentes)
@@ -70,6 +74,17 @@ export class HistorialIncidenteRepository {
         estado: 'INACTIVO',
       })
       .where('id = :id', { id })
+      .execute()
+  }
+  async cambiarEstados(idIncidentes: string[], estado: string) {
+    return await this.dataSource
+      .getRepository(HistorialIncidentes)
+      .createQueryBuilder()
+      .update(HistorialIncidentes)
+      .set({
+        estado: estado,
+      })
+      .whereInIds(idIncidentes)
       .execute()
   }
   async inactivarPorFecha(

@@ -13,7 +13,7 @@ import { HistorialActivarDesactivar } from '../../historialActivarDesactivar/his
 import { HistorialIncidentes } from '../../historialIncidentes/historialIncidentes.entity'
 import * as dotenv from 'dotenv'
 dotenv.config()
-@Entity({ name: 'parametros', schema: process.env.DB_SCHEMA_PROYECTO })
+@Entity({ name: 'alarmas', schema: process.env.DB_SCHEMA_PROYECTO })
 export class Alarma {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
@@ -24,20 +24,20 @@ export class Alarma {
   @Column({ length: 50, type: 'varchar', unique: true })
   nombre: string
 
-  @Column({ type: 'boolean', default: false })
-  sonido: boolean
-
-  @Column({ type: 'boolean', default: false })
-  notificacion: boolean
+  @Column({ length: 2, type: 'varchar' })
+  sonido: string
 
   @Column({ length: 50, type: 'varchar' })
   envio_noti: string
 
-  @Column({ name: 'seguridad_personas', type: 'boolean', default: false })
-  seguridadPersonas: boolean
+  @Column({ name: 'alumbrado_automatico', type: 'boolean', default: false })
+  alumbradoAutomatico: boolean
 
   @Column({ name: 'seguridad_bienes', type: 'boolean', default: false })
   seguridadBienes: boolean
+
+  @Column({ name: 'sensores_humo', type: 'boolean', default: false })
+  sensoresHumo: boolean
 
   @OneToMany(() => AlarmaContacto, (alarmaContacto) => alarmaContacto.alarma)
   alarmaContactos: AlarmaContacto[]
@@ -56,7 +56,7 @@ export class Alarma {
     type: 'bigint',
     nullable: true,
   })
-  idSimulador: string
+  idSimulador: string | null
   @ManyToOne(() => Simulador, (simulador) => simulador.alarmas, {
     nullable: true,
   })
@@ -64,7 +64,7 @@ export class Alarma {
     name: 'id_simulador',
     referencedColumnName: 'id',
   })
-  simulador: Simulador
+  simulador: Simulador | null
 
   @OneToMany(
     () => HistorialIncidentes,

@@ -25,17 +25,37 @@ export class DispositivoService {
         dispositivoDto,
         transaction
       )
-      const respuestaDisp = await axios
-        .post(`http://${dispositivoDto.direccionLan}/conf_pin`, {
-          idDispositivo: dispositivo.id,
-          sensoresActuadores: dispositivoDto.sensoresActuadores,
-        })
-        .catch((err) => {
-          throw new NotFoundException('Direcion de dispositivo no valida')
-        })
-      if (!respuestaDisp) {
-        throw new NotFoundException('Respuesta invalida')
-      }
+      /* const tiempoLimite = 5000 // 5000 milisegundos (5 segundos)
+
+      try {
+        const respuestaDisp = await axios.post(
+          `http://${dispositivoDto.direccionLan}/conf_pin`,
+          {
+            idDispositivo: dispositivo.id,
+            sensoresActuadores: dispositivoDto.sensoresActuadores,
+          },
+          {
+            timeout: tiempoLimite,
+          }
+        )
+
+        // El resto de tu lógica aquí para manejar la respuesta exitosa
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.code === 'ECONNABORTED') {
+            // Manejar el error de tiempo de espera aquí
+            console.error('La solicitud ha excedido el tiempo límite de espera')
+            throw new NotFoundException('Dirección de dispositivo no válida')
+          } else {
+            // Otros errores de Axios
+            throw new NotFoundException('Error en la solicitud')
+          }
+        } else {
+          // Otros tipos de errores
+          throw error
+        }
+      } */
+
       return dispositivo
     }
     return this.dispositivoRepositorio.runTransaction(op)

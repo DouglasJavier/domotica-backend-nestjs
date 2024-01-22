@@ -30,8 +30,10 @@ export class SimuladorRepository {
         'horario.horaFin',
       ])
       .where('simulador.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('simuladorActuador.estado = :estado')
-      .andWhere('horario.estado = :estado')
+      .andWhere('(simuladorActuador.estado = :estado OR simulador.id = :id)', {
+        id: '1',
+      })
+      .andWhere('(horario.estado = :estado OR simulador.id = :id)', { id: '1' })
 
     if (limite) query.take(limite)
     if (salto) query.skip(salto)

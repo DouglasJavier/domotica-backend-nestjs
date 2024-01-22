@@ -4,7 +4,10 @@ import {
   PaginacionQueryDto,
 } from 'src/common/dto/paginacionDto'
 import { HistorialIncidenteRepository } from './historialIncidentes.repository'
-import { RegistroIncidenteDto } from './dto/crear-historialIncidenteDto'
+import {
+  AtencionIncidentesDto,
+  RegistroIncidenteDto,
+} from './dto/crear-historialIncidenteDto'
 import { SensorActuadorRepository } from 'src/dispositivos/repository/sensor_actuador.repository'
 import { AlarmaRepository } from 'src/alarma/repository/alarma.repository'
 import { EntityManager } from 'typeorm'
@@ -54,6 +57,16 @@ export class HistorialIncidentesService {
     })
     this.enviarFotosPorTelegram(fotosCapturadas)
     return historialIncidente
+  }
+
+  async atencionIncidentes(
+    atencionIncidentesDto: AtencionIncidentesDto,
+    estado: string
+  ) {
+    this.historialIncidentesRepositorio.cambiarEstados(
+      atencionIncidentesDto.idIncidentes,
+      estado
+    )
   }
 
   async inactivarPorFecha(intervaloFecha: IntervaloFechasDto) {

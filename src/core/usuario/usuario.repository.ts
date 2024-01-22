@@ -14,7 +14,7 @@ export class UsuarioRepository {
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
       .select(['usuario'])
-      .where('usuario.estado = :estado', { estado: 'ACTIVO' })
+    /* .where('usuario.estado = :estado', { estado: 'ACTIVO' }) */
     //.andWhere('alarmaUsuarios.estado = :estado');
     if (limite) query.take(limite)
     if (salto) query.skip(salto)
@@ -56,6 +56,14 @@ export class UsuarioRepository {
       .select(['usuario'])
       .where('usuario.usuario = :user', { user })
       .andWhere('usuario.estado = :estado', { estado: 'ACTIVO' })
+    return await query.getOne()
+  }
+  async buscarPorId(id: string) {
+    const query = this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .select(['usuario'])
+      .where('usuario.id = :id', { id })
     return await query.getOne()
   }
 }

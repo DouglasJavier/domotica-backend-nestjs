@@ -5,3 +5,9 @@ export interface UsuarioCRUDType {
   contrasenia: string
   rol: string
 }
+
+export interface UsuarioEditarType {
+  usuario: string
+  contrasenia1: string
+  contrasenia2?: string
+}

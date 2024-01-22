@@ -72,11 +72,11 @@ export class AlarmaRepository {
     const alarma = new Alarma()
     alarma.nombre = alarmaDto.nombre
     alarma.seguridadBienes = alarmaDto.seguridadBienes
-    alarma.seguridadPersonas = alarmaDto.seguridadPersonas
+    alarma.sensoresHumo = alarmaDto.sensoresHumo
     alarma.envio_noti = alarmaDto.envio_noti
-    alarma.idSimulador = alarmaDto.idSimulador
+    alarma.idSimulador = alarmaDto.idSimulador || null
     alarma.sonido = alarmaDto.sonido
-    alarma.notificacion = alarmaDto.notificacion
+    alarma.alumbradoAutomatico = alarmaDto.alumbradoAutomatico
     alarma.idSimulador = alarmaDto.idSimulador
     alarma.estado = 'ACTIVO'
     const result = await transaction.getRepository(Alarma).save(alarma)
