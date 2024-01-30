@@ -26,6 +26,7 @@ export class ContactoRepository {
         'alarma.nombre',
       ])
       .where('contacto.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('alarmaContactos.estado = :estado')
     //.andWhere('alarmaContactos.estado = :estado');
     if (limite) query.take(limite)
     if (salto) query.skip(salto)

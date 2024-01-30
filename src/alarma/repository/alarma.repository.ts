@@ -34,6 +34,7 @@ export class AlarmaRepository {
       ])
       .orderBy('alarma.id', 'DESC')
       .andWhere('alarma.estado != :estado', { estado: 'INACTIVO' })
+      .andWhere('alarmaContacto.estado != :estado')
       .getManyAndCount()
     return respuesta
   }
