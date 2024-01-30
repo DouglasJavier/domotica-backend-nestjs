@@ -13,6 +13,8 @@ import { ubicacionAlarmaRepository } from '../repository/ubicacionAlarma.reposit
 import { EntityManager } from 'typeorm'
 import axios from 'axios'
 import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
+import { HistorialIncidentesService } from 'src/historialIncidentes/historialIncidentes.service'
+import { AccionConst } from 'src/common/constants'
 
 @Injectable()
 export class AlarmaService {
@@ -22,7 +24,8 @@ export class AlarmaService {
     private historialRepository: HistorialActivarDesactivarRepository,
     private alarmasContactosRepository: AlarmaContactoRepository,
     private ubicacionesAlarmasRepository: ubicacionAlarmaRepository,
-    private dispositivoRepository: DispositivoRepository
+    private dispositivoRepository: DispositivoRepository,
+    private incidentesService: HistorialIncidentesService
   ) {}
   async listaAlarmas() {
     const respuesta = this.alarmaRepository.listaAlarmas()
@@ -161,6 +164,7 @@ export class AlarmaService {
         },
         transaction
       )
+      this.incidentesService.accionSirenas(AccionConst.APAGAR)
       for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
         const dispositivos =
           await this.dispositivoRepository.buscarPorIdUbicaciónSensores(
