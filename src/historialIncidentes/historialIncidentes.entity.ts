@@ -23,6 +23,9 @@ export class HistorialIncidentes {
   @Column({ type: 'timestamptz', nullable: false })
   fecha: Date
 
+  @Column({ name: 'feacha_atencion', type: 'timestamptz', nullable: true })
+  fechaAtencion: Date
+
   @Column({ length: 20, type: 'varchar' })
   estado: string
 

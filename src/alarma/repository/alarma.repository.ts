@@ -42,7 +42,9 @@ export class AlarmaRepository {
       .getRepository(Alarma)
       .createQueryBuilder('alarma')
       .leftJoin('alarma.ubicacionAlarmas', 'ubicaciones')
-      .select(['alarma', 'ubicaciones'])
+      .leftJoin('alarma.alarmaContactos', 'alarmaContactos')
+      .leftJoin('alarmaContactos.contacto', 'contacto')
+      .select(['alarma', 'alarmaContactos.id', 'contacto'])
       .where('alarma.id = :id', { id: id })
       .getOne()
     if (!alarma) throw new NotFoundException('Articulo no encontrado')
@@ -80,6 +82,9 @@ export class AlarmaRepository {
     alarma.idSimulador = alarmaDto.idSimulador
     alarma.estado = 'ACTIVO'
     const result = await transaction.getRepository(Alarma).save(alarma)
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    console.log(alarmaDto.idContactos)
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     await alarmaDto.idContactos.map(async (idContacto) => {
       const alarmaContacto = new AlarmaContacto()
       alarmaContacto.idContacto = idContacto

@@ -149,6 +149,18 @@ export class DispositivoRepository {
     return query.getMany()
   }
 
+  async buscarPorDescricionSensoresActuadores(tipo: string) {
+    const query = this.dataSource
+      .getRepository(Dispositivo)
+      .createQueryBuilder('dispositivo')
+      .leftJoin('dispositivo.sensoresActuadores', 'sensorActuador')
+      .select(['dispositivo', 'sensorActuador.pin'])
+      .where('sensorActuador.descripcion = :tipo', { tipo })
+      .andWhere('dispositivo.estado = :estado', { estado: 'ACTIVO' })
+      .andWhere('sensorActuador.estado = :estado', { estado: 'ACTIVO' })
+    return query.getMany()
+  }
+
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
     return this.dataSource.manager.transaction<T>(op)
   }

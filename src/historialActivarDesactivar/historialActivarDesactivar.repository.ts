@@ -24,8 +24,12 @@ export class HistorialActivarDesactivarRepository {
       .save(historial)
   }
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, salto, campo, sentido } = paginacionQueryDto
-
+    const { limite, pagina } = paginacionQueryDto
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    console.log(limite)
+    console.log((pagina - 1) * limite)
+    console.log(pagina)
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     const query = this.dataSource
       .getRepository(HistorialActivarDesactivar)
       .createQueryBuilder('historialActivarDesactivar')
@@ -42,6 +46,9 @@ export class HistorialActivarDesactivarRepository {
       .where('historialActivarDesactivar.estado != :estado', {
         estado: 'INACTIVO',
       })
+    /* .skip((pagina - 1) * limite)
+      .take(limite) */
+    /* 
     switch (campo) {
       case 'id':
         query.addOrderBy('historialActivarDesactivar.id', sentido)
@@ -51,7 +58,9 @@ export class HistorialActivarDesactivarRepository {
         break
       default:
         query.orderBy('historialActivarDesactivar.id', 'DESC')
-    }
+    } */
+    if (pagina) query.skip((pagina - 1) * limite)
+    if (limite) query.take(limite)
     return await query.getManyAndCount()
   }
   async inactivar(id: string, transaction: EntityManager) {

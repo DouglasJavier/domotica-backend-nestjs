@@ -64,6 +64,14 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       '/historialIncidentes/fotos/:fileId': {
         [RolEnum.ADMINISTRADOR]: 'PATCH',
       },
+      '/historialIncidentes/:id/atender': {
+        [RolEnum.ADMINISTRADOR]: 'PATCH',
+        [RolEnum.USUARIO]: 'PATCH',
+      },
+      '/historialIncidentes/:id/descartar': {
+        [RolEnum.ADMINISTRADOR]: 'PATCH',
+        [RolEnum.USUARIO]: 'PATCH',
+      },
       '/historialActivarDesactivar': {
         [RolEnum.ADMINISTRADOR]: 'GET',
         [RolEnum.USUARIO]: 'GET',
@@ -114,7 +122,8 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         [RolEnum.USUARIO]: 'GET',
       },
       '/alarmas/:id': {
-        [RolEnum.ADMINISTRADOR]: 'PATCH',
+        [RolEnum.ADMINISTRADOR]: 'GET|PATCH',
+        [RolEnum.USUARIO]: 'GET',
       },
       '/alarmas/:id/encender': {
         [RolEnum.ADMINISTRADOR]: 'PATCH',

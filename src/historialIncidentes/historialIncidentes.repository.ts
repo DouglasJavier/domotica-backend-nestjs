@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { Brackets, DataSource, EntityManager } from 'typeorm'
 import { PaginacionQueryDto } from '../common/dto/paginacionDto'
 import { HistorialIncidentes } from './historialIncidentes.entity'
@@ -48,6 +48,18 @@ export class HistorialIncidenteRepository {
     }
     return await query.getManyAndCount()
   }
+
+  async buscarPorId(id: string) {
+    const result = await this.dataSource
+      .getRepository(HistorialIncidentes)
+      .createQueryBuilder('historialIncidente')
+      .leftJoin('historialIncidente.alarma', 'alarma')
+      .select(['historialIncidente', 'alarma'])
+      .where('historialIncidente.id = :id', { id: id })
+      .getOne()
+    return result
+  }
+
   async crear(insidenteDto: CrearHistorialIncidentesDto) {
     const nuevoHistorialIncidentes = new HistorialIncidentes()
     nuevoHistorialIncidentes.fecha = insidenteDto.fecha
@@ -57,12 +69,12 @@ export class HistorialIncidenteRepository {
     const result = await this.dataSource
       .getRepository(HistorialIncidentes)
       .save(nuevoHistorialIncidentes)
-    insidenteDto.fotos.map(async (foto) => {
+    /* insidenteDto.fotos.map(async (foto) => {
       const nuevaFoto = new Fotos()
       nuevaFoto.foto = foto
       nuevaFoto.idIncidente = result.id
       await this.dataSource.getRepository(Fotos).save(nuevaFoto)
-    })
+    }) */
     return result
   }
   async inactivar(id: string, transaction: EntityManager) {
@@ -76,15 +88,16 @@ export class HistorialIncidenteRepository {
       .where('id = :id', { id })
       .execute()
   }
-  async cambiarEstados(idIncidentes: string[], estado: string) {
+  async cambiarEstados(id: string, estado: string, usuarioAuditoria: string) {
     return await this.dataSource
       .getRepository(HistorialIncidentes)
       .createQueryBuilder()
       .update(HistorialIncidentes)
       .set({
         estado: estado,
+        idUsuarioAuditoria: usuarioAuditoria,
       })
-      .whereInIds(idIncidentes)
+      .where('id = :id', { id })
       .execute()
   }
   async inactivarPorFecha(

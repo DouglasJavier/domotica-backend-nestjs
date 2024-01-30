@@ -1,5 +1,4 @@
 import {
-  Body,
   HttpException,
   HttpStatus,
   Inject,
@@ -37,7 +36,7 @@ export class AlarmaService {
   async crear(alarmaDto: AlarmaCRUDType) {
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.crear(alarmaDto, transaction)
-      this.historialRepository.crear(
+      await this.historialRepository.crear(
         {
           accion: 'CREAR',
           fecha: new Date(),
@@ -54,8 +53,8 @@ export class AlarmaService {
     const existe = this.alarmaRepository.buscarPorId(id)
     if (!existe)
       throw new NotFoundException('No existe el articulo selecionado')
-    this.alarmasContactosRepository.inactivarContactos(id)
-    this.ubicacionesAlarmasRepository.inactivarUbicaciones(id)
+    await this.ubicacionesAlarmasRepository.inactivarUbicaciones(id)
+    const idContactos = alarmaDto.idContactos
     const alarma = alarmaDto
     delete alarma.idContactos
     delete alarma.idSimulador
@@ -66,7 +65,13 @@ export class AlarmaService {
         alarma,
         transaction
       )
-      this.historialRepository.crear(
+      await this.alarmasContactosRepository.inactivarContactos(id, transaction)
+      await this.alarmasContactosRepository.crearContactos(
+        idContactos,
+        id,
+        transaction
+      )
+      await this.historialRepository.crear(
         {
           accion: 'EDITAR',
           fecha: new Date(),
@@ -91,7 +96,7 @@ export class AlarmaService {
       )
     }
     //Envio de información a los dispositivos
-    for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
+    /* for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
       const dispositivos =
         await this.dispositivoRepository.buscarPorIdUbicaciónSensores(
           alarma.ubicacionAlarmas[i].idUbicacion
@@ -113,7 +118,7 @@ export class AlarmaService {
             )
           })
       }
-    }
+    } */
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
         id,

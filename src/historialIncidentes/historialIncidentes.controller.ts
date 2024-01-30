@@ -23,7 +23,7 @@ import {
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
 import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
-
+import { Request } from 'express'
 @Controller('historialIncidentes')
 export class HistorialIncidentesController {
   constructor(private historialServicio: HistorialIncidentesService) {}
@@ -39,24 +39,29 @@ export class HistorialIncidentesController {
     return result
   }
   @UseGuards(JwtAuthGuard, CasbinGuard)
-  @Patch('/atender')
+  @Patch('/:id/atender')
   async antenderIncidentes(
-    @Body() atencionIncidenteDto: AtencionIncidentesDto
+    @Req() req: Request,
+    @Param() params: ParamIdDto,
+    @Body() atencionIncidentesDto: AtencionIncidentesDto
   ) {
+    const usuarioAuditoria = req.user.id
+    const { id: idHistorial } = params
     const result = await this.historialServicio.atencionIncidentes(
-      atencionIncidenteDto,
-      'ATENDIDO'
+      idHistorial,
+      atencionIncidentesDto,
+      usuarioAuditoria
     )
     return result
   }
   @UseGuards(JwtAuthGuard, CasbinGuard)
-  @Patch('/descartar')
-  async descartarIncidentes(
-    @Body() atencionIncidenteDto: AtencionIncidentesDto
-  ) {
-    const result = await this.historialServicio.atencionIncidentes(
-      atencionIncidenteDto,
-      'ATENDIDO'
+  @Patch('/:id/descartar')
+  async descartarIncidentes(@Req() req: Request, @Param() params: ParamIdDto) {
+    const usuarioAuditoria = req.user.id
+    const { id: idHistorial } = params
+    const result = await this.historialServicio.descartarIncidentes(
+      idHistorial,
+      usuarioAuditoria
     )
     return result
   }

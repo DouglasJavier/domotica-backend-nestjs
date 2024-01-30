@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import {
   IntervaloFechasDto,
   PaginacionQueryDto,
@@ -17,6 +22,7 @@ import * as fs from 'fs'
 import { Dispositivo } from 'src/dispositivos/entity/dispositivo.entity'
 import * as path from 'path'
 import { Telegraf } from 'telegraf'
+import { AccionConst, SensorActuadorConst, Status } from 'src/common/constants'
 @Injectable()
 export class HistorialIncidentesService {
   constructor(
@@ -47,25 +53,84 @@ export class HistorialIncidentesService {
       registroIncidenteDto.pin
     )
     if (!sensor) throw new NotFoundException('No se encontró el sensor')
-    const fotosCapturadas: string[] = await this.guardarFotos(dispositivo)
+    /* const fotosCapturadas: string[] = await this.guardarFotos(dispositivo) */
 
     const historialIncidente = this.historialIncidentesRepositorio.crear({
       idSensor: sensor.id,
       idAlarma: alarma.id,
       fecha: new Date(),
-      fotos: fotosCapturadas,
+      /* fotos: fotosCapturadas, */
     })
-    this.enviarFotosPorTelegram(fotosCapturadas)
+    /* this.enviarFotosPorTelegram(fotosCapturadas) */
     return historialIncidente
   }
 
   async atencionIncidentes(
+    idIncidente,
     atencionIncidentesDto: AtencionIncidentesDto,
-    estado: string
+    usuarioAuditoria: string
   ) {
+    const incidente = await this.historialIncidentesRepositorio.buscarPorId(
+      idIncidente
+    )
+    if (!incidente) throw new NotFoundException('Incidente no encontrado')
+    console.log(
+      incidente.alarma.envio_noti === '1' &&
+        atencionIncidentesDto.notificacionContactos === true
+    )
+    console.log(
+      incidente.alarma.envio_noti === '3' &&
+        atencionIncidentesDto.notificacionContactos === false
+    )
+    console.log(
+      incidente.alarma.sonido === '1' &&
+        atencionIncidentesDto.activarSonido === true
+    )
+    console.log(
+      incidente.alarma.sonido === '3' &&
+        atencionIncidentesDto.activarSonido === false
+    )
+    console.log('!!!!!!!!!!!!!!!!!!!!!')
+    console.log(incidente.alarma.sonido)
+    console.log(atencionIncidentesDto.activarSonido)
+    if (
+      (incidente.alarma.envio_noti === '1' &&
+        atencionIncidentesDto.notificacionContactos === true) ||
+      (incidente.alarma.envio_noti === '3' &&
+        atencionIncidentesDto.notificacionContactos === false) ||
+      (incidente.alarma.sonido === '1' &&
+        atencionIncidentesDto.activarSonido === true) ||
+      (incidente.alarma.sonido === '3' &&
+        atencionIncidentesDto.activarSonido === false)
+    )
+      throw new HttpException(
+        'La acción no coresponde con la configuracion de la alarma',
+        HttpStatus.CONFLICT
+      )
+    if (
+      atencionIncidentesDto.activarSonido ||
+      incidente.alarma.sonido === '3'
+    ) {
+      await this.accionSirenas(AccionConst.ENCENDER)
+    }
+    if (
+      atencionIncidentesDto.notificacionContactos ||
+      incidente.alarma.envio_noti === '3'
+    ) {
+      console.log('Envio whatsapp')
+    }
+    await this.historialIncidentesRepositorio.cambiarEstados(
+      idIncidente,
+      Status.ATENDIDO,
+      usuarioAuditoria
+    )
+  }
+
+  async descartarIncidentes(idIncidente, usuario_auditoria) {
     this.historialIncidentesRepositorio.cambiarEstados(
-      atencionIncidentesDto.idIncidentes,
-      estado
+      idIncidente,
+      Status.DESCARTADO,
+      usuario_auditoria
     )
   }
 
@@ -156,6 +221,68 @@ export class HistorialIncidentesService {
       }
     } catch (error) {
       console.error('Error al enviar fotos por Telegram:', error)
+    }
+  }
+  async accionSirenas(accion: string) {
+    const dispositivos =
+      await this.dispositivoRepositorio.buscarPorDescricionSensoresActuadores(
+        SensorActuadorConst.SIRENA
+      )
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+    console.log(dispositivos)
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+    const tiempoLimite = 5000
+    for (let i = 0; i < dispositivos.length; i++) {
+      for (let j = 0; j < dispositivos[i].sensoresActuadores.length; j++) {
+        const sirena = dispositivos[i].sensoresActuadores[j]
+        /* await axios
+          .post(`http://${dispositivos[j].direccionLan}/actudador`, {
+            pin: sirena.pin,
+            accion: accion,
+          })
+          .catch((error) => {
+            console.log(`error al activar actuador en ${sirena.pin}`)
+            console.log(error)
+            throw new NotFoundException(
+              `error al activar sirena en ${dispositivos[j].nombre}`
+            )
+          }) */
+
+        try {
+          await axios.post(
+            `http://${dispositivos[j].direccionLan}/actudador`,
+            {
+              pin: sirena.pin,
+              accion: accion,
+            },
+            {
+              timeout: tiempoLimite,
+            }
+          )
+
+          // El resto de tu lógica aquí para manejar la respuesta exitosa
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            if (error.code === 'ECONNABORTED') {
+              // Manejar el error de tiempo de espera aquí
+              console.error(
+                'La solicitud ha excedido el tiempo límite de espera'
+              )
+              throw new NotFoundException(
+                `error al activar sirena en ${dispositivos[j].nombre}`
+              )
+            } else {
+              // Otros errores de Axios
+              throw new NotFoundException(
+                `error al activar sirena en ${dispositivos[j].nombre}`
+              )
+            }
+          } else {
+            // Otros tipos de errores
+            throw error
+          }
+        }
+      }
     }
   }
   async guardarGrabacion() {

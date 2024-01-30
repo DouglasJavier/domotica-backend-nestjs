@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { EntityManager, Repository } from 'typeorm'
-import { HistorialActivarDesactivar } from './historialActivarDesactivar.entity'
+import { EntityManager } from 'typeorm'
 import { HistorialActivarDesactivarRepository } from './historialActivarDesactivar.repository'
 import {
   IntervaloFechasDto,

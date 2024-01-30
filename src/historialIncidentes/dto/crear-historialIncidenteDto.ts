@@ -12,5 +12,6 @@ export class RegistroIncidenteDto {
 }
 
 export class AtencionIncidentesDto {
-  idIncidentes: string[]
+  activarSonido: boolean
+  notificacionContactos: boolean
 }
