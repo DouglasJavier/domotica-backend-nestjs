@@ -8,6 +8,7 @@ import { HistorialIncidenteRepository } from './historialIncidentes.repository'
 import { SensorActuadorRepository } from 'src/dispositivos/repository/sensor_actuador.repository'
 import { AlarmaRepository } from 'src/alarma/repository/alarma.repository'
 import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
+import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository'
 
 @Module({
   imports: [TypeOrmModule.forFeature([HistorialIncidentes, Fotos])],
@@ -18,6 +19,7 @@ import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.r
     SensorActuadorRepository,
     AlarmaRepository,
     DispositivoRepository,
+    HistorialActivarDesactivarRepository,
   ],
   exports: [HistorialIncidentesService],
 })

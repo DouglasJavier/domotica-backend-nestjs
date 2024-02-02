@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Inject,
@@ -6,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { AlarmaRepository } from '../repository/alarma.repository'
-import { AlarmaCRUDType } from '../dto/alarmaCRUDType'
+import { AlarmaCRUDType, BotonPanicoType } from '../dto/alarmaCRUDType'
 import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository'
 import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository'
 import { ubicacionAlarmaRepository } from '../repository/ubicacionAlarma.repository'
@@ -36,7 +37,7 @@ export class AlarmaService {
     if (!alarma) throw new NotFoundException('Articulo no encontrado')
     return alarma
   }
-  async crear(alarmaDto: AlarmaCRUDType) {
+  async crear(alarmaDto: AlarmaCRUDType, usuarioAuditoria: string) {
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.crear(alarmaDto, transaction)
       await this.historialRepository.crear(
@@ -44,7 +45,7 @@ export class AlarmaService {
           accion: 'CREAR',
           fecha: new Date(),
           idAlarma: result.id,
-          idUsuario: '1',
+          idUsuario: usuarioAuditoria,
         },
         transaction
       )
@@ -52,7 +53,13 @@ export class AlarmaService {
     }
     return this.alarmaRepository.runTransaction(op)
   }
-  async editar(alarmaDto: AlarmaCRUDType, id: string) {
+  async editar(
+    alarmaDto: AlarmaCRUDType,
+    id: string,
+    usuarioAuditoria: string
+  ) {
+    if (id === '1' || id === '2')
+      throw new BadRequestException('Acción no permitida')
     const existe = this.alarmaRepository.buscarPorId(id)
     if (!existe)
       throw new NotFoundException('No existe el articulo selecionado')
@@ -79,7 +86,7 @@ export class AlarmaService {
           accion: 'EDITAR',
           fecha: new Date(),
           idAlarma: id,
-          idUsuario: '1',
+          idUsuario: usuarioAuditoria,
         },
         transaction
       )
@@ -87,7 +94,39 @@ export class AlarmaService {
     }
     return this.alarmaRepository.runTransaction(op)
   }
-  async encender(id: string) {
+  async editarBotonPanico(
+    botonPanicoDto: BotonPanicoType,
+    idAlarma: string,
+    usuarioAuditoria: string
+  ) {
+    if (idAlarma !== '1' && idAlarma !== '2')
+      throw new BadRequestException('Acción no permitida')
+    const op = async (transaction: EntityManager) => {
+      await this.alarmasContactosRepository.inactivarContactos(
+        idAlarma,
+        transaction
+      )
+      const result = await this.alarmasContactosRepository.crearContactos(
+        botonPanicoDto.idContactos,
+        idAlarma,
+        transaction
+      )
+      await this.historialRepository.crear(
+        {
+          accion: 'EDITAR',
+          fecha: new Date(),
+          idAlarma: idAlarma,
+          idUsuario: usuarioAuditoria,
+        },
+        transaction
+      )
+      return result
+    }
+    return this.alarmaRepository.runTransaction(op)
+  }
+  async encender(id: string, usuarioAuditoria: string) {
+    if (id === '1' || id === '2')
+      throw new BadRequestException('Acción no permitida')
     const alarma = await this.alarmaRepository.buscarPorId(id)
     if (!alarma)
       throw new NotFoundException('No existe la alarma selecionada selecionado')
@@ -135,7 +174,7 @@ export class AlarmaService {
           accion: 'ENCENDER',
           fecha: new Date(),
           idAlarma: id,
-          idUsuario: '1',
+          idUsuario: usuarioAuditoria,
         },
         transaction
       )
@@ -143,7 +182,9 @@ export class AlarmaService {
     }
     return this.alarmaRepository.runTransaction(op)
   }
-  async apagar(id: string) {
+  async apagar(id: string, usuarioAuditoria: string) {
+    if (id === '1' || id === '2')
+      throw new BadRequestException('Acción no permitida')
     const alarma = await this.alarmaRepository.buscarPorId(id)
     if (!alarma)
       throw new NotFoundException('No existe el articulo selecionado')
@@ -160,7 +201,7 @@ export class AlarmaService {
           accion: 'APAGAR',
           fecha: new Date(),
           idAlarma: id,
-          idUsuario: '1',
+          idUsuario: usuarioAuditoria,
         },
         transaction
       )
@@ -194,7 +235,9 @@ export class AlarmaService {
     }
     return this.alarmaRepository.runTransaction(op)
   }
-  async inactivar(id: string) {
+  async inactivar(id: string, usuarioAuditoria: string) {
+    if (id === '1' || id === '2')
+      throw new BadRequestException('Acción no permitida')
     const existe = this.alarmaRepository.buscarPorId(id)
     if (!existe)
       throw new NotFoundException('No existe el articulo selecionado')
@@ -211,12 +254,16 @@ export class AlarmaService {
           accion: 'ELIMINAR',
           fecha: new Date(),
           idAlarma: id,
-          idUsuario: '1',
+          idUsuario: usuarioAuditoria,
         },
         transaction
       )
       return result
     }
     return this.alarmaRepository.runTransaction(op)
+  }
+  async apagarSirenas(usuarioAuditoria: string) {
+    console.log(usuarioAuditoria)
+    this.incidentesService.accionSirenas(AccionConst.APAGAR)
   }
 }

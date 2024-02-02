@@ -11,7 +11,7 @@ export enum Status {
 }
 
 export enum DispositivoConts {
-  ESP32CAM = 'ESP-32CAM',
+  ESP32CAM = 'ESP-32 CAM',
   ESP32 = 'ESP-32',
 }
 export enum SensorActuadorConst {

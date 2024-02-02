@@ -14,7 +14,12 @@ export class ContactoRepository {
       .getRepository(Contacto)
       .createQueryBuilder('contacto')
       .leftJoin('contacto.alarmaContactos', 'alarmaContactos')
-      .leftJoin('alarmaContactos.alarma', 'alarma')
+      .leftJoin(
+        'alarmaContactos.alarma',
+        'alarma',
+        'alarmaContactos.estado = :estado',
+        { estado: 'ACTIVO' }
+      )
       .select([
         'contacto.id',
         'contacto.nombre',
@@ -26,7 +31,6 @@ export class ContactoRepository {
         'alarma.nombre',
       ])
       .where('contacto.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('alarmaContactos.estado = :estado')
     //.andWhere('alarmaContactos.estado = :estado');
     if (limite) query.take(limite)
     if (salto) query.skip(salto)

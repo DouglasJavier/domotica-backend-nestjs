@@ -5,6 +5,7 @@ import { HistorialIncidentes } from './historialIncidentes.entity'
 import { Ubicacion } from 'src/ubicaciones/ubicaciones.entity'
 import { CrearHistorialIncidentesDto } from './dto/crear-historialIncidenteDto'
 import { Fotos } from './fotos.entity'
+import { Status } from 'src/common/constants'
 
 @Injectable()
 export class HistorialIncidenteRepository {
@@ -60,15 +61,20 @@ export class HistorialIncidenteRepository {
     return result
   }
 
-  async crear(insidenteDto: CrearHistorialIncidentesDto) {
+  async crear(
+    insidenteDto: CrearHistorialIncidentesDto,
+    transaction?: EntityManager
+  ) {
     const nuevoHistorialIncidentes = new HistorialIncidentes()
     nuevoHistorialIncidentes.fecha = insidenteDto.fecha
     nuevoHistorialIncidentes.idAlarma = insidenteDto.idAlarma
     nuevoHistorialIncidentes.idSensor = insidenteDto.idSensor
     nuevoHistorialIncidentes.estado = 'DESATENDIDO'
-    const result = await this.dataSource
-      .getRepository(HistorialIncidentes)
-      .save(nuevoHistorialIncidentes)
+
+    const result = await (
+      transaction?.getRepository(HistorialIncidentes) ??
+      this.dataSource.getRepository(HistorialIncidentes)
+    ).save(nuevoHistorialIncidentes)
     /* insidenteDto.fotos.map(async (foto) => {
       const nuevaFoto = new Fotos()
       nuevaFoto.foto = foto
@@ -119,6 +125,7 @@ export class HistorialIncidenteRepository {
       })
       .where('fecha >= :fecha1', { fecha1: fechaInicio })
       .andWhere('fecha <= :fecha2', { fecha2: fechaFin })
+      .andWhere('estado != :estado', { estado: Status.DESATENDIDO })
       .execute()
   }
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {

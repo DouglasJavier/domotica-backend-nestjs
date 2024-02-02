@@ -64,17 +64,17 @@ export class HistorialIncidentes {
   @Column({
     name: 'id_sensor',
     type: 'bigint',
-    nullable: false,
+    nullable: true,
   })
-  idSensor: string
+  idSensor: string | null
   @ManyToOne(() => SensorActuador, (sensor) => sensor.historialIncidentes, {
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({
     name: 'id_sensor',
     referencedColumnName: 'id',
   })
-  sensor: SensorActuador
+  sensor: SensorActuador | null
   @OneToMany(() => Fotos, (foto) => foto.historialIncidente)
   fotos: Fotos[]
 

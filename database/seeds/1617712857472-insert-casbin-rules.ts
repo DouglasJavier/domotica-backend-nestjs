@@ -72,6 +72,10 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         [RolEnum.ADMINISTRADOR]: 'PATCH',
         [RolEnum.USUARIO]: 'PATCH',
       },
+      '/historialIncidentes/:id/botonPanico': {
+        [RolEnum.ADMINISTRADOR]: 'POST',
+        [RolEnum.USUARIO]: 'POST',
+      },
       '/historialActivarDesactivar': {
         [RolEnum.ADMINISTRADOR]: 'GET',
         [RolEnum.USUARIO]: 'GET',
@@ -124,6 +128,14 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       '/alarmas/:id': {
         [RolEnum.ADMINISTRADOR]: 'GET|PATCH',
         [RolEnum.USUARIO]: 'GET',
+      },
+      '/alarmas/:id/editarBoton': {
+        [RolEnum.ADMINISTRADOR]: 'PATCH',
+        [RolEnum.USUARIO]: 'PATCH',
+      },
+      '/alarmas/apagarSirenas': {
+        [RolEnum.ADMINISTRADOR]: 'PATCH',
+        [RolEnum.USUARIO]: 'PATCH',
       },
       '/alarmas/:id/encender': {
         [RolEnum.ADMINISTRADOR]: 'PATCH',

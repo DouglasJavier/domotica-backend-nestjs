@@ -1,10 +1,11 @@
-import { Body, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
+import { Body, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
 
 import { Controller } from '@nestjs/common'
 import { AlarmaService } from '../service/alarma.service'
 import { AlarmaCRUDType } from '../dto/alarmaCRUDType'
 import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
+import { Request } from 'express'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('alarmas')
@@ -24,32 +25,64 @@ export class AlarmaController {
   }
 
   @Post()
-  async crearAlarma(@Body() alarmaDto: AlarmaCRUDType) {
-    const result = this.alarmaService.crear(alarmaDto)
+  async crearAlarma(@Body() alarmaDto: AlarmaCRUDType, @Req() req: Request) {
+    const usuarioAuditoria = req.user.id
+
+    const result = this.alarmaService.crear(alarmaDto, usuarioAuditoria)
+    return result
+  }
+
+  @Patch('/apagarSirenas')
+  async apagarSirenas(@Req() req: Request) {
+    const usuarioAuditoria = req.user.id
+    const result = this.alarmaService.apagarSirenas(usuarioAuditoria)
     return result
   }
 
   @Patch(':id')
   async editarAlarma(
     @Body() alarmaDto: AlarmaCRUDType,
-    @Param('id') id: string
+    @Param('id') id: string,
+    @Req() req: Request
   ) {
-    const result = this.alarmaService.editar(alarmaDto, id)
+    const usuarioAuditoria = req.user.id
+
+    const result = this.alarmaService.editar(alarmaDto, id, usuarioAuditoria)
+    return result
+  }
+  @Patch(':id/editarBoton')
+  async editarBotonPanico(
+    @Body() alarmaDto: AlarmaCRUDType,
+    @Param('id') id: string,
+    @Req() req: Request
+  ) {
+    const usuarioAuditoria = req.user.id
+
+    const result = this.alarmaService.editarBotonPanico(
+      alarmaDto,
+      id,
+      usuarioAuditoria
+    )
     return result
   }
   @Patch(':id/encender')
-  async encenderAlarma(@Param('id') id: string) {
-    const result = this.alarmaService.encender(id)
+  async encenderAlarma(@Param('id') id: string, @Req() req: Request) {
+    const usuarioAuditoria = req.user.id
+    const result = this.alarmaService.encender(id, usuarioAuditoria)
     return result
   }
   @Patch(':id/apagar')
-  async apagarAlarma(@Param('id') id: string) {
-    const result = this.alarmaService.apagar(id)
+  async apagarAlarma(@Param('id') id: string, @Req() req: Request) {
+    const usuarioAuditoria = req.user.id
+
+    const result = this.alarmaService.apagar(id, usuarioAuditoria)
     return result
   }
   @Patch(':id/eliminar')
-  async eliminarAlarma(@Param('id') id: string) {
-    const result = this.alarmaService.inactivar(id)
+  async eliminarAlarma(@Param('id') id: string, @Req() req: Request) {
+    const usuarioAuditoria = req.user.id
+
+    const result = this.alarmaService.inactivar(id, usuarioAuditoria)
     return result
   }
 }

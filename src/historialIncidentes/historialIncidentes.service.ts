@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -23,13 +24,15 @@ import { Dispositivo } from 'src/dispositivos/entity/dispositivo.entity'
 import * as path from 'path'
 import { Telegraf } from 'telegraf'
 import { AccionConst, SensorActuadorConst, Status } from 'src/common/constants'
+import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository'
 @Injectable()
 export class HistorialIncidentesService {
   constructor(
     private historialIncidentesRepositorio: HistorialIncidenteRepository,
     private sensorActuadorRepositorio: SensorActuadorRepository,
     private alarmaRepositorio: AlarmaRepository,
-    private dispositivoRepositorio: DispositivoRepository
+    private dispositivoRepositorio: DispositivoRepository,
+    private historialRepository: HistorialActivarDesactivarRepository
   ) {}
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
@@ -53,6 +56,8 @@ export class HistorialIncidentesService {
       registroIncidenteDto.pin
     )
     if (!sensor) throw new NotFoundException('No se encontró el sensor')
+    if (alarma.sonido === '3') this.accionSirenas(AccionConst.ENCENDER)
+
     /* const fotosCapturadas: string[] = await this.guardarFotos(dispositivo) */
 
     const historialIncidente = this.historialIncidentesRepositorio.crear({
@@ -65,6 +70,44 @@ export class HistorialIncidentesService {
     return historialIncidente
   }
 
+  async accionarBotonPanico(idAlarma: string, usuarioAuditoria: string) {
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    console.log('entró a crear historial encender boton panico')
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+
+    if (!(idAlarma === '1' || idAlarma === '2'))
+      throw new BadRequestException('Acción no permitida')
+    const dispositivos = await this.dispositivoRepositorio.listarCamaras()
+    const alarma = await this.alarmaRepositorio.buscarPorId(idAlarma)
+    if (alarma.sonido === '3') this.accionSirenas(AccionConst.ENCENDER)
+
+    const fotosCapturadas: string[] = await this.guardarFotos(
+      dispositivos[0],
+      1,
+      1000
+    )
+    const op = async (transaction: EntityManager) => {
+      const historialIncidente = this.historialIncidentesRepositorio.crear({
+        idSensor: null,
+        idAlarma: idAlarma,
+        fecha: new Date(),
+        fotos: fotosCapturadas,
+      })
+      await this.historialRepository.crear(
+        {
+          accion: AccionConst.ENCENDER,
+          fecha: new Date(),
+          idAlarma: idAlarma,
+          idUsuario: usuarioAuditoria,
+        },
+        transaction
+      )
+      return historialIncidente
+    }
+    /* this.enviarFotosPorTelegram(fotosCapturadas) */
+    return this.historialRepository.runTransaction(op)
+  }
+
   async atencionIncidentes(
     idIncidente,
     atencionIncidentesDto: AtencionIncidentesDto,
@@ -74,50 +117,27 @@ export class HistorialIncidentesService {
       idIncidente
     )
     if (!incidente) throw new NotFoundException('Incidente no encontrado')
-    console.log(
-      incidente.alarma.envio_noti === '1' &&
-        atencionIncidentesDto.notificacionContactos === true
-    )
-    console.log(
-      incidente.alarma.envio_noti === '3' &&
-        atencionIncidentesDto.notificacionContactos === false
-    )
-    console.log(
-      incidente.alarma.sonido === '1' &&
-        atencionIncidentesDto.activarSonido === true
-    )
-    console.log(
-      incidente.alarma.sonido === '3' &&
-        atencionIncidentesDto.activarSonido === false
-    )
-    console.log('!!!!!!!!!!!!!!!!!!!!!')
-    console.log(incidente.alarma.sonido)
-    console.log(atencionIncidentesDto.activarSonido)
-    if (
-      (incidente.alarma.envio_noti === '1' &&
-        atencionIncidentesDto.notificacionContactos === true) ||
-      (incidente.alarma.envio_noti === '3' &&
-        atencionIncidentesDto.notificacionContactos === false) ||
-      (incidente.alarma.sonido === '1' &&
-        atencionIncidentesDto.activarSonido === true) ||
-      (incidente.alarma.sonido === '3' &&
-        atencionIncidentesDto.activarSonido === false)
-    )
-      throw new HttpException(
-        'La acción no coresponde con la configuracion de la alarma',
-        HttpStatus.CONFLICT
+    if (!(incidente.idAlarma === '1' || incidente.idAlarma === '2')) {
+      if (
+        (incidente.alarma.envio_noti === '1' &&
+          atencionIncidentesDto.notificacionContactos === true) ||
+        (incidente.alarma.envio_noti === '3' &&
+          atencionIncidentesDto.notificacionContactos === false) ||
+        (incidente.alarma.sonido === '1' &&
+          atencionIncidentesDto.activarSonido === true) ||
+        (incidente.alarma.sonido === '3' &&
+          atencionIncidentesDto.activarSonido === false)
       )
-    if (
-      atencionIncidentesDto.activarSonido ||
-      incidente.alarma.sonido === '3'
-    ) {
-      await this.accionSirenas(AccionConst.ENCENDER)
-    }
-    if (
-      atencionIncidentesDto.notificacionContactos ||
-      incidente.alarma.envio_noti === '3'
-    ) {
-      console.log('Envio whatsapp')
+        throw new HttpException(
+          'La acción no coresponde con la configuracion de la alarma',
+          HttpStatus.CONFLICT
+        )
+      if (atencionIncidentesDto.activarSonido) {
+        await this.accionSirenas(AccionConst.ENCENDER)
+      }
+      if (atencionIncidentesDto.notificacionContactos) {
+        console.log('Envio whatsapp')
+      }
     }
     await this.historialIncidentesRepositorio.cambiarEstados(
       idIncidente,
@@ -160,45 +180,55 @@ export class HistorialIncidentesService {
     return this.historialIncidentesRepositorio.runTransaction(op)
   }
 
-  async guardarFotos(dispositivo: Dispositivo) {
+  async guardarFotos(
+    dispositivos: Dispositivo[],
+    numeroFotos: number,
+    tiempoEspera: number
+  ) {
     const fotosCapturadas: string[] = []
     /* try { */
-    for (let i = 0; i < 3; i++) {
-      // Esperar 1 segundo antes de capturar la siguiente foto
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      // Capturar la foto
-      const respuestaFoto = await axios
-        .get(`http://${dispositivo.direccionLan}/jpg`, {
-          responseType: 'stream',
-        })
-        .catch((error) => {
-          throw new NotFoundException('error al capturar las fotos')
+    console.log('FFFFFFFFFFFFFFFFFFFFFFFFF')
+    console.log(dispositivos)
+    console.log('FFFFFFFFFFFFFFFFFFFFFFFFF')
+    for (let i = 0; i < dispositivos.length; i++) {
+      const dispositivo = dispositivos[i]
+      for (let j = 0; j < numeroFotos; j++) {
+        // Esperar 1 segundo antes de capturar la siguiente foto
+        await new Promise((resolve) => setTimeout(resolve, tiempoEspera))
+        // Capturar la foto
+        const respuestaFoto = await axios
+          .get(`http://${dispositivo.direccionLan}/jpg`, {
+            responseType: 'stream',
+          })
+          .catch((error) => {
+            throw new NotFoundException('error al capturar las fotos')
+          })
+
+        // Crear un directorio "fotos" si no existe
+        if (!fs.existsSync('fotos')) {
+          fs.mkdirSync('fotos')
+        }
+
+        // Crear un nombre de archivo basado en la fecha y hora actual
+        const fechaHoraActual = new Date()
+        const nombreArchivo = `${
+          dispositivo.ubicacion.nombre
+        } - ${fechaHoraActual.toISOString()}.jpg`
+        const rutaArchivo = path.join('fotos', nombreArchivo)
+
+        // Guardar la foto en el directorio
+        const archivoDeFoto = fs.createWriteStream(rutaArchivo)
+        respuestaFoto.data.pipe(archivoDeFoto)
+
+        // Esperar a que se complete la escritura del archivo
+        await new Promise((resolve, reject) => {
+          archivoDeFoto.on('finish', resolve)
+          archivoDeFoto.on('error', reject)
         })
 
-      // Crear un directorio "fotos" si no existe
-      if (!fs.existsSync('fotos')) {
-        fs.mkdirSync('fotos')
+        // Agregar la dirección HTTP de la foto a la lista
+        fotosCapturadas.push(`${nombreArchivo}`)
       }
-
-      // Crear un nombre de archivo basado en la fecha y hora actual
-      const fechaHoraActual = new Date()
-      const nombreArchivo = `${
-        dispositivo.ubicacion.nombre
-      } - ${fechaHoraActual.toISOString()}.jpg`
-      const rutaArchivo = path.join('fotos', nombreArchivo)
-
-      // Guardar la foto en el directorio
-      const archivoDeFoto = fs.createWriteStream(rutaArchivo)
-      respuestaFoto.data.pipe(archivoDeFoto)
-
-      // Esperar a que se complete la escritura del archivo
-      await new Promise((resolve, reject) => {
-        archivoDeFoto.on('finish', resolve)
-        archivoDeFoto.on('error', reject)
-      })
-
-      // Agregar la dirección HTTP de la foto a la lista
-      fotosCapturadas.push(`${nombreArchivo}`)
     }
     return fotosCapturadas
     /*  } catch (error) {

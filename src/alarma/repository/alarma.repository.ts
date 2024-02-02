@@ -7,6 +7,7 @@ import { Simulador } from 'src/simulador/entity/simulador.entity'
 import { AlarmaContacto } from 'src/alarma/entity/alarmasContactos.entity'
 import { UbicacionAlarma } from 'src/alarma/entity/ubicacionesAlarmas.entity'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { Status } from 'src/common/constants'
 
 @Injectable()
 export class AlarmaRepository {
@@ -15,7 +16,12 @@ export class AlarmaRepository {
     const respuesta = await this.dataSource
       .getRepository(Alarma)
       .createQueryBuilder('alarma')
-      .leftJoin('alarma.alarmaContactos', 'alarmaContacto')
+      .leftJoin(
+        'alarma.alarmaContactos',
+        'alarmaContacto',
+        'alarmaContacto.estado != :estado',
+        { estado: Status.ACTIVE }
+      )
       .leftJoin('alarmaContacto.contacto', 'contacto')
       .leftJoin('alarma.ubicacionAlarmas', 'ubicacionAlarmas')
       .leftJoin('ubicacionAlarmas.ubicacion', 'ubicacion')
@@ -34,7 +40,6 @@ export class AlarmaRepository {
       ])
       .orderBy('alarma.id', 'DESC')
       .andWhere('alarma.estado != :estado', { estado: 'INACTIVO' })
-      .andWhere('alarmaContacto.estado != :estado')
       .getManyAndCount()
     return respuesta
   }
@@ -47,6 +52,7 @@ export class AlarmaRepository {
       .leftJoin('alarmaContactos.contacto', 'contacto')
       .select(['alarma', 'alarmaContactos.id', 'contacto'])
       .where('alarma.id = :id', { id: id })
+      .andWhere('alarmaContactos.estado = :estado', { estado: Status.ACTIVE })
       .getOne()
     if (!alarma) throw new NotFoundException('Articulo no encontrado')
     return alarma
@@ -80,7 +86,6 @@ export class AlarmaRepository {
     alarma.idSimulador = alarmaDto.idSimulador || null
     alarma.sonido = alarmaDto.sonido
     alarma.alumbradoAutomatico = alarmaDto.alumbradoAutomatico
-    alarma.idSimulador = alarmaDto.idSimulador
     alarma.estado = 'ACTIVO'
     const result = await transaction.getRepository(Alarma).save(alarma)
     console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')

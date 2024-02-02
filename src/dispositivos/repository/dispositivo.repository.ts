@@ -6,6 +6,7 @@ import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto'
 import { SensorActuador } from '../entity/sensor_actuador.entity'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { DispositivoConts } from 'src/common/constants'
 
 @Injectable()
 export class DispositivoRepository {
@@ -133,7 +134,7 @@ export class DispositivoRepository {
         'ubicacionDispositivo.id',
       ])
       .where('dispositivo.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('dispositivo.tipo = :tipo', { tipo: 'ESP-32CAM' })
+      .andWhere('dispositivo.tipo = :tipo', { tipo: DispositivoConts.ESP32CAM })
     return await query.getManyAndCount()
   }
   async buscarPorIdUbicaciónSensores(idUbicacion: string) {

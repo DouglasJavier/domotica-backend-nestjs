@@ -39,6 +39,17 @@ export class HistorialIncidentesController {
     return result
   }
   @UseGuards(JwtAuthGuard, CasbinGuard)
+  @Post('/:id/botonPanico')
+  async accionarBotonPanico(@Req() req, @Param() params: ParamIdDto) {
+    const usuarioAuditoria = req.user.id
+    const { id: idBoton } = params
+    const result = await this.historialServicio.accionarBotonPanico(
+      idBoton,
+      usuarioAuditoria
+    )
+    return result
+  }
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/atender')
   async antenderIncidentes(
     @Req() req: Request,

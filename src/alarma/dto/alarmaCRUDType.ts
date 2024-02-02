@@ -9,3 +9,7 @@ export interface AlarmaCRUDType {
   seguridadBienes: boolean
   sensoresHumo: boolean
 }
+
+export interface BotonPanicoType {
+  idContactos: string[]
+}
