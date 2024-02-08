@@ -14,7 +14,7 @@ import { ContactoService } from './contactos.service'
 import { ContactoCRUDType } from './dto/ContactoCRUDType'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
-import { JwtAuthGuard } from 'src/core/authentication/usuario/jwt-auth.guard'
+import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)

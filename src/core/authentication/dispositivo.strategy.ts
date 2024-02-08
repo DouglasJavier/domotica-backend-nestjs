@@ -1,23 +1,21 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
-import { AuthService } from '../authentication.service'
+import { AuthService } from './authentication.service'
 
 @Injectable()
-export class DispositivoStrategy extends PassportStrategy(Strategy) {
+export class DispositivoStrategy extends PassportStrategy(
+  Strategy,
+  'dispositivo'
+) {
   constructor(private readonly autenticacionService: AuthService) {
-    super({
-      params: {
-        usernameField: 'idDispositivo',
-        passwordField: 'contrasenia',
-      },
-    })
+    super()
   }
-
   async validate(
     idDispositivo: string,
     contrasenia: string
   ): Promise<DispositivoUser> {
+    console.log('Entró a validar dispositivo')
     const dispositivo = await this.autenticacionService.validarDispositivo(
       idDispositivo,
       contrasenia

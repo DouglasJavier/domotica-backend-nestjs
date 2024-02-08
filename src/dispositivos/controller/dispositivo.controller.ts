@@ -14,7 +14,7 @@ import { DispositivoService } from '../service/dispositivo.service'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
 import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto'
-import { JwtAuthGuard } from 'src/core/authentication/usuario/jwt-auth.guard'
+import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
@@ -39,7 +39,12 @@ export class DispositivoController {
     return result
   }
   @Post()
-  async crear(@Req() req, @Body() parametroDto: DispositivoCrearDto) {
+  async crear(
+    @Req() req,
+    @Body() parametroDto: DispositivoCrearDto,
+    @Query('username') idDispositivo: string,
+    @Query('password') contrasenia: string
+  ) {
     const result = await this.dispositivoServicio.crear(parametroDto)
     return result
   }

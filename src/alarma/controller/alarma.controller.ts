@@ -3,7 +3,7 @@ import { Body, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
 import { Controller } from '@nestjs/common'
 import { AlarmaService } from '../service/alarma.service'
 import { AlarmaCRUDType } from '../dto/alarmaCRUDType'
-import { JwtAuthGuard } from 'src/core/authentication/usuario/jwt-auth.guard'
+import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 import { Request } from 'express'
 

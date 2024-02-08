@@ -21,9 +21,10 @@ import {
   RegistroIncidenteDto,
 } from './dto/crear-historialIncidenteDto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
-import { JwtAuthGuard } from 'src/core/authentication/usuario/jwt-auth.guard'
+import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 import { Request } from 'express'
+import { DispositivoAuthGuard } from 'src/core/authentication/dispositivo-auth.guard'
 @Controller('historialIncidentes')
 export class HistorialIncidentesController {
   constructor(private historialServicio: HistorialIncidentesService) {}
@@ -33,6 +34,7 @@ export class HistorialIncidentesController {
     const result = await this.historialServicio.listar(paginacionQueryDto)
     return result
   }
+  @UseGuards(DispositivoAuthGuard)
   @Post()
   async crear(@Req() req, @Body() registroDto: RegistroIncidenteDto) {
     const result = await this.historialServicio.crear(registroDto)

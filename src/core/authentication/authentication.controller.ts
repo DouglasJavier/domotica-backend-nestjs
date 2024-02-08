@@ -13,8 +13,8 @@ import {
 import { Request, Response } from 'express'
 import { AuthService } from './authentication.service'
 import { LoginAuthDto } from './authentication.dto'
-import { JwtAuthGuard } from './usuario/jwt-auth.guard'
-import { LocalAuthGuard } from './usuario/local-auth.guard'
+import { JwtAuthGuard } from './jwt-auth.guard'
+import { LocalAuthGuard } from './local-auth.guard'
 
 @Controller('auth')
 export class AuthController {

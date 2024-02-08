@@ -14,7 +14,7 @@ import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
 import { UsuarioService } from './usuario.service'
 import { UsuarioCRUDType, UsuarioEditarType } from './dto/UsuarioCRUDType'
-import { JwtAuthGuard } from '../authentication/usuario/jwt-auth.guard'
+import { JwtAuthGuard } from '../authentication/jwt-auth.guard'
 import { CasbinGuard } from '../authorization/guards/casbin.guard'
 import { Request } from 'express'
 
