@@ -14,7 +14,7 @@ import { UbicacionService } from './ubicaciones.service'
 import { PaginacionQueryDto } from '../common/dto/paginacionDto'
 import { CrearUbicacionDto } from './dto/crear-ubicacionDto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
-import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
+import { JwtAuthGuard } from 'src/core/authentication/usuario/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('ubicaciones')

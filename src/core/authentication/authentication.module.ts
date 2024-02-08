@@ -1,30 +1,25 @@
+// auth.module.ts
 import { Module } from '@nestjs/common'
-import { JwtModule } from '@nestjs/jwt'
 import { AuthController } from './authentication.controller'
 import { AuthService } from './authentication.service'
-import { JwtStrategy } from './jwt.strategy'
-import { UsuarioService } from '../usuario/usuario.service'
+
+import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
 import { UsuarioRepository } from '../usuario/usuario.repository'
-import { LocalStrategy } from './local.strategy'
+import { UsuarioService } from '../usuario/usuario.service'
+import { DispositivoAuthModule } from './dispositivo/dispositivo-auth.module'
+import { JwtAuthModule } from './usuario/jwt-auth.module'
+import { LocalAuthModule } from './usuario/local-auth.module'
+import { JwtService } from '@nestjs/jwt'
 
 @Module({
-  imports: [
-    JwtModule.registerAsync({
-      useFactory: () => {
-        return {
-          signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
-          secret: process.env.JWT_SECRET,
-        }
-      },
-    }),
-  ],
+  imports: [JwtAuthModule, LocalAuthModule, DispositivoAuthModule],
   controllers: [AuthController],
   providers: [
+    JwtService,
     AuthService,
-    JwtStrategy,
-    LocalStrategy,
     UsuarioService,
     UsuarioRepository,
+    DispositivoRepository,
   ],
   exports: [AuthService],
 })

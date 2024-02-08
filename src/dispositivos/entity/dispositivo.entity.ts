@@ -27,6 +27,9 @@ export class Dispositivo {
   @Column({ length: 200, type: 'varchar', nullable: true })
   direccionWan: string
 
+  @Column({ length: 120, type: 'varchar' })
+  contrasenia: string
+
   @Column({ length: 20, type: 'varchar' })
   estado: string
 

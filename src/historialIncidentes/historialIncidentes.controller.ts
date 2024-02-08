@@ -21,7 +21,7 @@ import {
   RegistroIncidenteDto,
 } from './dto/crear-historialIncidenteDto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
-import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
+import { JwtAuthGuard } from 'src/core/authentication/usuario/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 import { Request } from 'express'
 @Controller('historialIncidentes')

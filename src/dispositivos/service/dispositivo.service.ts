@@ -7,6 +7,7 @@ import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto'
 import { SensorActuadorRepository } from '../repository/sensor_actuador.repository'
 import axios from 'axios'
+import { TextService } from 'src/common/lib/text.service'
 
 @Injectable()
 export class DispositivoService {
@@ -21,11 +22,14 @@ export class DispositivoService {
 
   async crear(dispositivoDto: DispositivoCrearDto) {
     const op = async (transaction: EntityManager) => {
+      const pass = await TextService.encrypt(dispositivoDto.contrasenia)
+      dispositivoDto.contrasenia = pass
       const dispositivo = await this.dispositivoRepositorio.crear(
         dispositivoDto,
         transaction
       )
-      /* const tiempoLimite = 5000 // 5000 milisegundos (5 segundos)
+
+      const tiempoLimite = 5000 // 5000 milisegundos (5 segundos)
 
       try {
         const respuestaDisp = await axios.post(
@@ -54,8 +58,7 @@ export class DispositivoService {
           // Otros tipos de errores
           throw error
         }
-      } */
-
+      }
       return dispositivo
     }
     return this.dispositivoRepositorio.runTransaction(op)
@@ -64,7 +67,7 @@ export class DispositivoService {
   async actualizar(id: string, dispositivoDto: DispositivoCrearDto) {
     const dispositivo = await this.dispositivoRepositorio.buscarPorId(id)
     console.log(dispositivoDto.sensoresActuadores)
-    const respuestaDisp = await axios
+    /* const respuestaDisp = await axios
       .post(`http://${dispositivoDto.direccionLan}/conf_pin`, {
         idDispositivo: dispositivo.id,
         sensoresActuadores: dispositivoDto.sensoresActuadores,
@@ -74,8 +77,39 @@ export class DispositivoService {
       })
     if (!respuestaDisp) {
       throw new NotFoundException('Respuesta invalida')
-    }
+    } */
     const op = async (transaction: EntityManager) => {
+      const tiempoLimite = 5000
+      try {
+        const respuestaDisp = await axios.post(
+          `http://${dispositivoDto.direccionLan}/conf_pin`,
+          {
+            idDispositivo: dispositivo.id,
+            sensoresActuadores: dispositivoDto.sensoresActuadores,
+          },
+          {
+            timeout: tiempoLimite,
+          }
+        )
+
+        // El resto de tu lógica aquí para manejar la respuesta exitosa
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.code === 'ECONNABORTED') {
+            // Manejar el error de tiempo de espera aquí
+            console.error('La solicitud ha excedido el tiempo límite de espera')
+            throw new NotFoundException('Dirección de dispositivo no válida')
+          } else {
+            // Otros errores de Axios
+            throw new NotFoundException('Error en la solicitud')
+          }
+        } else {
+          // Otros tipos de errores
+          throw error
+        }
+      }
+      const pass = await TextService.encrypt(dispositivoDto.contrasenia)
+      dispositivoDto.contrasenia = pass
       const result = await this.dispositivoRepositorio.actualizar(
         id,
         {

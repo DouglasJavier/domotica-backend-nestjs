@@ -4,6 +4,7 @@ export class DispositivoCrearDto {
   direccionLan: string
   direccionWan?: string
   idUbicacion: string
+  contrasenia: string
   sensoresActuadores: SensorActuadorDto[]
 }
 export class SensorActuadorDto {

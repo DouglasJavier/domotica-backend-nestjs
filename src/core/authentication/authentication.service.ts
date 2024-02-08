@@ -3,11 +3,14 @@ import { LoginAuthDto } from './authentication.dto'
 import { UsuarioService } from '../usuario/usuario.service'
 import { JwtService } from '@nestjs/jwt'
 import { TextService } from 'src/common/lib/text.service'
+import { DispositivoService } from 'src/dispositivos/service/dispositivo.service'
+import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
 
 @Injectable()
 export class AuthService {
   constructor(
     private usuarioService: UsuarioService,
+    private dispositivoRepository: DispositivoRepository,
     private readonly jwtService: JwtService
   ) {}
 
@@ -62,5 +65,17 @@ export class AuthService {
       id: respuesta.id,
       rol: respuesta.rol,
     }
+  }
+  async validarDispositivo(idDispositivo: string, contrasenia: string) {
+    const dispositivo = await this.dispositivoRepository.buscarPorId(
+      idDispositivo
+    )
+    const pass = TextService.decodeBase64(contrasenia)
+
+    if (!(await TextService.compare(pass, dispositivo.contrasenia))) {
+      throw new UnauthorizedException('Credenciales invalidos')
+    }
+
+    return dispositivo
   }
 }

@@ -18,7 +18,7 @@ export class Usuario {
   @Column({ length: 60, type: 'varchar' })
   usuario: string
 
-  @Column({ length: 60, type: 'varchar' })
+  @Column({ length: 120, type: 'varchar' })
   contrasenia: string
 
   @Column({ length: 50, type: 'varchar' })

@@ -13,7 +13,7 @@ import { SimuladorService } from '../service/simulador.service'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { SimuladorCrearDto } from '../dto/crear-simulador.dto'
 import { ParamIdDto } from 'src/common/dto/params-id.dto'
-import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
+import { JwtAuthGuard } from 'src/core/authentication/usuario/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)

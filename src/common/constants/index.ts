@@ -20,9 +20,20 @@ export enum SensorActuadorConst {
   FOCO = 'FOCO',
   SIRENA = 'SIRENA',
 }
+export enum SensorSeguridadBienes {
+  PIR = 'PIR',
+}
+export enum SensorAlumbradoAutomatico {
+  PIR = 'PIR',
+}
+export enum SensorHumo {
+  MQ2 = 'MQ2',
+}
+
 export enum AccionConst {
   ENCENDER = 'ENCENDER',
   APAGAR = 'APAGAR',
+  ELIMINAR = 'ELIMINAR',
 }
 export enum Order {
   ASC = 'ASC',

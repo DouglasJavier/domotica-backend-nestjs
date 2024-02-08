@@ -77,6 +77,7 @@ export class DispositivoRepository {
     nuevoDispositivo.idUbicacion = dispositivoDto.idUbicacion
     nuevoDispositivo.direccionLan = dispositivoDto.direccionLan
     nuevoDispositivo.direccionWan = dispositivoDto.direccionWan
+    nuevoDispositivo.contrasenia = dispositivoDto.contrasenia
     nuevoDispositivo.estado = 'ACTIVO'
     const dispositivo = await transaction
       .getRepository(Dispositivo)

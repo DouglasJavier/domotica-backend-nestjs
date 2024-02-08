@@ -15,7 +15,14 @@ import { EntityManager } from 'typeorm'
 import axios from 'axios'
 import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
 import { HistorialIncidentesService } from 'src/historialIncidentes/historialIncidentes.service'
-import { AccionConst } from 'src/common/constants'
+import {
+  AccionConst,
+  SensorActuadorConst,
+  SensorAlumbradoAutomatico,
+  SensorHumo,
+  SensorSeguridadBienes,
+  Status,
+} from 'src/common/constants'
 
 @Injectable()
 export class AlarmaService {
@@ -138,7 +145,7 @@ export class AlarmaService {
       )
     }
     //Envio de información a los dispositivos
-    /* for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
+    for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
       const dispositivos =
         await this.dispositivoRepository.buscarPorIdUbicaciónSensores(
           alarma.ubicacionAlarmas[i].idUbicacion
@@ -146,21 +153,35 @@ export class AlarmaService {
       console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
       console.log(dispositivos)
       console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+      //Alumbredo automatico
+      //this.activarAlumbradoAutomatico(dispositivo)
       console.log(dispositivos)
       for (let j = 0; j < dispositivos.length; j++) {
-        const respuestaEnvio = await axios
-          .post(`http://${dispositivos[j].direccionLan}/sensores`, {
-            sensoresActuadores: dispositivos[j].sensoresActuadores,
-          })
-          .catch((error) => {
-            console.log(`error al activar sensor en ${dispositivos[j].nombre}`)
-            console.log(error)
-            throw new NotFoundException(
-              `error al activar sensor en ${dispositivos[j].nombre}`
-            )
-          })
+        if (
+          (this.vertificarTipo(dispositivos[j].tipo, 'SeguridadBienes') &&
+            alarma.seguridadBienes) ||
+          (this.vertificarTipo(dispositivos[j].tipo, 'SensorHumo') &&
+            alarma.sensoresHumo) ||
+          (this.vertificarTipo(dispositivos[j].tipo, 'AlumbradoAutomatico') &&
+            alarma.alumbradoAutomatico)
+        ) {
+          await axios
+            .post(`http://${dispositivos[j].direccionLan}/sensores`, {
+              sensoresActuadores: dispositivos[j].sensoresActuadores,
+              alumbradoAutomatico: alarma.alumbradoAutomatico,
+            })
+            .catch((error) => {
+              console.log(
+                `error al activar sensor en ${dispositivos[j].nombre}`
+              )
+              console.log(error)
+              throw new NotFoundException(
+                `error al activar sensor en ${dispositivos[j].nombre}`
+              )
+            })
+        }
       }
-    } */
+    }
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
         id,
@@ -205,7 +226,7 @@ export class AlarmaService {
         },
         transaction
       )
-      this.incidentesService.accionSirenas(AccionConst.APAGAR)
+      await this.incidentesService.accionSirenas(AccionConst.APAGAR)
       for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
         const dispositivos =
           await this.dispositivoRepository.buscarPorIdUbicaciónSensores(
@@ -245,13 +266,13 @@ export class AlarmaService {
       const result = await this.alarmaRepository.actualizar(
         id,
         {
-          estado: 'INACTIVO',
+          estado: Status.INACTIVE,
         },
         transaction
       )
       this.historialRepository.crear(
         {
-          accion: 'ELIMINAR',
+          accion: AccionConst.ELIMINAR,
           fecha: new Date(),
           idAlarma: id,
           idUsuario: usuarioAuditoria,
@@ -264,6 +285,32 @@ export class AlarmaService {
   }
   async apagarSirenas(usuarioAuditoria: string) {
     console.log(usuarioAuditoria)
-    this.incidentesService.accionSirenas(AccionConst.APAGAR)
+    await this.incidentesService.accionSirenas(AccionConst.APAGAR)
+  }
+  vertificarTipo(
+    tipoSensor: string,
+    tipo: string
+  ): tipoSensor is SensorSeguridadBienes {
+    if (tipo === 'SeguridadBienes')
+      if (
+        Object.values(SensorSeguridadBienes).includes(
+          tipoSensor as SensorSeguridadBienes
+        )
+      ) {
+        return true
+      }
+    if (tipo === 'SensorHumo')
+      if (Object.values(SensorHumo).includes(tipoSensor as SensorHumo)) {
+        return true
+      }
+    if (tipo === 'AlumbradoAutomatico')
+      if (
+        Object.values(SensorAlumbradoAutomatico).includes(
+          tipoSensor as SensorAlumbradoAutomatico
+        )
+      ) {
+        return true
+      }
+    return false
   }
 }

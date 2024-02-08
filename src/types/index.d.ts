@@ -21,6 +21,9 @@ declare global {
     exp?: number
     iat?: number
   }
+  type DispositivoUser = {
+    idDispositivo: string
+  }
 }
 
 declare module 'express-serve-static-core' {
