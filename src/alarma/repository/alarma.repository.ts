@@ -64,7 +64,6 @@ export class AlarmaRepository {
       .select(['alarma'])
       .where('alarma.estado = :estado', { estado: 'ENCENDIDO' })
       .getOne()
-    if (!alarma) throw new NotFoundException('Articulo no encontrado')
     return alarma
   }
   async buscarEncendido() {

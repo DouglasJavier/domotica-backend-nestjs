@@ -72,8 +72,8 @@ export class AuthService {
     )
     const pass = TextService.decodeBase64(contrasenia)
 
-    if (!(await TextService.compare(pass, dispositivo.contrasenia))) {
-      throw new UnauthorizedException('Credenciales invalidos')
+    if (!(await TextService.compareSHA256(pass, dispositivo.contrasenia))) {
+      throw new UnauthorizedException()
     }
 
     return dispositivo

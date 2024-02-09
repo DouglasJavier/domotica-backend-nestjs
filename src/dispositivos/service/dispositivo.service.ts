@@ -22,7 +22,7 @@ export class DispositivoService {
 
   async crear(dispositivoDto: DispositivoCrearDto) {
     const op = async (transaction: EntityManager) => {
-      const pass = await TextService.encrypt(dispositivoDto.contrasenia)
+      const pass = await TextService.encryptSHA256(dispositivoDto.contrasenia)
       dispositivoDto.contrasenia = pass
       const dispositivo = await this.dispositivoRepositorio.crear(
         dispositivoDto,
@@ -80,6 +80,8 @@ export class DispositivoService {
     } */
     const op = async (transaction: EntityManager) => {
       const tiempoLimite = 5000
+      const pass = await TextService.encryptSHA256(dispositivoDto.contrasenia)
+      dispositivoDto.contrasenia = pass
       try {
         const respuestaDisp = await axios.post(
           `http://${dispositivoDto.direccionLan}/conf_pin`,
@@ -108,8 +110,6 @@ export class DispositivoService {
           throw error
         }
       }
-      const pass = await TextService.encrypt(dispositivoDto.contrasenia)
-      dispositivoDto.contrasenia = pass
       const result = await this.dispositivoRepositorio.actualizar(
         id,
         {

@@ -39,12 +39,7 @@ export class DispositivoController {
     return result
   }
   @Post()
-  async crear(
-    @Req() req,
-    @Body() parametroDto: DispositivoCrearDto,
-    @Query('username') idDispositivo: string,
-    @Query('password') contrasenia: string
-  ) {
+  async crear(@Req() req, @Body() parametroDto: DispositivoCrearDto) {
     const result = await this.dispositivoServicio.crear(parametroDto)
     return result
   }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { compare, hash } from 'bcrypt'
-import { v4, v5 } from 'uuid'
-import zxcvbn from 'zxcvbn-typescript'
+//import zxcvbn from 'zxcvbn-typescript'
 import { Configurations } from '../params'
+import * as crypto from 'crypto'
 
 @Injectable()
 export class TextService {
@@ -14,38 +14,28 @@ export class TextService {
     return await hash(password, Configurations.SALT_ROUNDS)
   }
 
-  static async compare(
-    passwordInPlainText: string | Buffer,
-    hashedPassword: string
-  ) {
+  static async compare(passwordInPlainText: string, hashedPassword: string) {
     return await compare(passwordInPlainText, hashedPassword)
   }
 
-  /**
-   * Método para convertir un texto a formato uuid
-   * @param text Texto
-   * @param namespace Uuid base
-   */
-  static textToUuid(
-    text: string,
-    namespace = 'bb5d0ffa-9a4c-4d7c-8fc2-0a7d2220ba45'
-  ): string {
-    return v5(text, namespace)
+  static async encryptSHA256(password: string) {
+    const sha256 = crypto.createHash('sha256')
+    sha256.update(password)
+    return sha256.digest('hex')
   }
 
-  static generateUuid(): string {
-    return v4()
+  static async compareSHA256(
+    passwordInPlainText: string,
+    hashedPassword: string
+  ) {
+    const hashedInput = await this.encryptSHA256(passwordInPlainText)
+    return hashedInput === hashedPassword
   }
 
-  /**
-   * Método para generar un texto aleatorio corto de acuerdo a un alfabeto
-   * @returns string
-   */
-
-  static validateLevelPassword(password: string) {
+  /* static validateLevelPassword(password: string) {
     const result = zxcvbn(password)
     return result.score >= Configurations.SCORE_PASSWORD
-  }
+  } */
 
   static decodeBase64 = (base64: string) => {
     const text = TextService.atob(base64)

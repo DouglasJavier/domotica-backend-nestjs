@@ -24,22 +24,28 @@ import { ParamIdDto } from 'src/common/dto/params-id.dto'
 import { JwtAuthGuard } from 'src/core/authentication/jwt-auth.guard'
 import { CasbinGuard } from 'src/core/authorization/guards/casbin.guard'
 import { Request } from 'express'
-import { DispositivoAuthGuard } from 'src/core/authentication/dispositivo-auth.guard'
+import { AuthService } from 'src/core/authentication/authentication.service'
 @Controller('historialIncidentes')
 export class HistorialIncidentesController {
-  constructor(private historialServicio: HistorialIncidentesService) {}
+  constructor(
+    private historialServicio: HistorialIncidentesService,
+    private authService: AuthService
+  ) {}
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Get()
   async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.historialServicio.listar(paginacionQueryDto)
     return result
   }
-  @UseGuards(DispositivoAuthGuard)
+
   @Post()
   async crear(@Req() req, @Body() registroDto: RegistroIncidenteDto) {
+    const key = req.headers['key']
+    await this.authService.validarDispositivo(registroDto.idDispositivo, key)
     const result = await this.historialServicio.crear(registroDto)
     return result
   }
+
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Post('/:id/botonPanico')
   async accionarBotonPanico(@Req() req, @Param() params: ParamIdDto) {
