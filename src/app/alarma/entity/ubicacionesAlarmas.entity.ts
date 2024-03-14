@@ -5,9 +5,9 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm'
-import { Ubicacion } from '../../ubicaciones/ubicaciones.entity'
 import { Alarma } from './alarmas.entity'
 import * as dotenv from 'dotenv'
+import { Ubicacion } from 'src/app/ubicaciones/ubicaciones.entity'
 dotenv.config()
 @Entity({ name: 'ubicacionesAlarmas', schema: process.env.DB_SCHEMA_PROYECTO })
 export class UbicacionAlarma {

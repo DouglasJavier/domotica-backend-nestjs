@@ -8,13 +8,13 @@ import {
 } from '@nestjs/common'
 import { AlarmaRepository } from '../repository/alarma.repository'
 import { AlarmaCRUDType, BotonPanicoType } from '../dto/alarmaCRUDType'
-import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository'
-import { AlarmaContactoRepository } from 'src/alarma/repository/alarmasContactos.repository'
+import { HistorialActivarDesactivarRepository } from 'src/app/historialActivarDesactivar/historialActivarDesactivar.repository'
+import { AlarmaContactoRepository } from 'src/app/alarma/repository/alarmasContactos.repository'
 import { ubicacionAlarmaRepository } from '../repository/ubicacionAlarma.repository'
 import { EntityManager } from 'typeorm'
 import axios from 'axios'
-import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
-import { HistorialIncidentesService } from 'src/historialIncidentes/historialIncidentes.service'
+import { DispositivoRepository } from 'src/app/dispositivos/repository/dispositivo.repository'
+import { HistorialIncidentesService } from 'src/app/historialIncidentes/historialIncidentes.service'
 import {
   AccionConst,
   SensorActuadorConst,

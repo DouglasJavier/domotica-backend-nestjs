@@ -1,7 +1,7 @@
-import { HistorialActivarDesactivar } from 'src/historialActivarDesactivar/historialActivarDesactivar.entity'
+import { HistorialActivarDesactivar } from 'src/app/historialActivarDesactivar/historialActivarDesactivar.entity'
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
 import * as dotenv from 'dotenv'
-import { HistorialIncidentes } from 'src/historialIncidentes/historialIncidentes.entity'
+import { HistorialIncidentes } from 'src/app/historialIncidentes/historialIncidentes.entity'
 dotenv.config()
 
 @Entity({ name: 'usuario', schema: process.env.DB_SCHEMA_USUARIOS })

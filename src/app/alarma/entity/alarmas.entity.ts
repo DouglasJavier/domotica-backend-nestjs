@@ -8,10 +8,10 @@ import {
 } from 'typeorm'
 import { Simulador } from '../../simulador/entity/simulador.entity'
 import { AlarmaContacto } from './alarmasContactos.entity'
-import { UbicacionAlarma } from './ubicacionesAlarmas.entity'
 import { HistorialActivarDesactivar } from '../../historialActivarDesactivar/historialActivarDesactivar.entity'
-import { HistorialIncidentes } from '../../historialIncidentes/historialIncidentes.entity'
 import * as dotenv from 'dotenv'
+import { HistorialIncidentes } from 'src/app/historialIncidentes/historialIncidentes.entity'
+import { UbicacionAlarma } from './ubicacionesAlarmas.entity'
 dotenv.config()
 @Entity({ name: 'alarmas', schema: process.env.DB_SCHEMA_PROYECTO })
 export class Alarma {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Brackets, DataSource } from 'typeorm'
-import { PaginacionQueryDto } from '../common/dto/paginacionDto'
+import { PaginacionQueryDto } from '../../common/dto/paginacionDto'
 import { Ubicacion } from './ubicaciones.entity'
 import { CrearUbicacionDto } from './dto/crear-ubicacionDto'
 

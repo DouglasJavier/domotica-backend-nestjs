@@ -1,4 +1,4 @@
-import { Simulador } from 'src/simulador/entity/simulador.entity'
+import { Simulador } from 'src/app/simulador/entity/simulador.entity'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class simulador1611171041792 implements MigrationInterface {

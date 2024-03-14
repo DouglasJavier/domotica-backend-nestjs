@@ -1,4 +1,4 @@
-import { Alarma } from 'src/alarma/entity/alarmas.entity'
+import { Alarma } from 'src/app/alarma/entity/alarmas.entity'
 import { Status } from 'src/common/constants'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 

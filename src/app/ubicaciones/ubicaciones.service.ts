@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Ubicacion } from './ubicaciones.entity'
-import { PaginacionQueryDto } from '../common/dto/paginacionDto'
+import { PaginacionQueryDto } from '../../common/dto/paginacionDto'
 import { UbicacionRepository } from './ubicaciones.repository'
 import { CrearUbicacionDto } from './dto/crear-ubicacionDto'
 

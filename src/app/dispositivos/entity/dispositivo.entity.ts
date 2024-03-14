@@ -6,9 +6,9 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm'
-import { Ubicacion } from '../../ubicaciones/ubicaciones.entity'
 import { SensorActuador } from './sensor_actuador.entity'
 import * as dotenv from 'dotenv'
+import { Ubicacion } from 'src/app/ubicaciones/ubicaciones.entity'
 dotenv.config()
 @Entity({ name: 'dispositivos', schema: process.env.DB_SCHEMA_PROYECTO })
 export class Dispositivo {

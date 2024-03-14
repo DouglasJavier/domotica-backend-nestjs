@@ -8,7 +8,7 @@ import {
 } from 'typeorm'
 import { Horario } from './horario.entity'
 import { Simulador } from './simulador.entity'
-import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity'
+import { SensorActuador } from 'src/app/dispositivos/entity/sensor_actuador.entity'
 import * as dotenv from 'dotenv'
 dotenv.config()
 

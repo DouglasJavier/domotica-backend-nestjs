@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from 'typeorm'
 import { Alarma } from '../alarma/entity/alarmas.entity'
-import { SensorActuador } from 'src/dispositivos/entity/sensor_actuador.entity'
+import { SensorActuador } from 'src/app/dispositivos/entity/sensor_actuador.entity'
 import { Fotos } from './fotos.entity'
 import * as dotenv from 'dotenv'
 import { Usuario } from 'src/core/usuario/usuario.entity'

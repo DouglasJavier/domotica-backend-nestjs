@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { Cron, CronExpression, Interval } from '@nestjs/schedule'
 import axios from 'axios'
 import e from 'express'
-import { AlarmaRepository } from 'src/alarma/repository/alarma.repository'
-import { SimuladorActuadorRepository } from 'src/simulador/repository/simulador_actuador.repository'
+import { AlarmaRepository } from 'src/app/alarma/repository/alarma.repository'
+import { SimuladorActuadorRepository } from 'src/app/simulador/repository/simulador_actuador.repository'
 
 @Injectable()
 export class TaskSimuladorService {

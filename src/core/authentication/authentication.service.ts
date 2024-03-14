@@ -3,8 +3,8 @@ import { LoginAuthDto } from './authentication.dto'
 import { UsuarioService } from '../usuario/usuario.service'
 import { JwtService } from '@nestjs/jwt'
 import { TextService } from 'src/common/lib/text.service'
-import { DispositivoService } from 'src/dispositivos/service/dispositivo.service'
-import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
+import { DispositivoService } from 'src/app/dispositivos/service/dispositivo.service'
+import { DispositivoRepository } from 'src/app/dispositivos/repository/dispositivo.repository'
 
 @Injectable()
 export class AuthService {

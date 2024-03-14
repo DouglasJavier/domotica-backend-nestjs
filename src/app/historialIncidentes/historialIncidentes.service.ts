@@ -14,17 +14,17 @@ import {
   AtencionIncidentesDto,
   RegistroIncidenteDto,
 } from './dto/crear-historialIncidenteDto'
-import { SensorActuadorRepository } from 'src/dispositivos/repository/sensor_actuador.repository'
-import { AlarmaRepository } from 'src/alarma/repository/alarma.repository'
+import { SensorActuadorRepository } from 'src/app/dispositivos/repository/sensor_actuador.repository'
+import { AlarmaRepository } from 'src/app/alarma/repository/alarma.repository'
 import { EntityManager } from 'typeorm'
-import { DispositivoRepository } from 'src/dispositivos/repository/dispositivo.repository'
+import { DispositivoRepository } from 'src/app/dispositivos/repository/dispositivo.repository'
 import axios from 'axios'
 import * as fs from 'fs'
-import { Dispositivo } from 'src/dispositivos/entity/dispositivo.entity'
+import { Dispositivo } from 'src/app/dispositivos/entity/dispositivo.entity'
 import * as path from 'path'
 import { Telegraf } from 'telegraf'
 import { AccionConst, SensorActuadorConst, Status } from 'src/common/constants'
-import { HistorialActivarDesactivarRepository } from 'src/historialActivarDesactivar/historialActivarDesactivar.repository'
+import { HistorialActivarDesactivarRepository } from 'src/app/historialActivarDesactivar/historialActivarDesactivar.repository'
 @Injectable()
 export class HistorialIncidentesService {
   constructor(
@@ -59,7 +59,11 @@ export class HistorialIncidentesService {
     if (!sensor) throw new NotFoundException('No se encontró el sensor')
     if (alarma.sonido === '3') this.accionSirenas(AccionConst.ENCENDER)
 
-    /* const fotosCapturadas: string[] = await this.guardarFotos(dispositivo) */
+    const fotosCapturadas: string[] = await this.guardarFotos(
+      [dispositivo],
+      3,
+      5000
+    )
 
     const historialIncidente = this.historialIncidentesRepositorio.crear({
       idSensor: sensor.id,
@@ -67,7 +71,7 @@ export class HistorialIncidentesService {
       fecha: new Date(),
       /* fotos: fotosCapturadas, */
     })
-    /* this.enviarFotosPorTelegram(fotosCapturadas) */
+    this.enviarFotosPorTelegram(fotosCapturadas)
     return historialIncidente
   }
 

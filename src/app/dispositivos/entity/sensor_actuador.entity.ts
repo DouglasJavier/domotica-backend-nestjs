@@ -6,11 +6,11 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm'
-import { Ubicacion } from '../../ubicaciones/ubicaciones.entity'
-import { SimuladorActuador } from 'src/simulador/entity/simulador_actuador.entity'
+import { SimuladorActuador } from 'src/app/simulador/entity/simulador_actuador.entity'
 import { Dispositivo } from './dispositivo.entity'
-import { HistorialIncidentes } from 'src/historialIncidentes/historialIncidentes.entity'
+import { HistorialIncidentes } from 'src/app/historialIncidentes/historialIncidentes.entity'
 import * as dotenv from 'dotenv'
+import { Ubicacion } from 'src/app/ubicaciones/ubicaciones.entity'
 dotenv.config()
 @Entity({
   name: 'sensores_actuadores',
