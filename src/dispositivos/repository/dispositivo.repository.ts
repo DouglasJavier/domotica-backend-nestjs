@@ -6,7 +6,7 @@ import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto'
 import { SensorActuador } from '../entity/sensor_actuador.entity'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import { DispositivoConts } from 'src/common/constants'
+import { DispositivoConts, Status } from 'src/common/constants'
 
 @Injectable()
 export class DispositivoRepository {
@@ -17,7 +17,12 @@ export class DispositivoRepository {
       .getRepository(Dispositivo)
       .createQueryBuilder('dispositivo')
       .leftJoin('dispositivo.ubicacion', 'ubicacionDispositivo')
-      .leftJoin('dispositivo.sensoresActuadores', 'sensorActuador')
+      .leftJoin(
+        'dispositivo.sensoresActuadores',
+        'sensorActuador',
+        'sensorActuador.estado = :estado2',
+        { estado2: Status.ACTIVE }
+      )
       .leftJoin('sensorActuador.ubicacion', 'ubicacionSensorActuador')
       .select([
         'dispositivo.id',
@@ -34,8 +39,7 @@ export class DispositivoRepository {
         'ubicacionDispositivo.nombre',
         'ubicacionDispositivo.id',
       ])
-      .where('dispositivo.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('sensorActuador.estado = :estado')
+      .where('dispositivo.estado = :estado', { estado: Status.ACTIVE })
 
     if (limite) query.take(limite)
     if (salto) query.skip(salto)

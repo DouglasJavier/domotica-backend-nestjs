@@ -8,7 +8,7 @@ import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto'
 import { SensorActuadorRepository } from '../repository/sensor_actuador.repository'
 import axios from 'axios'
 import { TextService } from 'src/common/lib/text.service'
-
+import { Response } from 'express'
 @Injectable()
 export class DispositivoService {
   constructor(
@@ -22,8 +22,9 @@ export class DispositivoService {
 
   async crear(dispositivoDto: DispositivoCrearDto) {
     const op = async (transaction: EntityManager) => {
-      const pass = await TextService.encryptSHA256(dispositivoDto.contrasenia)
-      dispositivoDto.contrasenia = pass
+      const pass = TextService.decodeBase64(dispositivoDto.contrasenia)
+      const contrasenia = await TextService.encryptSHA256(pass)
+      dispositivoDto.contrasenia = contrasenia
       const dispositivo = await this.dispositivoRepositorio.crear(
         dispositivoDto,
         transaction
@@ -39,6 +40,9 @@ export class DispositivoService {
             sensoresActuadores: dispositivoDto.sensoresActuadores,
           },
           {
+            headers: {
+              Authorization: `Bearer ${contrasenia}`,
+            },
             timeout: tiempoLimite,
           }
         )
@@ -67,21 +71,13 @@ export class DispositivoService {
   async actualizar(id: string, dispositivoDto: DispositivoCrearDto) {
     const dispositivo = await this.dispositivoRepositorio.buscarPorId(id)
     console.log(dispositivoDto.sensoresActuadores)
-    /* const respuestaDisp = await axios
-      .post(`http://${dispositivoDto.direccionLan}/conf_pin`, {
-        idDispositivo: dispositivo.id,
-        sensoresActuadores: dispositivoDto.sensoresActuadores,
-      })
-      .catch((err) => {
-        throw new NotFoundException('Direcion de dispositivo no valida')
-      })
-    if (!respuestaDisp) {
-      throw new NotFoundException('Respuesta invalida')
-    } */
+    const pass = TextService.decodeBase64(dispositivoDto.contrasenia)
+    console.log(pass)
+    const contrasenia = await TextService.encryptSHA256(pass)
+    console.log(contrasenia)
+    dispositivoDto.contrasenia = contrasenia
     const op = async (transaction: EntityManager) => {
       const tiempoLimite = 5000
-      const pass = await TextService.encryptSHA256(dispositivoDto.contrasenia)
-      dispositivoDto.contrasenia = pass
       try {
         const respuestaDisp = await axios.post(
           `http://${dispositivoDto.direccionLan}/conf_pin`,
@@ -90,11 +86,12 @@ export class DispositivoService {
             sensoresActuadores: dispositivoDto.sensoresActuadores,
           },
           {
+            headers: {
+              Authorization: `Bearer ${contrasenia}`,
+            },
             timeout: tiempoLimite,
           }
         )
-
-        // El resto de tu lógica aquí para manejar la respuesta exitosa
       } catch (error) {
         if (axios.isAxiosError(error)) {
           if (error.code === 'ECONNABORTED') {
@@ -163,5 +160,62 @@ export class DispositivoService {
   }
   async listarCamaras() {
     return await this.dispositivoRepositorio.listarCamaras()
+  }
+
+  async buscarPorId(id: string) {
+    return await this.dispositivoRepositorio.buscarPorId(id)
+  }
+
+  async streamVideo(response: Response, idDispositivo: string): Promise<void> {
+    const dispostivo = await this.dispositivoRepositorio.buscarPorId(
+      idDispositivo
+    )
+    response.setHeader(
+      'Content-Type',
+      'multipart/x-mixed-replace; boundary=--jpegboundary'
+    )
+    response.setHeader(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0'
+    )
+    response.setHeader('Pragma', 'no-cache')
+    response.setHeader('Connection', 'close')
+
+    const axiosInstance = axios.create({
+      headers: {
+        Authorization: `Bearer ${dispostivo.contrasenia}`,
+      },
+      responseType: 'stream',
+    })
+
+    try {
+      const responseStream = await axiosInstance.get(
+        dispostivo.direccionLan + '/mjpeg'
+      )
+
+      responseStream.data.on('data', (chunk) => {
+        response.write(
+          `--jpegboundary\r\nContent-Type: image/jpeg\r\nContent-Length: ${chunk.length}\r\n\r\n`
+        )
+        response.write(chunk, 'binary')
+        response.write('\r\n')
+      })
+
+      responseStream.data.on('end', () => {
+        response.end()
+      })
+
+      responseStream.data.on('error', (error) => {
+        console.error('Error streaming from camera:', error)
+        response.end()
+      })
+
+      response.on('close', () => {
+        responseStream.data.destroy()
+      })
+    } catch (error) {
+      console.error('Error connecting to camera:', error)
+      response.end()
+    }
   }
 }

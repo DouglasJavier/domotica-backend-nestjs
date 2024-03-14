@@ -200,6 +200,9 @@ export class HistorialIncidentesService {
         const respuestaFoto = await axios
           .get(`http://${dispositivo.direccionLan}/jpg`, {
             responseType: 'stream',
+            headers: {
+              Authorization: `Bearer ${dispositivo.contrasenia}`,
+            },
           })
           .catch((error) => {
             throw new NotFoundException('error al capturar las fotos')
@@ -287,6 +290,9 @@ export class HistorialIncidentesService {
               accion: accion,
             },
             {
+              headers: {
+                Authorization: `Bearer ${dispositivos[j].contrasenia}`,
+              },
               timeout: tiempoLimite,
             }
           )

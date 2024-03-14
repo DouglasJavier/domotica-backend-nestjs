@@ -65,6 +65,11 @@ export class TaskSimuladorService {
                 {
                   pin: actuador.actuador.pin,
                   accion: 'ENCENDER',
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${actuador.actuador.dispositivo.contrasenia}`,
+                  },
                 }
               )
               .catch((error) => {
@@ -83,6 +88,11 @@ export class TaskSimuladorService {
                 {
                   pin: actuador.actuador.pin,
                   accion: 'APAGAR',
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${actuador.actuador.dispositivo.contrasenia}`,
+                  },
                 }
               )
               .catch((error) => {

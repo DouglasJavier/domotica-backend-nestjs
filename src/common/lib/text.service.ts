@@ -21,7 +21,14 @@ export class TextService {
   static async encryptSHA256(password: string) {
     const sha256 = crypto.createHash('sha256')
     sha256.update(password)
-    return sha256.digest('hex')
+    const hashBytes = sha256.digest()
+
+    // Convertir los bytes brutos a cadena hexadecimal
+    const hashHex = Array.from(hashBytes)
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('')
+
+    return hashHex
   }
 
   static async compareSHA256(

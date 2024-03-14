@@ -166,10 +166,18 @@ export class AlarmaService {
             alarma.alumbradoAutomatico)
         ) {
           await axios
-            .post(`http://${dispositivos[j].direccionLan}/sensores`, {
-              sensoresActuadores: dispositivos[j].sensoresActuadores,
-              alumbradoAutomatico: alarma.alumbradoAutomatico,
-            })
+            .post(
+              `http://${dispositivos[j].direccionLan}/sensores`,
+              {
+                sensoresActuadores: dispositivos[j].sensoresActuadores,
+                alumbradoAutomatico: alarma.alumbradoAutomatico,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${dispositivos[j].contrasenia}`,
+                },
+              }
+            )
             .catch((error) => {
               console.log(
                 `error al activar sensor en ${dispositivos[j].nombre}`
@@ -237,7 +245,7 @@ export class AlarmaService {
         console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
         console.log(dispositivos)
         for (let j = 0; j < dispositivos.length; j++) {
-          const respuestaEnvio = await axios
+          await axios
             .post(`http://${dispositivos[j].direccionLan}/sensores`, {
               sensoresActuadores: [],
             })
