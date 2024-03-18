@@ -7,7 +7,18 @@ import { PassportUserType, PayloadType } from './authentication.dto'
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (req) => {
+        let token = null
+        if (
+          req.headers.authorization &&
+          req.headers.authorization.split(' ')[0] === 'Bearer'
+        ) {
+          token = req.headers.authorization.split(' ')[1]
+        } else if (req.query && req.query.token) {
+          token = req.query.token
+        }
+        return token
+      },
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET,
     })

@@ -70,11 +70,14 @@ export class AuthService {
     const dispositivo = await this.dispositivoRepository.buscarPorId(
       idDispositivo
     )
-    const pass = TextService.decodeBase64(contrasenia)
+    if (!(contrasenia === dispositivo.contrasenia)) {
+      throw new UnauthorizedException()
+    }
+    /*   const pass = TextService.decodeBase64(contrasenia)
 
     if (!(await TextService.compareSHA256(pass, dispositivo.contrasenia))) {
       throw new UnauthorizedException()
-    }
+    } */
 
     return dispositivo
   }

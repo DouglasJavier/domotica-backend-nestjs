@@ -107,6 +107,10 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       '/dispositivos/:id/inactivar': {
         [RolEnum.ADMINISTRADOR]: 'PATCH',
       },
+      '/dispositivos/:id/stream': {
+        [RolEnum.ADMINISTRADOR]: 'GET',
+        [RolEnum.USUARIO]: 'GET',
+      },
       '/contactos': {
         [RolEnum.ADMINISTRADOR]: 'GET|POST',
         [RolEnum.USUARIO]: 'GET|POST',

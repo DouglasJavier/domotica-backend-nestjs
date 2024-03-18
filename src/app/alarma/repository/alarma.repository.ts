@@ -48,13 +48,16 @@ export class AlarmaRepository {
       .getRepository(Alarma)
       .createQueryBuilder('alarma')
       .leftJoin('alarma.ubicacionAlarmas', 'ubicaciones')
-      .leftJoin('alarma.alarmaContactos', 'alarmaContactos')
+      .leftJoin(
+        'alarma.alarmaContactos',
+        'alarmaContactos',
+        'alarmaContactos.estado = :estado',
+        { estado: Status.ACTIVE }
+      )
       .leftJoin('alarmaContactos.contacto', 'contacto')
-      .select(['alarma', 'alarmaContactos.id', 'contacto'])
+      .select(['alarma', 'alarmaContactos', 'contacto', 'ubicaciones'])
       .where('alarma.id = :id', { id: id })
-      .andWhere('alarmaContactos.estado = :estado', { estado: Status.ACTIVE })
       .getOne()
-    if (!alarma) throw new NotFoundException('Articulo no encontrado')
     return alarma
   }
   async buscarAlarmaEncendida() {
@@ -73,7 +76,6 @@ export class AlarmaRepository {
       .select(['alarma'])
       .where('alarma.estado = :estado', { estado: 'ENCENDIDO' })
       .getMany()
-    if (!alarma) throw new NotFoundException('Articulo no encontrado')
     return alarma
   }
   async crear(alarmaDto: AlarmaCRUDType, transaction: EntityManager) {

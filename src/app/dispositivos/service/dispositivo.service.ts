@@ -33,7 +33,7 @@ export class DispositivoService {
       const tiempoLimite = 5000 // 5000 milisegundos (5 segundos)
 
       try {
-        const respuestaDisp = await axios.post(
+        await axios.post(
           `http://${dispositivoDto.direccionLan}/conf_pin`,
           {
             idDispositivo: dispositivo.id,

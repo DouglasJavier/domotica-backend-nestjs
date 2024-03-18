@@ -135,6 +135,7 @@ export class DispositivoRepository {
         'dispositivo.nombre',
         'dispositivo.direccionLan',
         'dispositivo.direccionWan',
+        'dispositivo.contrasenia',
         'ubicacionDispositivo.nombre',
         'ubicacionDispositivo.id',
       ])
@@ -142,7 +143,12 @@ export class DispositivoRepository {
       .andWhere('dispositivo.tipo = :tipo', { tipo: DispositivoConts.ESP32CAM })
     return await query.getManyAndCount()
   }
-  async buscarPorIdUbicaciónSensores(idUbicacion: string) {
+  async buscarPorIdUbicaciónSensoresTipo(
+    idUbicacion: string,
+    tipoBienes: string[],
+    tipoHumo: string[],
+    tipoAlumbrado: string[]
+  ) {
     const query = this.dataSource
       .getRepository(Dispositivo)
       .createQueryBuilder('dispositivo')
@@ -152,6 +158,18 @@ export class DispositivoRepository {
       .andWhere('dispositivo.estado = :estado', { estado: 'ACTIVO' })
       .andWhere('sensorActuador.estado = :estado', { estado: 'ACTIVO' })
       .andWhere('sensorActuador.tipo = :tipo', { tipo: 'SENSOR' })
+
+    // Se agregan condiciones de filtro basadas en las descripciones
+    if (
+      tipoBienes.length > 0 ||
+      tipoHumo.length > 0 ||
+      tipoAlumbrado.length > 0
+    ) {
+      query.andWhere('sensorActuador.descripcion IN (:...descripciones)', {
+        descripciones: [...tipoBienes, ...tipoHumo, ...tipoAlumbrado],
+      })
+    }
+
     return query.getMany()
   }
 

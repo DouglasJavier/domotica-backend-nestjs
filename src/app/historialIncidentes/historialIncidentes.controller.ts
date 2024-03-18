@@ -41,7 +41,9 @@ export class HistorialIncidentesController {
   @Post()
   async crear(@Req() req, @Body() registroDto: RegistroIncidenteDto) {
     const key = req.headers['key']
+    console.log('Entro aqui')
     await this.authService.validarDispositivo(registroDto.idDispositivo, key)
+    console.log('Se validó correctamente')
     const result = await this.historialServicio.crear(registroDto)
     return result
   }
@@ -99,7 +101,7 @@ export class HistorialIncidentesController {
     const result = await this.historialServicio.inactivar(idHistorial)
     return result
   }
-  @UseGuards(JwtAuthGuard, CasbinGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/fotos/:fileId')
   async serveAvatar(@Param('fileId') fileId, @Res() res): Promise<any> {
     res.sendFile(fileId, { root: 'fotos' })

@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Init1707255590231 implements MigrationInterface {
-    name = 'Init1707255590231'
+export class Init1710471332564 implements MigrationInterface {
+    name = 'Init1710471332564'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "proyecto"."horarios" ("id" BIGSERIAL NOT NULL, "horaInicio" TIMESTAMP WITH TIME ZONE NOT NULL, "horaFin" TIMESTAMP WITH TIME ZONE NOT NULL, "estado" character varying(20) NOT NULL, "id_simulador_actuador" bigint NOT NULL, CONSTRAINT "PK_c69b602fc8441125f1310a4858d" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "proyecto"."ubicacionesAlarmas" ("id" BIGSERIAL NOT NULL, "estado" character varying(20) NOT NULL, "idUbicacion" bigint NOT NULL, "idAlarma" bigint NOT NULL, CONSTRAINT "PK_021586089b072beddf8dbf74c20" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "proyecto"."dispositivos" ("id" BIGSERIAL NOT NULL, "nombre" character varying(50) NOT NULL, "tipo" character varying(50) NOT NULL, "direccionLan" character varying(200) NOT NULL, "direccionWan" character varying(200), "contrasenia" character varying(120) NOT NULL, "estado" character varying(20) NOT NULL, "idUbicacion" bigint NOT NULL, CONSTRAINT "PK_e9595bb1be0bf2b2e376b904434" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "proyecto"."ubicaciones" ("id" BIGSERIAL NOT NULL, "nombre" character varying(50) NOT NULL, "estado" character varying(20) NOT NULL, CONSTRAINT "PK_a9ce0b671142b83ebff02722cf9" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "proyecto"."dispositivos" ("id" BIGSERIAL NOT NULL, "nombre" character varying(50) NOT NULL, "tipo" character varying(50) NOT NULL, "direccionLan" character varying(200) NOT NULL, "direccionWan" character varying(200), "contrasenia" character varying(120) NOT NULL, "estado" character varying(20) NOT NULL, "idUbicacion" bigint NOT NULL, CONSTRAINT "PK_e9595bb1be0bf2b2e376b904434" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "proyecto"."fotosIncidentes" ("id" BIGSERIAL NOT NULL, "foto" character varying NOT NULL, "id_incidente" bigint NOT NULL, CONSTRAINT "PK_612b2423754ce28fa263082d308" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "proyecto"."historialActivarDesactivar" ("id" BIGSERIAL NOT NULL, "fecha" TIMESTAMP WITH TIME ZONE NOT NULL, "accion" character varying(50) NOT NULL, "estado" character varying(20) NOT NULL, "idAlarma" bigint NOT NULL, "idUsuario" bigint NOT NULL, CONSTRAINT "PK_2a75f7f606cf6def915f3bc4618" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "usuarios"."usuario" ("id" BIGSERIAL NOT NULL, "nombres" character varying(60) NOT NULL, "apellidos" character varying(60) NOT NULL, "usuario" character varying(60) NOT NULL, "contrasenia" character varying(120) NOT NULL, "estado" character varying(50) NOT NULL, "rol" character varying(60) NOT NULL, "intentos" integer NOT NULL DEFAULT '0', CONSTRAINT "PK_a56c58e5cabaa04fb2c98d2d7e2" PRIMARY KEY ("id"))`);
@@ -67,8 +67,8 @@ export class Init1707255590231 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "usuarios"."usuario"`);
         await queryRunner.query(`DROP TABLE "proyecto"."historialActivarDesactivar"`);
         await queryRunner.query(`DROP TABLE "proyecto"."fotosIncidentes"`);
-        await queryRunner.query(`DROP TABLE "proyecto"."ubicaciones"`);
         await queryRunner.query(`DROP TABLE "proyecto"."dispositivos"`);
+        await queryRunner.query(`DROP TABLE "proyecto"."ubicaciones"`);
         await queryRunner.query(`DROP TABLE "proyecto"."ubicacionesAlarmas"`);
         await queryRunner.query(`DROP TABLE "proyecto"."horarios"`);
     }

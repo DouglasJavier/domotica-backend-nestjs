@@ -15,14 +15,7 @@ import { EntityManager } from 'typeorm'
 import axios from 'axios'
 import { DispositivoRepository } from 'src/app/dispositivos/repository/dispositivo.repository'
 import { HistorialIncidentesService } from 'src/app/historialIncidentes/historialIncidentes.service'
-import {
-  AccionConst,
-  SensorActuadorConst,
-  SensorAlumbradoAutomatico,
-  SensorHumo,
-  SensorSeguridadBienes,
-  Status,
-} from 'src/common/constants'
+import { AccionConst, Status, TiposSensores } from 'src/common/constants'
 
 @Injectable()
 export class AlarmaService {
@@ -147,47 +140,40 @@ export class AlarmaService {
     //Envio de información a los dispositivos
     for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
       const dispositivos =
-        await this.dispositivoRepository.buscarPorIdUbicaciónSensores(
-          alarma.ubicacionAlarmas[i].idUbicacion
+        await this.dispositivoRepository.buscarPorIdUbicaciónSensoresTipo(
+          alarma.ubicacionAlarmas[i].idUbicacion,
+          alarma.seguridadBienes ? TiposSensores.tipoSeguridadBienes : [],
+          alarma.sensoresHumo ? TiposSensores.tipoHumo : [],
+          alarma.alumbradoAutomatico ? TiposSensores.tipoAlumbrado : []
         )
       console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-      console.log(dispositivos)
+      console.log(dispositivos[0].sensoresActuadores)
       console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
       //Alumbredo automatico
       //this.activarAlumbradoAutomatico(dispositivo)
       console.log(dispositivos)
       for (let j = 0; j < dispositivos.length; j++) {
-        if (
-          (this.vertificarTipo(dispositivos[j].tipo, 'SeguridadBienes') &&
-            alarma.seguridadBienes) ||
-          (this.vertificarTipo(dispositivos[j].tipo, 'SensorHumo') &&
-            alarma.sensoresHumo) ||
-          (this.vertificarTipo(dispositivos[j].tipo, 'AlumbradoAutomatico') &&
-            alarma.alumbradoAutomatico)
-        ) {
-          await axios
-            .post(
-              `http://${dispositivos[j].direccionLan}/sensores`,
-              {
-                sensoresActuadores: dispositivos[j].sensoresActuadores,
-                alumbradoAutomatico: alarma.alumbradoAutomatico,
+        await axios
+          .post(
+            `http://${dispositivos[j].direccionLan}/sensores`,
+            {
+              sensoresActuadores: dispositivos[j].sensoresActuadores,
+              alumbradoAutomatico: alarma.alumbradoAutomatico,
+              enviarReporte: alarma.seguridadBienes || alarma.sensoresHumo,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${dispositivos[j].contrasenia}`,
               },
-              {
-                headers: {
-                  Authorization: `Bearer ${dispositivos[j].contrasenia}`,
-                },
-              }
+            }
+          )
+          .catch((error) => {
+            console.log(`error al activar sensor en ${dispositivos[j].nombre}`)
+            console.log(error)
+            throw new NotFoundException(
+              `error al activar sensor en ${dispositivos[j].nombre}`
             )
-            .catch((error) => {
-              console.log(
-                `error al activar sensor en ${dispositivos[j].nombre}`
-              )
-              console.log(error)
-              throw new NotFoundException(
-                `error al activar sensor en ${dispositivos[j].nombre}`
-              )
-            })
-        }
+          })
       }
     }
     const op = async (transaction: EntityManager) => {
@@ -237,8 +223,11 @@ export class AlarmaService {
       await this.incidentesService.accionSirenas(AccionConst.APAGAR)
       for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
         const dispositivos =
-          await this.dispositivoRepository.buscarPorIdUbicaciónSensores(
-            alarma.ubicacionAlarmas[i].idUbicacion
+          await this.dispositivoRepository.buscarPorIdUbicaciónSensoresTipo(
+            alarma.ubicacionAlarmas[i].idUbicacion,
+            alarma.seguridadBienes ? TiposSensores.tipoSeguridadBienes : [],
+            alarma.sensoresHumo ? TiposSensores.tipoHumo : [],
+            alarma.alumbradoAutomatico ? TiposSensores.tipoAlumbrado : []
           )
         console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
         console.log(dispositivos)
@@ -246,16 +235,26 @@ export class AlarmaService {
         console.log(dispositivos)
         for (let j = 0; j < dispositivos.length; j++) {
           await axios
-            .post(`http://${dispositivos[j].direccionLan}/sensores`, {
-              sensoresActuadores: [],
-            })
+            .post(
+              `http://${dispositivos[j].direccionLan}/sensores`,
+              {
+                sensoresActuadores: [],
+                alumbradoAutomatico: false,
+                enviarReporte: false,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${dispositivos[j].contrasenia}`,
+                },
+              }
+            )
             .catch((error) => {
               console.log(
-                `error al activar sensor en ${dispositivos[j].nombre}`
+                `error al desactivar sensores en ${dispositivos[j].nombre}`
               )
               console.log(error)
               throw new NotFoundException(
-                `error al activar sensor en ${dispositivos[j].nombre}`
+                `error al desactivar sensores en ${dispositivos[j].nombre}`
               )
             })
         }
@@ -294,31 +293,5 @@ export class AlarmaService {
   async apagarSirenas(usuarioAuditoria: string) {
     console.log(usuarioAuditoria)
     await this.incidentesService.accionSirenas(AccionConst.APAGAR)
-  }
-  vertificarTipo(
-    tipoSensor: string,
-    tipo: string
-  ): tipoSensor is SensorSeguridadBienes {
-    if (tipo === 'SeguridadBienes')
-      if (
-        Object.values(SensorSeguridadBienes).includes(
-          tipoSensor as SensorSeguridadBienes
-        )
-      ) {
-        return true
-      }
-    if (tipo === 'SensorHumo')
-      if (Object.values(SensorHumo).includes(tipoSensor as SensorHumo)) {
-        return true
-      }
-    if (tipo === 'AlumbradoAutomatico')
-      if (
-        Object.values(SensorAlumbradoAutomatico).includes(
-          tipoSensor as SensorAlumbradoAutomatico
-        )
-      ) {
-        return true
-      }
-    return false
   }
 }

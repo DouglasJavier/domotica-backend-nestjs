@@ -69,7 +69,7 @@ export class HistorialIncidentesService {
       idSensor: sensor.id,
       idAlarma: alarma.id,
       fecha: new Date(),
-      /* fotos: fotosCapturadas, */
+      fotos: fotosCapturadas,
     })
     this.enviarFotosPorTelegram(fotosCapturadas)
     return historialIncidente
@@ -209,6 +209,7 @@ export class HistorialIncidentesService {
             },
           })
           .catch((error) => {
+            console.log(error)
             throw new NotFoundException('error al capturar las fotos')
           })
 

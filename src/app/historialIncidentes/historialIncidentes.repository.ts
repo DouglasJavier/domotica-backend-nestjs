@@ -75,12 +75,12 @@ export class HistorialIncidenteRepository {
       transaction?.getRepository(HistorialIncidentes) ??
       this.dataSource.getRepository(HistorialIncidentes)
     ).save(nuevoHistorialIncidentes)
-    /* insidenteDto.fotos.map(async (foto) => {
+    insidenteDto.fotos.map(async (foto) => {
       const nuevaFoto = new Fotos()
       nuevaFoto.foto = foto
       nuevaFoto.idIncidente = result.id
       await this.dataSource.getRepository(Fotos).save(nuevaFoto)
-    }) */
+    })
     return result
   }
   async inactivar(id: string, transaction: EntityManager) {
