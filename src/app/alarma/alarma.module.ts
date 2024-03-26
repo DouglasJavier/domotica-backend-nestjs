@@ -11,6 +11,8 @@ import { DispositivoRepository } from 'src/app/dispositivos/repository/dispositi
 import { HistorialIncidentesService } from 'src/app/historialIncidentes/historialIncidentes.service'
 import { HistorialIncidenteRepository } from 'src/app/historialIncidentes/historialIncidentes.repository'
 import { SensorActuadorRepository } from 'src/app/dispositivos/repository/sensor_actuador.repository'
+import { MensajeriaService } from '../mensajeria/mensajeria.service'
+import { UsuarioRepository } from 'src/core/usuario/usuario.repository'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Alarma])],
@@ -25,6 +27,8 @@ import { SensorActuadorRepository } from 'src/app/dispositivos/repository/sensor
     HistorialIncidentesService,
     HistorialIncidenteRepository,
     SensorActuadorRepository,
+    MensajeriaService,
+    UsuarioRepository,
   ],
   exports: [AlarmaService],
 })

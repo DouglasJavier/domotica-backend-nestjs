@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { LoginAuthDto } from './authentication.dto'
 import { UsuarioService } from '../usuario/usuario.service'
 import { JwtService } from '@nestjs/jwt'
@@ -70,6 +74,8 @@ export class AuthService {
     const dispositivo = await this.dispositivoRepository.buscarPorId(
       idDispositivo
     )
+    if (!dispositivo) throw new NotFoundException('Dispositivo no encontrado')
+    console.log('######', dispositivo)
     if (!(contrasenia === dispositivo.contrasenia)) {
       throw new UnauthorizedException()
     }

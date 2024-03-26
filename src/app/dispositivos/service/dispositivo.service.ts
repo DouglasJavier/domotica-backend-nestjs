@@ -1,7 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { EntityManager, Repository } from 'typeorm'
-import { Dispositivo } from '../entity/dispositivo.entity'
+import { EntityManager } from 'typeorm'
 import { DispositivoRepository } from '../repository/dispositivo.repository'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto'
@@ -29,7 +27,6 @@ export class DispositivoService {
         dispositivoDto,
         transaction
       )
-
       const tiempoLimite = 5000 // 5000 milisegundos (5 segundos)
 
       try {
@@ -129,7 +126,7 @@ export class DispositivoService {
 
   async activar(id: string) {
     const op = async (transaction: EntityManager) => {
-      const result = await this.dispositivoRepositorio.actualizar(
+      await this.dispositivoRepositorio.actualizar(
         id,
         {
           estado: 'ACTIVO',
@@ -143,7 +140,7 @@ export class DispositivoService {
 
   async inactivar(id: string) {
     const op = async (transaction: EntityManager) => {
-      const result = await this.dispositivoRepositorio.actualizar(
+      await this.dispositivoRepositorio.actualizar(
         id,
         {
           estado: 'INACTIVO',

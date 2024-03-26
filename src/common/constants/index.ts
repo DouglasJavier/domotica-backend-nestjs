@@ -16,31 +16,22 @@ export enum DispositivoConts {
 }
 export enum SensorActuadorConst {
   PIR = 'PIR',
-  MQ2 = 'MQ2',
+  MQ2 = 'MQ-2',
+  MQ7 = 'MQ-7',
   FOCO = 'FOCO',
   SIRENA = 'SIRENA',
 }
 
 export const TiposSensores = {
   tipoSeguridadBienes: ['PIR'],
-  tipoHumo: ['MQ2'],
+  tipoHumo: ['MQ-2', 'MQ-7'],
   tipoAlumbrado: ['PIR'],
 }
-/* export enum SensorActuadorConst {
-  PIR = 'PIR',
-  MQ2 = 'MQ2',
-  FOCO = 'FOCO',
-  SIRENA = 'SIRENA',
+
+export const TipoSalidaSensor = {
+  pullDown: ['PIR'],
+  pullUp: ['MQ-2', 'MQ-7'],
 }
-export enum SensorSeguridadBienes {
-  PIR = 'PIR',
-}
-export enum SensorAlumbradoAutomatico {
-  PIR = 'PIR',
-}
-export enum SensorHumo {
-  MQ2 = 'MQ2',
-} */
 
 export enum AccionConst {
   ENCENDER = 'ENCENDER',

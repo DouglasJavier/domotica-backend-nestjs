@@ -6,6 +6,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 import { Simulador } from '../entity/simulador.entity'
 import { SimuladorCrearDto } from '../dto/crear-simulador.dto'
 import { SimuladorActuador } from '../entity/simulador_actuador.entity'
+import { Status } from 'src/common/constants'
 
 @Injectable()
 export class SimuladorRepository {
@@ -15,7 +16,14 @@ export class SimuladorRepository {
     const query = this.dataSource
       .getRepository(Simulador)
       .createQueryBuilder('simulador')
-      .leftJoin('simulador.simuladoresActuadores', 'simuladorActuador')
+      .leftJoin(
+        'simulador.simuladoresActuadores',
+        'simuladorActuador',
+        'simuladorActuador.estado = :estado',
+        {
+          estado: Status.ACTIVE,
+        }
+      )
       .leftJoin('simuladorActuador.actuador', 'actuador')
       .leftJoin('actuador.ubicacion', 'ubicacion')
       .leftJoin('simuladorActuador.horarios', 'horario')
@@ -26,14 +34,9 @@ export class SimuladorRepository {
         'actuador.tipo',
         'actuador.descripcion',
         'ubicacion.nombre',
-        'horario.horaInicio',
-        'horario.horaFin',
+        'horario',
       ])
       .where('simulador.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('(simuladorActuador.estado = :estado OR simulador.id = :id)', {
-        id: '1',
-      })
-      .andWhere('(horario.estado = :estado OR simulador.id = :id)', { id: '1' })
 
     if (limite) query.take(limite)
     if (salto) query.skip(salto)

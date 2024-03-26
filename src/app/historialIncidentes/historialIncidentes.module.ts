@@ -13,6 +13,7 @@ import { AuthService } from 'src/core/authentication/authentication.service'
 import { UsuarioService } from 'src/core/usuario/usuario.service'
 import { JwtService } from '@nestjs/jwt'
 import { UsuarioRepository } from 'src/core/usuario/usuario.repository'
+import { MensajeriaService } from '../mensajeria/mensajeria.service'
 
 @Module({
   imports: [TypeOrmModule.forFeature([HistorialIncidentes, Fotos])],
@@ -28,6 +29,7 @@ import { UsuarioRepository } from 'src/core/usuario/usuario.repository'
     UsuarioService,
     JwtService,
     UsuarioRepository,
+    MensajeriaService,
   ],
   exports: [HistorialIncidentesService],
 })

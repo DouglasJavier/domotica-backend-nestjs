@@ -25,6 +25,7 @@ export class SimuladorService {
         simuladorDto,
         transaction
       )
+      console.log('######', simuladorDto.simuladoresActuadores)
       for (let i = 0; i < simuladorDto.simuladoresActuadores.length; i++) {
         const simuladorActuador = simuladorDto.simuladoresActuadores[i]
         const simuladorActuadorResult =
@@ -46,7 +47,7 @@ export class SimuladorService {
 
   async actualizar(id: string, simuladorDto: SimuladorCrearDto) {
     const op = async (transaction: EntityManager) => {
-      const result = await this.simuladorRepositorio.actualizar(
+      await this.simuladorRepositorio.actualizar(
         id,
         {
           nombre: simuladorDto.nombre,
@@ -54,6 +55,7 @@ export class SimuladorService {
         transaction
       )
       await this.simuladorActuadorRepositorio._inactivar(id, transaction)
+      console.log('######', simuladorDto.simuladoresActuadores)
       for (let i = 0; i < simuladorDto.simuladoresActuadores.length; i++) {
         const simuladorActuador = simuladorDto.simuladoresActuadores[i]
         const simuladorActuadorResult =

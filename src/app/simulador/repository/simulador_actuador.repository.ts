@@ -39,7 +39,9 @@ export class SimuladorActuadorRepository {
       .getRepository(SimuladorActuador)
       .createQueryBuilder('simuladorActuador')
       .leftJoin('simuladorActuador.simulador', 'simulador')
-      .leftJoin('simulador.alarmas', 'alarma')
+      .leftJoin('simulador.alarmas', 'alarma', 'alarma.id = :id', {
+        id: idAlarma,
+      })
       .leftJoin('simuladorActuador.actuador', 'actuador')
       .leftJoin('actuador.dispositivo', 'dispositivo')
       .leftJoin('simuladorActuador.horarios', 'horario')
@@ -51,11 +53,8 @@ export class SimuladorActuadorRepository {
         'horario.horaInicio',
         'horario.horaFin',
       ])
-      .where('simulador.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('simuladorActuador.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('horario.estado = :estado', { estado: 'ACTIVO' })
+      .where('simuladorActuador.estado = :estado', { estado: 'ACTIVO' })
       .andWhere('dispositivo.estado = :estado', { estado: 'ACTIVO' })
-      .andWhere('alarma.id = :id', { id: idAlarma })
     return query.getMany()
   }
 }

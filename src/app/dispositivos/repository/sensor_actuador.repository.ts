@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { DataSource, EntityManager, Repository } from 'typeorm'
 import { SensorActuador } from '../entity/sensor_actuador.entity'
 import { SensorActuadorDto } from '../dto/crear-dispositivo.dto'
+import { Status, TipoSalidaSensor } from 'src/common/constants'
 
 @Injectable()
 export class SensorActuadorRepository {
@@ -30,11 +31,18 @@ export class SensorActuadorRepository {
         const nuevoSensorActuador = new SensorActuador()
         nuevoSensorActuador.idDispositivo = idDispositivo
         nuevoSensorActuador.descripcion = sensorActuador.descripcion
-        nuevoSensorActuador.estado = 'ACTIVO'
+        nuevoSensorActuador.estado = Status.ACTIVE
         nuevoSensorActuador.idUbicacion =
           sensorActuador.idUbicacion || idUbicacion
         nuevoSensorActuador.pin = sensorActuador.pin
         nuevoSensorActuador.tipo = sensorActuador.tipo
+        nuevoSensorActuador.tipoSalida = TipoSalidaSensor.pullDown.includes(
+          sensorActuador.descripcion
+        )
+          ? 'pullDown'
+          : TipoSalidaSensor.pullUp.includes(sensorActuador.descripcion)
+          ? 'pullUp'
+          : ''
         return nuevoSensorActuador
       }
     )

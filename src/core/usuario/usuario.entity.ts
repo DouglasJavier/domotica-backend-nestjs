@@ -27,6 +27,9 @@ export class Usuario {
   @Column({ length: 60, type: 'varchar' })
   rol: string
 
+  @Column({ length: 60, type: 'varchar' })
+  idTelegram: string
+
   @Column({ type: 'integer', default: 0 })
   intentos: number
 

@@ -29,6 +29,9 @@ export class SensorActuador {
   @Column({ type: 'varchar' })
   descripcion: string
 
+  @Column({ name: 'tipo_salida', length: 10, type: 'varchar', nullable: false })
+  tipoSalida: string
+
   @Column({
     name: 'id_ubicacion',
     type: 'bigint',

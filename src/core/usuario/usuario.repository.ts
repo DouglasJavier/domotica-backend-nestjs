@@ -9,15 +9,16 @@ import { UsuarioCRUDType } from './dto/UsuarioCRUDType'
 export class UsuarioRepository {
   constructor(private dataSource: DataSource) {}
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, salto, campo, sentido } = paginacionQueryDto
+    const { limite, salto, campo, sentido, estado } = paginacionQueryDto
     const query = this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
       .select(['usuario'])
     /* .where('usuario.estado = :estado', { estado: 'ACTIVO' }) */
     //.andWhere('alarmaUsuarios.estado = :estado');
-    if (limite) query.take(limite)
-    if (salto) query.skip(salto)
+    if (estado) query.where('usuario.estado = :estado', { estado })
+    /* if (limite) query.take(limite)
+    if (salto) query.skip(salto) */
     switch (campo) {
       case 'id':
         query.addOrderBy('usuario.id', sentido)

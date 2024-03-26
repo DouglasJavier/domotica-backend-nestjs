@@ -4,6 +4,7 @@ export interface UsuarioCRUDType {
   usuario: string
   contrasenia: string
   rol: string
+  idTelegram: string
 }
 
 export interface UsuarioEditarType {

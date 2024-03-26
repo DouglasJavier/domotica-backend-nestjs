@@ -25,6 +25,7 @@ import * as path from 'path'
 import { Telegraf } from 'telegraf'
 import { AccionConst, SensorActuadorConst, Status } from 'src/common/constants'
 import { HistorialActivarDesactivarRepository } from 'src/app/historialActivarDesactivar/historialActivarDesactivar.repository'
+import { MensajeriaService } from '../mensajeria/mensajeria.service'
 @Injectable()
 export class HistorialIncidentesService {
   constructor(
@@ -32,7 +33,8 @@ export class HistorialIncidentesService {
     private sensorActuadorRepositorio: SensorActuadorRepository,
     private alarmaRepositorio: AlarmaRepository,
     private dispositivoRepositorio: DispositivoRepository,
-    private historialRepository: HistorialActivarDesactivarRepository
+    private historialRepository: HistorialActivarDesactivarRepository,
+    private mensajeriaService: MensajeriaService
   ) {}
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
@@ -71,7 +73,11 @@ export class HistorialIncidentesService {
       fecha: new Date(),
       fotos: fotosCapturadas,
     })
-    this.enviarFotosPorTelegram(fotosCapturadas)
+    this.mensajeriaService.enviarMensajeFotosPorTelegramUsuarios(
+      fotosCapturadas,
+      `El sensor ${sensor.descripcion} detectó un incidente de seguridad en ${sensor.ubicacion.nombre}`,
+      'Ingresar al sistema para revisar'
+    )
     return historialIncidente
   }
 
@@ -137,12 +143,17 @@ export class HistorialIncidentesService {
           'La acción no coresponde con la configuracion de la alarma',
           HttpStatus.CONFLICT
         )
-      if (atencionIncidentesDto.activarSonido) {
-        await this.accionSirenas(AccionConst.ENCENDER)
-      }
-      if (atencionIncidentesDto.notificacionContactos) {
-        console.log('Envio whatsapp')
-      }
+    }
+    console.log('activarSonido', atencionIncidentesDto.activarSonido)
+    if (atencionIncidentesDto.activarSonido) {
+      await this.accionSirenas(AccionConst.ENCENDER)
+    }
+    if (atencionIncidentesDto.notificacionContactos) {
+      this.mensajeriaService.enviarMensajeFotosPorTelegramContactos(
+        incidente.idAlarma,
+        incidente.fotos.map((foto) => foto.foto),
+        'Se detectó un incidente de seguridad en el hogar de la familia A'
+      )
     }
     await this.historialIncidentesRepositorio.cambiarEstados(
       idIncidente,
@@ -246,22 +257,6 @@ export class HistorialIncidentesService {
       );
     } */
   }
-  async enviarFotosPorTelegram(fotos: string[]) {
-    const bot = new Telegraf('6678960088:AAFAxPCtsAS2k55z9K6x9iOoEpN5mRh6OXg') // Reemplaza con el token de tu bot de Telegram
-    /* const chatId = obtenerChatIdPorTelefono('+591 71923457'); */
-    const chatIds = ['526101081'] // Reemplaza con los IDs de los contactos a los que deseas enviar las fotos
-
-    try {
-      for (const chatId of chatIds) {
-        for (const fotoUrl of fotos) {
-          // Envía la foto a través del bot de Telegram
-          await bot.telegram.sendPhoto(chatId, { source: 'fotos/' + fotoUrl })
-        }
-      }
-    } catch (error) {
-      console.error('Error al enviar fotos por Telegram:', error)
-    }
-  }
   async accionSirenas(accion: string) {
     const dispositivos =
       await this.dispositivoRepositorio.buscarPorDescricionSensoresActuadores(
@@ -274,22 +269,10 @@ export class HistorialIncidentesService {
     for (let i = 0; i < dispositivos.length; i++) {
       for (let j = 0; j < dispositivos[i].sensoresActuadores.length; j++) {
         const sirena = dispositivos[i].sensoresActuadores[j]
-        /* await axios
-          .post(`http://${dispositivos[j].direccionLan}/actudador`, {
-            pin: sirena.pin,
-            accion: accion,
-          })
-          .catch((error) => {
-            console.log(`error al activar actuador en ${sirena.pin}`)
-            console.log(error)
-            throw new NotFoundException(
-              `error al activar sirena en ${dispositivos[j].nombre}`
-            )
-          }) */
-
+        console.log('sirena', sirena)
         try {
           await axios.post(
-            `http://${dispositivos[j].direccionLan}/actudador`,
+            `http://${dispositivos[j].direccionLan}/actuador`,
             {
               pin: sirena.pin,
               accion: accion,
@@ -301,7 +284,7 @@ export class HistorialIncidentesService {
               timeout: tiempoLimite,
             }
           )
-
+          console.log('entregó correctamente')
           // El resto de tu lógica aquí para manejar la respuesta exitosa
         } catch (error) {
           if (axios.isAxiosError(error)) {

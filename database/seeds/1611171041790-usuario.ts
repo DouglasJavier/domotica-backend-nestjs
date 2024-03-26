@@ -14,6 +14,7 @@ export class usuario1611171041790 implements MigrationInterface {
         apellidos: 'Ap Admin',
         estado: 'ACTIVO',
         rol: 'ADMINISTRADOR',
+        idTelegram: '',
       },
     ]
 
@@ -25,6 +26,7 @@ export class usuario1611171041790 implements MigrationInterface {
         estado: item.estado,
         rol: item.rol,
         contrasenia: pass,
+        idTelegram: item.idTelegram,
       })
       await queryRunner.manager.save(usuario)
     }
