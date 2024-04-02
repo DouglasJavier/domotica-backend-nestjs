@@ -53,19 +53,21 @@ export class MensajeriaService {
   ) {
     const bot = new Telegraf(process.env.TOKEN_TELEGRAM_BOT)
     const contactos = await this.alarmaRepositorio.buscarPorId(idAlarma)
-    console.log('contactos: ', contactos)
     try {
-      for (const contacto of contactos[0]) {
+      for (const contacto of contactos.alarmaContactos) {
         if (fotos)
           for (const fotoUrl of fotos) {
             // Envía la foto a través del bot de Telegram
-            await bot.telegram.sendPhoto(contacto.numeroTel1, {
+            await bot.telegram.sendPhoto(contacto.contacto.numeroTel1, {
               source: 'fotos/' + fotoUrl,
             })
           }
         // Envía el mensaje junto con el botón
         if (mensaje)
-          await bot.telegram.sendMessage(contacto.numeroTel1, `${mensaje}`)
+          await bot.telegram.sendMessage(
+            contacto.contacto.numeroTel1,
+            `${mensaje}`
+          )
       }
     } catch (error) {
       console.error('Error al enviar fotos por Telegram:', error)

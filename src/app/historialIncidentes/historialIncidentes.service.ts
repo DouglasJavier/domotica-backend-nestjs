@@ -78,6 +78,12 @@ export class HistorialIncidentesService {
       `El sensor ${sensor.descripcion} detectó un incidente de seguridad en ${sensor.ubicacion.nombre}`,
       'Ingresar al sistema para revisar'
     )
+    if (alarma.envio_noti === '3')
+      this.mensajeriaService.enviarMensajeFotosPorTelegramContactos(
+        alarma.id,
+        fotosCapturadas,
+        `El sensor ${sensor.descripcion} detectó un incidente de seguridad en ${sensor.ubicacion.nombre} en el hogar de la familia `
+      )
     return historialIncidente
   }
 

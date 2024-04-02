@@ -55,7 +55,8 @@ export class HistorialIncidenteRepository {
       .getRepository(HistorialIncidentes)
       .createQueryBuilder('historialIncidente')
       .leftJoin('historialIncidente.alarma', 'alarma')
-      .select(['historialIncidente', 'alarma'])
+      .leftJoin('historialIncidente.fotos', 'fotos')
+      .select(['historialIncidente', 'alarma', 'fotos'])
       .where('historialIncidente.id = :id', { id: id })
       .getOne()
     return result
