@@ -23,7 +23,12 @@ export class AlarmaRepository {
         { estado: Status.ACTIVE }
       )
       .leftJoin('alarmaContacto.contacto', 'contacto')
-      .leftJoin('alarma.ubicacionAlarmas', 'ubicacionAlarmas')
+      .leftJoin(
+        'alarma.ubicacionAlarmas',
+        'ubicacionAlarmas',
+        'ubicacionAlarmas.estado != :estado',
+        { estado: Status.ACTIVE }
+      )
       .leftJoin('ubicacionAlarmas.ubicacion', 'ubicacion')
       .leftJoin('alarma.simulador', 'simulador')
       .select([
@@ -47,7 +52,11 @@ export class AlarmaRepository {
     const alarma = await this.dataSource
       .getRepository(Alarma)
       .createQueryBuilder('alarma')
-      .leftJoin('alarma.ubicacionAlarmas', 'ubicaciones')
+      .leftJoin(
+        'alarma.ubicacionAlarmas',
+        'ubicaciones',
+        'ubicaciones.estado = :estado'
+      )
       .leftJoin(
         'alarma.alarmaContactos',
         'alarmaContactos',

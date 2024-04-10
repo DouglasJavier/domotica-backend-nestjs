@@ -63,8 +63,8 @@ export class AlarmaService {
     const existe = this.alarmaRepository.buscarPorId(id)
     if (!existe)
       throw new NotFoundException('No existe el articulo selecionado')
-    await this.ubicacionesAlarmasRepository.inactivarUbicaciones(id)
     const idContactos = alarmaDto.idContactos
+    const idUbicaciones = alarmaDto.idUbicaciones
     const alarma = alarmaDto
     delete alarma.idContactos
     delete alarma.idSimulador
@@ -78,6 +78,15 @@ export class AlarmaService {
       await this.alarmasContactosRepository.inactivarContactos(id, transaction)
       await this.alarmasContactosRepository.crearContactos(
         idContactos,
+        id,
+        transaction
+      )
+      await this.ubicacionesAlarmasRepository.inactivarUbicaciones(
+        id,
+        transaction
+      )
+      await this.ubicacionesAlarmasRepository.crearUbicaciones(
+        idUbicaciones,
         id,
         transaction
       )
@@ -138,43 +147,46 @@ export class AlarmaService {
       )
     }
     //Envio de información a los dispositivos
-    for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
-      const dispositivos =
-        await this.dispositivoRepository.buscarPorIdUbicaciónSensoresTipo(
-          alarma.ubicacionAlarmas[i].idUbicacion,
-          alarma.seguridadBienes ? TiposSensores.tipoSeguridadBienes : [],
-          alarma.sensoresHumo ? TiposSensores.tipoHumo : [],
-          alarma.alumbradoAutomatico ? TiposSensores.tipoAlumbrado : []
-        )
-      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-      console.log(dispositivos[0].sensoresActuadores)
-      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-      //Alumbredo automatico
-      //this.activarAlumbradoAutomatico(dispositivo)
-      console.log(dispositivos)
-      for (let j = 0; j < dispositivos.length; j++) {
-        await axios
-          .post(
-            `http://${dispositivos[j].direccionLan}/sensores`,
-            {
-              sensoresActuadores: dispositivos[j].sensoresActuadores,
-              alumbradoAutomatico: alarma.alumbradoAutomatico,
-              enviarReporte: alarma.seguridadBienes || alarma.sensoresHumo,
+    const dispositivos =
+      await this.dispositivoRepository.buscarPorIdUbicacionesSensoresTipo(
+        alarma.ubicacionAlarmas.map((ubicacion) => ubicacion.idUbicacion),
+        alarma.seguridadBienes ? TiposSensores.tipoSeguridadBienes : [],
+        alarma.sensoresHumo ? TiposSensores.tipoHumo : [],
+        alarma.alumbradoAutomatico ? TiposSensores.tipoAlumbrado : []
+      )
+    //Alumbredo automatico
+    for (let j = 0; j < dispositivos.length; j++) {
+      /* console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+      console.log(dispositivos[j])
+      console.log('ubicacion', alarma.ubicacionAlarmas)
+      console.log('sensoresActuadores: ', dispositivos[j].sensoresActuadores)
+      console.log('alumbradoAutomatico: ', alarma.alumbradoAutomatico)
+      console.log(
+        'enviarReporte: ',
+        alarma.seguridadBienes || alarma.sensoresHumo
+      )
+      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&') */
+      await axios
+        .post(
+          `http://${dispositivos[j].direccionLan}/sensores`,
+          {
+            sensoresActuadores: dispositivos[j].sensoresActuadores,
+            alumbradoAutomatico: alarma.alumbradoAutomatico,
+            enviarReporte: alarma.seguridadBienes || alarma.sensoresHumo,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${dispositivos[j].contrasenia}`,
             },
-            {
-              headers: {
-                Authorization: `Bearer ${dispositivos[j].contrasenia}`,
-              },
-            }
+          }
+        )
+        .catch((error) => {
+          console.log(`error al activar sensor en ${dispositivos[j].nombre}`)
+          console.log(error)
+          throw new NotFoundException(
+            `error al activar sensor en ${dispositivos[j].nombre}`
           )
-          .catch((error) => {
-            console.log(`error al activar sensor en ${dispositivos[j].nombre}`)
-            console.log(error)
-            throw new NotFoundException(
-              `error al activar sensor en ${dispositivos[j].nombre}`
-            )
-          })
-      }
+        })
     }
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
@@ -222,13 +234,7 @@ export class AlarmaService {
       )
       await this.incidentesService.accionSirenas(AccionConst.APAGAR)
       for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
-        const dispositivos =
-          await this.dispositivoRepository.buscarPorIdUbicaciónSensoresTipo(
-            alarma.ubicacionAlarmas[i].idUbicacion,
-            alarma.seguridadBienes ? TiposSensores.tipoSeguridadBienes : [],
-            alarma.sensoresHumo ? TiposSensores.tipoHumo : [],
-            alarma.alumbradoAutomatico ? TiposSensores.tipoAlumbrado : []
-          )
+        const dispositivos = await this.dispositivoRepository.listarCompleto()
         console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
         console.log(dispositivos)
         console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
