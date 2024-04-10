@@ -25,26 +25,24 @@ export class TaskSimuladorService {
   async handleCron() {
     // Verifica los horarios y ejecuta las acciones en consecuencia
     const alarmaActiva = await this.alarmaRepositorio.buscarEncendido()
-    /* console.log('################# ALARMA #################')
+    console.log('################# ALARMA ACTIVA #################')
     console.log(alarmaActiva)
-    console.log('##################################') */
     if (alarmaActiva.length > 0) {
       const result =
         await this.simuladorActuadorRepositorio.listarActuadoresSimulador(
           alarmaActiva[0].id
         )
-      /* console.log('################# RESULT #################')
+      console.log('Similador actuador:')
       console.log(result)
-      console.log('##################################') */
       const now = new Date()
       const actuadores = result
 
       for (let index = 0; index < actuadores.length; index++) {
         const actuador = actuadores[index]
-        /* console.log('xxxxxxxxxxxxhorarioxxxxxxxxxxxx')
+        console.log('-----------Horarios-----------')
         console.log(actuador.horarios)
         console.log(actuador.actuador.dispositivo)
-        console.log('xxxxxxxxxxxxxxxxxxxxxxxx') */
+        console.log('------------------------------')
         for (let j = 0; j < actuador.horarios.length; j++) {
           const horario = actuador.horarios[j]
 
@@ -77,7 +75,10 @@ export class TaskSimuladorService {
               )
               .catch((error) => {
                 console.log(error)
-                throw new NotFoundException('error al enviar acción')
+                throw new NotFoundException(
+                  'error al enviar acción a ' +
+                    actuador.actuador.dispositivo.direccionLan
+                )
               })
           }
           if (
@@ -100,11 +101,15 @@ export class TaskSimuladorService {
               )
               .catch((error) => {
                 console.log(error)
-                throw new NotFoundException('error al enviar acción')
+                throw new NotFoundException(
+                  'error al enviar acción a ' +
+                    actuador.actuador.dispositivo.direccionLan
+                )
               })
           }
         }
       }
     }
+    console.log('##################################')
   }
 }
