@@ -25,26 +25,29 @@ export class TaskSimuladorService {
   async handleCron() {
     // Verifica los horarios y ejecuta las acciones en consecuencia
     const alarmaActiva = await this.alarmaRepositorio.buscarEncendido()
-    console.log('################# ALARMA #################')
+    /* console.log('################# ALARMA #################')
     console.log(alarmaActiva)
-    console.log('##################################')
+    console.log('##################################') */
     if (alarmaActiva.length > 0) {
       const result =
         await this.simuladorActuadorRepositorio.listarActuadoresSimulador(
           alarmaActiva[0].id
         )
-      console.log('################# RESULT #################')
+      /* console.log('################# RESULT #################')
       console.log(result)
-      console.log('##################################')
+      console.log('##################################') */
       const now = new Date()
       const actuadores = result
 
-      actuadores.forEach((actuador) => {
-        console.log('xxxxxxxxxxxxhorarioxxxxxxxxxxxx')
+      for (let index = 0; index < actuadores.length; index++) {
+        const actuador = actuadores[index]
+        /* console.log('xxxxxxxxxxxxhorarioxxxxxxxxxxxx')
         console.log(actuador.horarios)
         console.log(actuador.actuador.dispositivo)
-        console.log('xxxxxxxxxxxxxxxxxxxxxxxx')
-        actuador.horarios.forEach(async (horario) => {
+        console.log('xxxxxxxxxxxxxxxxxxxxxxxx') */
+        for (let j = 0; j < actuador.horarios.length; j++) {
+          const horario = actuador.horarios[j]
+
           const horaInicio = new Date(horario.horaInicio)
           const horaFin = new Date(horario.horaFin)
 
@@ -59,7 +62,7 @@ export class TaskSimuladorService {
             horaActualMinutos === horaInicioMinutos
           ) {
             console.log('ENCENDER')
-            const respuestaAccion = await axios
+            await axios
               .post(
                 `http://${actuador.actuador.dispositivo.direccionLan}/actuador`,
                 {
@@ -82,7 +85,7 @@ export class TaskSimuladorService {
             horaActualMinutos === horaFinMinutos
           ) {
             console.log('APAGAR')
-            const respuestaAccion = await axios
+            await axios
               .post(
                 `http://${actuador.actuador.dispositivo.direccionLan}/actuador`,
                 {
@@ -100,8 +103,8 @@ export class TaskSimuladorService {
                 throw new NotFoundException('error al enviar acción')
               })
           }
-        })
-      })
+        }
+      }
     }
   }
 }
