@@ -15,7 +15,7 @@ import {
 @Injectable()
 export class DispositivoRepository {
   constructor(private dataSource: DataSource) {}
-  async listar(paginacionQueryDto: PaginacionQueryDto) {
+  async listar(paginacionQueryDto?: PaginacionQueryDto) {
     const { limite, salto, campo, sentido } = paginacionQueryDto
     const query = this.dataSource
       .getRepository(Dispositivo)
@@ -62,6 +62,34 @@ export class DispositivoRepository {
     }
     return await query.getManyAndCount()
   }
+
+  async listarCompleto() {
+    const query = this.dataSource
+      .getRepository(Dispositivo)
+      .createQueryBuilder('dispositivo')
+      .leftJoin('dispositivo.ubicacion', 'ubicacionDispositivo')
+      .leftJoin(
+        'dispositivo.sensoresActuadores',
+        'sensorActuador',
+        'sensorActuador.estado = :estado2',
+        { estado2: Status.ACTIVE }
+      )
+      .leftJoin('sensorActuador.ubicacion', 'ubicacionSensorActuador')
+      .select([
+        'dispositivo',
+        'sensorActuador.id',
+        'sensorActuador.tipo',
+        'sensorActuador.descripcion',
+        'sensorActuador.pin',
+        'ubicacionSensorActuador.nombre',
+        'ubicacionSensorActuador.id',
+        'ubicacionDispositivo.nombre',
+        'ubicacionDispositivo.id',
+      ])
+      .where('dispositivo.estado = :estado', { estado: Status.ACTIVE })
+    return await query.getMany()
+  }
+
   async buscarPorId(idDispositivo: string) {
     const query = this.dataSource
       .getRepository(Dispositivo)
@@ -154,8 +182,8 @@ export class DispositivoRepository {
       .andWhere('dispositivo.tipo = :tipo', { tipo: DispositivoConts.ESP32CAM })
     return await query.getManyAndCount()
   }
-  async buscarPorIdUbicaciónSensoresTipo(
-    idUbicacion: string,
+  async buscarPorIdUbicacionesSensoresTipo(
+    idUbicaciones: string[],
     tipoBienes: string[],
     tipoHumo: string[],
     tipoAlumbrado: string[]
@@ -169,7 +197,9 @@ export class DispositivoRepository {
         'sensorActuador.pin',
         'sensorActuador.tipoSalida',
       ])
-      .where('sensorActuador.idUbicacion = :id', { id: idUbicacion })
+      .where('sensorActuador.idUbicacion IN (:...idUbicaciones)', {
+        idUbicaciones,
+      })
       .andWhere('dispositivo.estado = :estado', { estado: 'ACTIVO' })
       .andWhere('sensorActuador.estado = :estado', { estado: 'ACTIVO' })
       .andWhere('sensorActuador.tipo = :tipo', { tipo: 'SENSOR' })
