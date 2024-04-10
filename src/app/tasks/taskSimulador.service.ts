@@ -30,7 +30,7 @@ export class TaskSimuladorService {
     }
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async comprobarRevalidacion() {
     try {
       console.log('revalidando :' + process.env.URL_REVALIDATE)
