@@ -24,9 +24,21 @@ export class TaskSimuladorService {
         await axios.post(`http://${dispositivo.direccionLan}`)
       } catch (error) {
         console.log(
-          'error de coneccion con el dispositivo ' + dispositivo.direccionLan
+          'error de coneccion con el revalidador ' + dispositivo.direccionLan
         )
       }
+    }
+  }
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  async comprobarRevalidacion() {
+    try {
+      console.log('revalidando :' + process.env.URL_REVALIDATE)
+      await axios.get(`${process.env.URL_REVALIDATE}/status`)
+    } catch (error) {
+      console.log(
+        'error de conexion con el revalidador ' + process.env.URL_REVALIDATE
+      )
     }
   }
 
