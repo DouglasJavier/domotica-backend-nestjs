@@ -4,21 +4,30 @@ import axios from 'axios'
 import e from 'express'
 import { AlarmaRepository } from 'src/app/alarma/repository/alarma.repository'
 import { SimuladorActuadorRepository } from 'src/app/simulador/repository/simulador_actuador.repository'
+import { DispositivoRepository } from '../dispositivos/repository/dispositivo.repository'
 
 @Injectable()
 export class TaskSimuladorService {
   constructor(
     private simuladorActuadorRepositorio: SimuladorActuadorRepository,
-    private alarmaRepositorio: AlarmaRepository
+    private alarmaRepositorio: AlarmaRepository,
+    private dispositivoRepositorio: DispositivoRepository
   ) {}
 
-  @Interval(Number(10000))
+  @Interval(Number(100000))
   async handleCronTracing() {
-    /* const result =
-      await this.simuladorActuadorRepositorio.listarActuadoresSimulador('1');
-    console.log('##################################');
-    console.log(result);
-    console.log('##################################'); */
+    const dispositivos = await this.dispositivoRepositorio.listarCompleto()
+    for (let index = 0; index < dispositivos.length; index++) {
+      const dispositivo = dispositivos[index]
+      try {
+        console.log('###', dispositivo.nombre + ' ' + dispositivo.direccionLan)
+        await axios.post(`http://${dispositivo.direccionLan}`)
+      } catch (error) {
+        console.log(
+          'error de coneccion con el dispositivo ' + dispositivo.direccionLan
+        )
+      }
+    }
   }
 
   @Cron(CronExpression.EVERY_MINUTE) // Puedes ajustar la frecuencia según tus necesidades
@@ -60,8 +69,8 @@ export class TaskSimuladorService {
             horaActualMinutos === horaInicioMinutos
           ) {
             console.log('ENCENDER')
-            await axios
-              .post(
+            try {
+              await axios.post(
                 `http://${actuador.actuador.dispositivo.direccionLan}/actuador`,
                 {
                   pin: actuador.actuador.pin,
@@ -73,21 +82,20 @@ export class TaskSimuladorService {
                   },
                 }
               )
-              .catch((error) => {
-                console.log(error)
-                throw new NotFoundException(
-                  'error al enviar acción a ' +
-                    actuador.actuador.dispositivo.direccionLan
-                )
-              })
+            } catch (error) {
+              console.log(
+                'error al enviar acción a ' +
+                  actuador.actuador.dispositivo.direccionLan
+              )
+            }
           }
           if (
             horaActualHoras === horaFinHoras &&
             horaActualMinutos === horaFinMinutos
           ) {
             console.log('APAGAR')
-            await axios
-              .post(
+            try {
+              await axios.post(
                 `http://${actuador.actuador.dispositivo.direccionLan}/actuador`,
                 {
                   pin: actuador.actuador.pin,
@@ -99,13 +107,12 @@ export class TaskSimuladorService {
                   },
                 }
               )
-              .catch((error) => {
-                console.log(error)
-                throw new NotFoundException(
-                  'error al enviar acción a ' +
-                    actuador.actuador.dispositivo.direccionLan
-                )
-              })
+            } catch (error) {
+              console.log(
+                'error al enviar acción a ' +
+                  actuador.actuador.dispositivo.direccionLan
+              )
+            }
           }
         }
       }
