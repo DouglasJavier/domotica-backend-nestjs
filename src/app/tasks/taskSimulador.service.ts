@@ -83,6 +83,17 @@ export class TaskSimuladorService {
             console.log('ENCENDER')
             try {
               await axios.post(
+                `http://${actuador.actuador.dispositivo.direccionLan}/alumbradoAutomatico`,
+                {
+                  alumbradoAutomatico: false,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${actuador.actuador.dispositivo.contrasenia}`,
+                  },
+                }
+              )
+              await axios.post(
                 `http://${actuador.actuador.dispositivo.direccionLan}/actuador`,
                 {
                   pin: actuador.actuador.pin,
@@ -112,6 +123,17 @@ export class TaskSimuladorService {
                 {
                   pin: actuador.actuador.pin,
                   accion: 'APAGAR',
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${actuador.actuador.dispositivo.contrasenia}`,
+                  },
+                }
+              )
+              await axios.post(
+                `http://${actuador.actuador.dispositivo.direccionLan}/alumbradoAutomatico`,
+                {
+                  alumbradoAutomatico: true,
                 },
                 {
                   headers: {

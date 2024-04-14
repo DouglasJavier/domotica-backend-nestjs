@@ -67,7 +67,9 @@ export class DispositivoService {
 
   async actualizar(id: string, dispositivoDto: DispositivoCrearDto) {
     const dispositivo = await this.dispositivoRepositorio.buscarPorId(id)
-    console.log(dispositivoDto.sensoresActuadores)
+    console.log('*************************')
+    console.log(dispositivo.sensoresActuadores)
+    console.log('*************************')
     const pass = TextService.decodeBase64(dispositivoDto.contrasenia)
     console.log(pass)
     const contrasenia = await TextService.encryptSHA256(pass)
@@ -80,7 +82,7 @@ export class DispositivoService {
           `http://${dispositivoDto.direccionLan}/conf_pin`,
           {
             idDispositivo: dispositivo.id,
-            sensoresActuadores: dispositivoDto.sensoresActuadores,
+            sensoresActuadores: dispositivo.sensoresActuadores,
           },
           {
             headers: {

@@ -235,9 +235,9 @@ export class AlarmaService {
       await this.incidentesService.accionSirenas(AccionConst.APAGAR)
       for (let i = 0; i < alarma.ubicacionAlarmas.length; i++) {
         const dispositivos = await this.dispositivoRepository.listarCompleto()
-        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+        /* console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
         console.log(dispositivos)
-        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&') */
         console.log(dispositivos)
         for (let j = 0; j < dispositivos.length; j++) {
           await axios

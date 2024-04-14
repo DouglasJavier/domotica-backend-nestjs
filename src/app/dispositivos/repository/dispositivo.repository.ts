@@ -104,6 +104,7 @@ export class DispositivoRepository {
         'ubicacionDispositivo',
       ])
       .where('dispositivo.id = :id', { id: idDispositivo })
+      .andWhere('sensorActuador.estado = :estado', { estado: Status.ACTIVE })
     return query.getOne()
   }
   async crear(dispositivoDto: DispositivoCrearDto, transaction: EntityManager) {
