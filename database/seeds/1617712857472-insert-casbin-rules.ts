@@ -80,10 +80,10 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         [RolEnum.ADMINISTRADOR]: 'GET',
         [RolEnum.USUARIO]: 'GET',
       },
-      'historialActivarDesactivar/limpiarPorFecha': {
+      '/historialActivarDesactivar/limpiarPorFecha': {
         [RolEnum.ADMINISTRADOR]: 'PATCH',
       },
-      'historialActivarDesactivar/:id/limpiar': {
+      '/historialActivarDesactivar/:id/limpiar': {
         [RolEnum.ADMINISTRADOR]: 'PATCH',
       },
       '/dispositivos': {

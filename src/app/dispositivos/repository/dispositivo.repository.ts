@@ -94,9 +94,22 @@ export class DispositivoRepository {
     const query = this.dataSource
       .getRepository(Dispositivo)
       .createQueryBuilder('dispositivo')
-      .leftJoin('dispositivo.ubicacion', 'ubicacionDispositivo')
-      .leftJoin('dispositivo.sensoresActuadores', 'sensorActuador')
-      .leftJoin('sensorActuador.ubicacion', 'ubicacionSensorActuador')
+      .leftJoin(
+        'dispositivo.ubicacion',
+        'ubicacionDispositivo',
+        'ubicacionDispositivo.estado = :estado2',
+        { estado2: Status.ACTIVE }
+      )
+      .leftJoin(
+        'dispositivo.sensoresActuadores',
+        'sensorActuador',
+        'sensorActuador.estado = :estado2'
+      )
+      .leftJoin(
+        'sensorActuador.ubicacion',
+        'ubicacionSensorActuador',
+        'ubicacionSensorActuador.estado = :estado2'
+      )
       .select([
         'dispositivo',
         'sensorActuador',
@@ -104,7 +117,6 @@ export class DispositivoRepository {
         'ubicacionDispositivo',
       ])
       .where('dispositivo.id = :id', { id: idDispositivo })
-      .andWhere('sensorActuador.estado = :estado', { estado: Status.ACTIVE })
     return query.getOne()
   }
   async crear(dispositivoDto: DispositivoCrearDto, transaction: EntityManager) {

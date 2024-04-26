@@ -66,10 +66,6 @@ export class DispositivoService {
   }
 
   async actualizar(id: string, dispositivoDto: DispositivoCrearDto) {
-    const dispositivo = await this.dispositivoRepositorio.buscarPorId(id)
-    console.log('*************************')
-    console.log(dispositivo.sensoresActuadores)
-    console.log('*************************')
     const pass = TextService.decodeBase64(dispositivoDto.contrasenia)
     console.log(pass)
     const contrasenia = await TextService.encryptSHA256(pass)
@@ -77,7 +73,26 @@ export class DispositivoService {
     dispositivoDto.contrasenia = contrasenia
     const op = async (transaction: EntityManager) => {
       const tiempoLimite = 5000
+      await this.dispositivoRepositorio.actualizar(
+        id,
+        {
+          ...dispositivoDto,
+          sensoresActuadores: [],
+        },
+        transaction
+      )
+      await this.sensorActuadorRepositorio._inactivar(id, transaction)
+      await this.sensorActuadorRepositorio._crear(
+        id,
+        dispositivoDto.idUbicacion,
+        dispositivoDto.sensoresActuadores,
+        transaction
+      )
       try {
+        const dispositivo = await this.dispositivoRepositorio.buscarPorId(id)
+        console.log('*************************')
+        console.log(dispositivo.sensoresActuadores)
+        console.log('*************************')
         const respuestaDisp = await axios.post(
           `http://${dispositivoDto.direccionLan}/conf_pin`,
           {
@@ -106,21 +121,6 @@ export class DispositivoService {
           throw error
         }
       }
-      const result = await this.dispositivoRepositorio.actualizar(
-        id,
-        {
-          ...dispositivoDto,
-          sensoresActuadores: [],
-        },
-        transaction
-      )
-      await this.sensorActuadorRepositorio._inactivar(id, transaction)
-      await this.sensorActuadorRepositorio._crear(
-        id,
-        dispositivoDto.idUbicacion,
-        dispositivoDto.sensoresActuadores,
-        transaction
-      )
       return { id }
     }
     return this.dispositivoRepositorio.runTransaction(op)

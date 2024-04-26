@@ -156,7 +156,7 @@ export class AlarmaService {
       )
     //Alumbredo automatico
     for (let j = 0; j < dispositivos.length; j++) {
-      /* console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+      console.log('_-----------------------------------------')
       console.log(dispositivos[j])
       console.log('ubicacion', alarma.ubicacionAlarmas)
       console.log('sensoresActuadores: ', dispositivos[j].sensoresActuadores)
@@ -165,7 +165,7 @@ export class AlarmaService {
         'enviarReporte: ',
         alarma.seguridadBienes || alarma.sensoresHumo
       )
-      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&') */
+      console.log('_-----------------------------------------')
       await axios
         .post(
           `http://${dispositivos[j].direccionLan}/sensores`,
