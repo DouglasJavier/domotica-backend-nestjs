@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, EntityManager, Repository } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { Simulador } from '../entity/simulador.entity'
 import { SimuladorCrearDto } from '../dto/crear-simulador.dto'
-import { SimuladorActuador } from '../entity/simulador_actuador.entity'
 import { Status } from 'src/common/constants'
 
 @Injectable()

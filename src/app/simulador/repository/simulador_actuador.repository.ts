@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, EntityManager, Repository } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { SimuladorActuador } from '../entity/simulador_actuador.entity'
 import { SimuladorActuadorDto } from '../dto/crear-simulador.dto'
-import { Dispositivo } from 'src/app/dispositivos/entity/dispositivo.entity'
 
 @Injectable()
 export class SimuladorActuadorRepository {

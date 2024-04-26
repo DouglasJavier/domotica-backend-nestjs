@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { Ubicacion } from './ubicaciones.entity'
 import { PaginacionQueryDto } from '../../common/dto/paginacionDto'
 import { UbicacionRepository } from './ubicaciones.repository'
 import { CrearUbicacionDto } from './dto/crear-ubicacionDto'
@@ -21,19 +18,19 @@ export class UbicacionService {
   }
 
   async actualizar(id: string, ubicacionDto: CrearUbicacionDto) {
-    const result = await this.ubicacionRepositorio.actualizar(id, ubicacionDto)
+    await this.ubicacionRepositorio.actualizar(id, ubicacionDto)
     return { id }
   }
 
   async activar(id: string) {
-    const result = await this.ubicacionRepositorio.actualizar(id, {
+    await this.ubicacionRepositorio.actualizar(id, {
       estado: 'ACTIVO',
     })
     return { id }
   }
 
   async inactivar(id: string) {
-    const result = await this.ubicacionRepositorio.actualizar(id, {
+    await this.ubicacionRepositorio.actualizar(id, {
       estado: 'INACTIVO',
     })
     return { id }

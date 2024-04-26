@@ -1,7 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Cron, CronExpression, Interval } from '@nestjs/schedule'
 import axios from 'axios'
-import e from 'express'
 import { AlarmaRepository } from 'src/app/alarma/repository/alarma.repository'
 import { SimuladorActuadorRepository } from 'src/app/simulador/repository/simulador_actuador.repository'
 import { DispositivoRepository } from '../dispositivos/repository/dispositivo.repository'

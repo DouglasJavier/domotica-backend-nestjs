@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, Repository } from 'typeorm'
+import { DataSource } from 'typeorm'
 import { Contacto } from './contactos.entity'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { ContactoCRUDType } from './dto/ContactoCRUDType'

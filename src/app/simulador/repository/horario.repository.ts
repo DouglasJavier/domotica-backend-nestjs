@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, EntityManager, Repository } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { HorarioDto } from '../dto/crear-simulador.dto'
 import { Horario } from '../entity/horario.entity'
-import dayjs = require('dayjs')
 
 @Injectable()
 export class HorarioRepository {
@@ -27,7 +25,7 @@ export class HorarioRepository {
     horarios: HorarioDto[],
     transaction: EntityManager
   ) {
-    const fechaActual = dayjs().format('YYYY-MM-DD ')
+    //const fechaActual = dayjs().format('YYYY-MM-DD ')
 
     const nuevosHorarios: Horario[] = horarios.map((horario) => {
       // Formatear la fecha y la hora

@@ -93,7 +93,7 @@ export class DispositivoService {
         console.log('*************************')
         console.log(dispositivo.sensoresActuadores)
         console.log('*************************')
-        const respuestaDisp = await axios.post(
+        await axios.post(
           `http://${dispositivoDto.direccionLan}/conf_pin`,
           {
             idDispositivo: dispositivo.id,

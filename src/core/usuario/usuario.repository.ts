@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, Repository } from 'typeorm'
+import { DataSource } from 'typeorm'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { Usuario } from './usuario.entity'
 import { UsuarioCRUDType } from './dto/UsuarioCRUDType'
@@ -9,7 +8,7 @@ import { UsuarioCRUDType } from './dto/UsuarioCRUDType'
 export class UsuarioRepository {
   constructor(private dataSource: DataSource) {}
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, salto, campo, sentido, estado } = paginacionQueryDto
+    const { campo, sentido, estado } = paginacionQueryDto
     const query = this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')

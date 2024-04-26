@@ -8,7 +8,6 @@ import { DispositivoRepository } from 'src/app/dispositivos/repository/dispositi
 import { UsuarioRepository } from '../usuario/usuario.repository'
 import { UsuarioService } from '../usuario/usuario.service'
 import { DispositivoStrategy } from './dispositivo.strategy'
-import { PassportModule } from '@nestjs/passport'
 
 @Module({
   imports: [

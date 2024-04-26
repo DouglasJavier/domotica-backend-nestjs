@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, EntityManager, Repository } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { UbicacionAlarma } from '../entity/ubicacionesAlarmas.entity'
 import { Status } from 'src/common/constants'
 

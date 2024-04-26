@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, EntityManager, Repository } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { SensorActuador } from '../entity/sensor_actuador.entity'
 import { SensorActuadorDto } from '../dto/crear-dispositivo.dto'
 import { Status, TipoSalidaSensor } from 'src/common/constants'

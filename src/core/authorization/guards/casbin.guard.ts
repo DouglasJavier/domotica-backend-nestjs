@@ -9,7 +9,6 @@ import {
 import { AUTHZ_ENFORCER } from 'nest-authz'
 import { Request } from 'express'
 import { Enforcer } from 'casbin/lib/cjs/enforcer'
-import { userInfo } from 'os'
 
 @Injectable()
 export class CasbinGuard implements CanActivate {

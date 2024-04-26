@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, EntityManager, Repository } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { HistorialActivarDesactivar } from './historialActivarDesactivar.entity'
 import { HistorialActivarDesactivarCRUDType } from './dto/historialActivarDesactivarCRUDType'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'

@@ -5,8 +5,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm'
-import { Alarma } from '../alarma/entity/alarmas.entity'
-import { SensorActuador } from 'src/app/dispositivos/entity/sensor_actuador.entity'
 import { HistorialIncidentes } from './historialIncidentes.entity'
 import * as dotenv from 'dotenv'
 dotenv.config()

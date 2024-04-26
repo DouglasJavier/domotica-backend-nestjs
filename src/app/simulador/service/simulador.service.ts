@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { EntityManager, Repository } from 'typeorm'
-import { Simulador } from '../entity/simulador.entity'
+import { EntityManager } from 'typeorm'
 import { SimuladorRepository } from '../repository/simulador.repository'
 import { SimuladorActuadorRepository } from '../repository/simulador_actuador.repository'
 import { HorarioRepository } from '../repository/horario.repository'
@@ -77,7 +75,7 @@ export class SimuladorService {
 
   async activar(id: string) {
     const op = async (transaction: EntityManager) => {
-      const result = await this.simuladorRepositorio.actualizar(
+      await this.simuladorRepositorio.actualizar(
         id,
         {
           estado: 'ACTIVO',
@@ -91,7 +89,7 @@ export class SimuladorService {
 
   async inactivar(id: string) {
     const op = async (transaction: EntityManager) => {
-      const result = await this.simuladorRepositorio.actualizar(
+      await this.simuladorRepositorio.actualizar(
         id,
         {
           estado: 'INACTIVO',

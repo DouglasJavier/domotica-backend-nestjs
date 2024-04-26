@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { DataSource, EntityManager, Repository } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { Dispositivo } from '../entity/dispositivo.entity'
 import { PaginacionQueryDto } from 'src/common/dto/paginacionDto'
 import { DispositivoCrearDto } from '../dto/crear-dispositivo.dto'
