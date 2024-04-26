@@ -28,13 +28,6 @@ export class HorarioRepository {
     //const fechaActual = dayjs().format('YYYY-MM-DD ')
 
     const nuevosHorarios: Horario[] = horarios.map((horario) => {
-      // Formatear la fecha y la hora
-      /*   const horaInicio = fechaActual + horario.horaInicio + '+00:00';
-      const horaFin = fechaActual + horario.horaFin + '+00:00';
-      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-      console.log(dayjs(horario.horaInicio).format('HH:mm:ss'));
-      console.log(dayjs(horario.horaFin).format('HH:mm:ss'));
-      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'); */
       const nuevoHorario = new Horario()
       nuevoHorario.idSimuladorActuador = idSimuladorActuador
       nuevoHorario.horaInicio = horario.horaInicio

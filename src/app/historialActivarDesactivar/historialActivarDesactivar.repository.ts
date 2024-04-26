@@ -24,11 +24,6 @@ export class HistorialActivarDesactivarRepository {
   }
   async listar(paginacionQueryDto: PaginacionQueryDto) {
     const { limite, pagina, campo, sentido } = paginacionQueryDto
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    console.log(limite)
-    console.log((pagina - 1) * limite)
-    console.log(pagina)
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     const query = this.dataSource
       .getRepository(HistorialActivarDesactivar)
       .createQueryBuilder('historialActivarDesactivar')
@@ -78,11 +73,6 @@ export class HistorialActivarDesactivarRepository {
     fechaFin: string,
     transaction: EntityManager
   ) {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-    console.log(fechaInicio)
-    console.log(fechaFin)
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-
     return await transaction
       .getRepository(HistorialActivarDesactivar)
       .createQueryBuilder()

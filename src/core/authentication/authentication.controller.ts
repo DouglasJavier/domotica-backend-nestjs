@@ -27,7 +27,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    console.log('entro a logout')
     // req.logout();
     req.destroy()
 

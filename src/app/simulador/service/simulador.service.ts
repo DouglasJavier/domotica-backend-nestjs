@@ -23,7 +23,6 @@ export class SimuladorService {
         simuladorDto,
         transaction
       )
-      console.log('######', simuladorDto.simuladoresActuadores)
       for (let i = 0; i < simuladorDto.simuladoresActuadores.length; i++) {
         const simuladorActuador = simuladorDto.simuladoresActuadores[i]
         const simuladorActuadorResult =
@@ -53,7 +52,6 @@ export class SimuladorService {
         transaction
       )
       await this.simuladorActuadorRepositorio._inactivar(id, transaction)
-      console.log('######', simuladorDto.simuladoresActuadores)
       for (let i = 0; i < simuladorDto.simuladoresActuadores.length; i++) {
         const simuladorActuador = simuladorDto.simuladoresActuadores[i]
         const simuladorActuadorResult =

@@ -22,7 +22,6 @@ export class MensajeriaService {
       estado: Status.ACTIVE,
       salto: 0,
     })
-    console.log('usuarios: ', usuarios)
     try {
       for (const usuario of usuarios[0]) {
         if (fotos)

@@ -27,7 +27,6 @@ export class CasbinGuard implements CanActivate {
     if (!user) {
       throw new UnauthorizedException()
     }
-    console.log(user.rol, resource, action)
     const isPermitted = await this.enforcer.enforce(user.rol, resource, action)
     if (isPermitted) {
       return true

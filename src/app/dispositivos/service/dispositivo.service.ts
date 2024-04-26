@@ -67,9 +67,7 @@ export class DispositivoService {
 
   async actualizar(id: string, dispositivoDto: DispositivoCrearDto) {
     const pass = TextService.decodeBase64(dispositivoDto.contrasenia)
-    console.log(pass)
     const contrasenia = await TextService.encryptSHA256(pass)
-    console.log(contrasenia)
     dispositivoDto.contrasenia = contrasenia
     const op = async (transaction: EntityManager) => {
       const tiempoLimite = 5000
@@ -90,9 +88,6 @@ export class DispositivoService {
       )
       try {
         const dispositivo = await this.dispositivoRepositorio.buscarPorId(id)
-        console.log('*************************')
-        console.log(dispositivo.sensoresActuadores)
-        console.log('*************************')
         await axios.post(
           `http://${dispositivoDto.direccionLan}/conf_pin`,
           {

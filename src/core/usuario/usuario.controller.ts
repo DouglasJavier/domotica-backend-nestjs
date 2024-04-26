@@ -32,7 +32,6 @@ export class UsuarioController {
   @Get('/perfil')
   async verPerfil(@Req() req: Request) {
     const usuarioAuditoria = req.user.id
-    console.log(usuarioAuditoria)
     const result = await this.contactoServicio.verPerfil(usuarioAuditoria)
     return result
   }
@@ -49,7 +48,6 @@ export class UsuarioController {
     @Body() usuarioDto: UsuarioEditarType
   ) {
     const usuarioAuditoria = req.user.id
-    console.log(usuarioAuditoria)
     const result = await this.contactoServicio.editar(
       usuarioAuditoria,
       usuarioDto

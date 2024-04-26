@@ -41,9 +41,7 @@ export class HistorialIncidentesController {
   @Post()
   async crear(@Req() req, @Body() registroDto: RegistroIncidenteDto) {
     const key = req.headers['key']
-    console.log('Entro aqui')
     await this.authService.validarDispositivo(registroDto.idDispositivo, key)
-    console.log('Se validó correctamente')
     const result = await this.historialServicio.crear(registroDto)
     return result
   }

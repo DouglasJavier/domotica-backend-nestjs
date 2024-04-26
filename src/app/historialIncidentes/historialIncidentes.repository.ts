@@ -111,11 +111,6 @@ export class HistorialIncidenteRepository {
     fechaFin: string,
     transaction: EntityManager
   ) {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-    console.log(fechaInicio)
-    console.log(fechaFin)
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-
     return await transaction
       .getRepository(HistorialIncidentes)
       .createQueryBuilder()

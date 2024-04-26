@@ -15,7 +15,6 @@ export class DispositivoStrategy extends PassportStrategy(
     idDispositivo: string,
     contrasenia: string
   ): Promise<DispositivoUser> {
-    console.log('Entró a validar dispositivo')
     const dispositivo = await this.autenticacionService.validarDispositivo(
       idDispositivo,
       contrasenia

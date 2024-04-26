@@ -19,7 +19,6 @@ export class TaskSimuladorService {
     for (let index = 0; index < dispositivos.length; index++) {
       const dispositivo = dispositivos[index]
       try {
-        console.log('###', dispositivo.nombre + ' ' + dispositivo.direccionLan)
         await axios.post(`http://${dispositivo.direccionLan}`)
       } catch (error) {
         console.log(
@@ -150,6 +149,5 @@ export class TaskSimuladorService {
         }
       }
     }
-    console.log('##################################')
   }
 }

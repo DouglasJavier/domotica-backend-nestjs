@@ -74,7 +74,6 @@ export class AuthService {
       idDispositivo
     )
     if (!dispositivo) throw new NotFoundException('Dispositivo no encontrado')
-    console.log('######', dispositivo)
     if (!(contrasenia === dispositivo.contrasenia)) {
       throw new UnauthorizedException()
     }

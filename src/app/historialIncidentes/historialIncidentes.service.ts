@@ -44,9 +44,6 @@ export class HistorialIncidentesService {
   }
 
   async crear(registroIncidenteDto: RegistroIncidenteDto) {
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    console.log('entró a crear historial')
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     const alarma = await this.alarmaRepositorio.buscarAlarmaEncendida()
 
     if (!alarma) throw new NotFoundException('No se encontró la alarma')
@@ -87,10 +84,6 @@ export class HistorialIncidentesService {
   }
 
   async accionarBotonPanico(idAlarma: string, usuarioAuditoria: string) {
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    console.log('entró a crear historial encender boton panico')
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-
     if (!(idAlarma === '1' || idAlarma === '2'))
       throw new BadRequestException('Acción no permitida')
     const dispositivos = await this.dispositivoRepositorio.listarCamaras()
@@ -149,7 +142,6 @@ export class HistorialIncidentesService {
           HttpStatus.CONFLICT
         )
     }
-    console.log('activarSonido', atencionIncidentesDto.activarSonido)
     if (atencionIncidentesDto.activarSonido) {
       await this.accionSirenas(AccionConst.ENCENDER)
     }
@@ -208,9 +200,6 @@ export class HistorialIncidentesService {
   ) {
     const fotosCapturadas: string[] = []
     /* try { */
-    console.log('FFFFFFFFFFFFFFFFFFFFFFFFF')
-    console.log(dispositivos)
-    console.log('FFFFFFFFFFFFFFFFFFFFFFFFF')
     for (let i = 0; i < dispositivos.length; i++) {
       const dispositivo = dispositivos[i]
       for (let j = 0; j < numeroFotos; j++) {
@@ -267,14 +256,10 @@ export class HistorialIncidentesService {
       await this.dispositivoRepositorio.buscarPorDescricionSensoresActuadores(
         SensorActuadorConst.SIRENA
       )
-    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-    console.log(dispositivos)
-    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
     const tiempoLimite = 5000
     for (let i = 0; i < dispositivos.length; i++) {
       for (let j = 0; j < dispositivos[i].sensoresActuadores.length; j++) {
         const sirena = dispositivos[i].sensoresActuadores[j]
-        console.log('sirena', sirena)
         try {
           await axios.post(
             `http://${dispositivos[j].direccionLan}/actuador`,
@@ -289,7 +274,6 @@ export class HistorialIncidentesService {
               timeout: tiempoLimite,
             }
           )
-          console.log('entregó correctamente')
           // El resto de tu lógica aquí para manejar la respuesta exitosa
         } catch (error) {
           if (axios.isAxiosError(error)) {
