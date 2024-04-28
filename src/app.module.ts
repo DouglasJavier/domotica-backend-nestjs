@@ -72,6 +72,12 @@ dotenv.config()
         Fotos,
       ],
       synchronize: true,
+      ssl: true, // Asegúrate de agregar esta línea
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
       //logging: true,
     }),
     AlarmaModule,

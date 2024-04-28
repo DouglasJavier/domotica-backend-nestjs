@@ -17,6 +17,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
         entities: [__dirname + '../../../../**/*.entity{.ts,.js}'],
         keepConnectionAlive: true,
         synchronize: false,
+        ssl: true, // Asegúrate de agregar esta línea
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
       }),
     }),
   ],

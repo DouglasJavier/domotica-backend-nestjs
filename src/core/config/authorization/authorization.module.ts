@@ -21,6 +21,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
             password: configService.get('DB_PASSWORD'),
             database: configService.get('DB_DATABASE'),
             schema: configService.get('DB_SCHEMA_USUARIOS'),
+            ssl: true, // Asegúrate de agregar esta línea
+            extra: {
+              ssl: {
+                rejectUnauthorized: false,
+              },
+            },
             logging: false,
             synchronize: false,
           })
