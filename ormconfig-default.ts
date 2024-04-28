@@ -11,7 +11,7 @@ const AppDataSource = new DataSource({
   database: process.env.DB_DATABASE,
   schema: process.env.DB_SCHEMA,
   synchronize: false,
-
+  ssl: Boolean(process.env.DB_SSL || false),
   logging: true,
   entities: ['src/**/*.entity.ts'],
   migrations: ['database/migrations/*.ts'],

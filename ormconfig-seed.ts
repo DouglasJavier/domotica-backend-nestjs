@@ -14,6 +14,7 @@ const SeedDataSource = new DataSource({
   logging: true,
   entities: ['src/**/*.entity.ts'],
   migrations: ['database/seeds/*.ts'],
+  ssl: Boolean(process.env.DB_SSL || false),
 })
 
 export default SeedDataSource
