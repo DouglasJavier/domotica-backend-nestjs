@@ -28,7 +28,7 @@ export class TaskSimuladorService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  /* @Cron(CronExpression.EVERY_10_MINUTES)
   async comprobarRevalidacion() {
     try {
       console.log('revalidando :' + process.env.URL_REVALIDATE)
@@ -38,7 +38,7 @@ export class TaskSimuladorService {
         'error de conexion con el revalidador ' + process.env.URL_REVALIDATE
       )
     }
-  }
+  } */
 
   @Cron(CronExpression.EVERY_MINUTE) // Puedes ajustar la frecuencia según tus necesidades
   async handleCron() {
