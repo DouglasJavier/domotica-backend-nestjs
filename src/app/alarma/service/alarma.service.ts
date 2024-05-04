@@ -67,7 +67,7 @@ export class AlarmaService {
     const idUbicaciones = alarmaDto.idUbicaciones
     const alarma = alarmaDto
     delete alarma.idContactos
-    delete alarma.idSimulador
+    //delete alarma.idSimulador
     delete alarma.idUbicaciones
     const op = async (transaction: EntityManager) => {
       const result = await this.alarmaRepository.actualizar(
