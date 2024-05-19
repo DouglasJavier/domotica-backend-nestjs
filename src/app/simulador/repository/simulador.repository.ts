@@ -36,8 +36,10 @@ export class SimuladorRepository {
       ])
       .where('simulador.estado = :estado', { estado: 'ACTIVO' })
 
-    if (limite) query.take(limite)
-    if (salto) query.skip(salto)
+    if (limite && salto) {
+      query.take(limite)
+      query.skip(salto)
+    }
     switch (campo) {
       case 'id':
         query.addOrderBy('simulador.id', sentido)

@@ -144,8 +144,8 @@ export class DispositivoRepository {
         )
           ? 'pullDown'
           : TipoSalidaSensor.pullUp.includes(sensorActuador.descripcion)
-          ? 'pullUp'
-          : ''
+            ? 'pullUp'
+            : ''
         nuevoSensorActuador.estado = 'ACTIVO'
         return nuevoSensorActuador
       })
